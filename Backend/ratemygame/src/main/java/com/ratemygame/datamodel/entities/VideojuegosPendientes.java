@@ -1,4 +1,4 @@
-package com.daw.epickeys.datamodel.entities;
+package com.ratemygame.datamodel.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;

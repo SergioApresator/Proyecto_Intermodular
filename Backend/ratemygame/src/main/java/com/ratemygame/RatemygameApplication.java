@@ -1,13 +1,13 @@
-package com.daw.epickeys;
+package com.ratemygame;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class EpickeysApplication {
+public class RatemygameApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(EpickeysApplication.class, args);
+		SpringApplication.run(RatemygameApplication.class, args);
 	}
 
 }
