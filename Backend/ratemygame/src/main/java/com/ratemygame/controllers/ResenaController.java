@@ -1,0 +1,44 @@
+package com.ratemygame.controllers;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.ratemygame.dtos.ResenaDTO;
+import com.ratemygame.services.ResenaService;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/resenas")
+public class ResenaController {
+
+    @Autowired
+    private ResenaService resenaService;
+
+    @GetMapping("/videojuego/{idVideojuego}")
+    public ResponseEntity<List<ResenaDTO>> getResenasByVideojuego(@PathVariable Long idVideojuego) {
+        return ResponseEntity.ok(resenaService.getResenasByVideojuego(idVideojuego));
+    }
+
+    @GetMapping("/usuario/{idUsuario}")
+    public ResponseEntity<List<ResenaDTO>> getResenasByUsuario(@PathVariable Long idUsuario) {
+        return ResponseEntity.ok(resenaService.getResenasByUsuario(idUsuario));
+    }
+
+    @PostMapping
+    public ResponseEntity<ResenaDTO> createResena(@RequestBody ResenaDTO resenaDTO) {
+        return resenaService.createResena(resenaDTO)
+                .map(dto -> new ResponseEntity<>(dto, HttpStatus.CREATED))
+                .orElse(ResponseEntity.badRequest().build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteResena(@PathVariable Long id) {
+        if (resenaService.deleteResena(id)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+}
