@@ -25,6 +25,10 @@ public class UsuarioService {
         return usuarioRepository.findById(id).map(this::convertToDTO);
     }
 
+    public Optional<UsuarioDTO> loginUsuario(String email, String password) {
+        return usuarioRepository.findByEmailAndPassword(email, password).map(this::convertToDTO);
+    }
+
     public UsuarioDTO createUsuario(Usuario usuario) {
         Usuario savedUsuario = usuarioRepository.save(usuario);
         return convertToDTO(savedUsuario);
@@ -33,6 +37,8 @@ public class UsuarioService {
     public Optional<UsuarioDTO> updateUsuario(Long id, Usuario usuarioDetails) {
         return usuarioRepository.findById(id).map(usuario -> {
             usuario.setNombre(usuarioDetails.getNombre());
+            usuario.setApellidos(usuarioDetails.getApellidos());
+            usuario.setUsername(usuarioDetails.getUsername());
             usuario.setEmail(usuarioDetails.getEmail());
             usuario.setPassword(usuarioDetails.getPassword());
             usuario.setFoto_url(usuarioDetails.getFoto_url());
@@ -53,6 +59,8 @@ public class UsuarioService {
         UsuarioDTO dto = new UsuarioDTO();
         dto.setId(usuario.getId());
         dto.setNombre(usuario.getNombre());
+        dto.setApellidos(usuario.getApellidos());
+        dto.setUsername(usuario.getUsername());
         dto.setEmail(usuario.getEmail());
         dto.setFoto_url(usuario.getFoto_url());
         return dto;

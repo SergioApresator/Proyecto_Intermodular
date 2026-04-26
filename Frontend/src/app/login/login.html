@@ -2,14 +2,14 @@
 <h1>Iniciar Sesión</h1>
 
     <p>Correo Electrónico: 
-        <input type="text" formControlName="correo">
-        @if(this.formularioLogin.get('correo')?.errors?.['required']) { 
+        <input type="text" formControlName="email">
+        @if(this.formularioLogin.get('email')?.errors?.['required']) { 
             <span>(Obligatorio, no dejar vacío)</span> 
         } 
     </p> 
     <p>Contraseña: 
-        <input type="text" formControlName="contrasena">
-        @if(this.formularioLogin.get('contrasena')?.errors?.['required']) { 
+        <input type="text" formControlName="password">
+        @if(this.formularioLogin.get('password')?.errors?.['required']) { 
             <span>(Obligatorio, no dejar vacío)</span> 
         } 
     </p> 

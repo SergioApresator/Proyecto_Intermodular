@@ -21,12 +21,11 @@ export class Usuarios {
   //se pone 'text' as 'json' para que no de fallos al frecibir la respuesta del servidor,
   //ya que algunos serfvidores devuelven un mensaje en vez de un objeto
   guardarUsuario(datos: any): Observable<any> {
-    return this.http.post(this.url + '/crearUsuario', datos, { responseType: 'text' as 'json' });
+    return this.http.post(this.url, datos);
   }
 
   //Metodo para login
-  login(usuario: string, contrasena: string): Observable<any> {
-    const urlLogin = `http://localhost:9999/api/usuarios/buscarUsuarioPorLogin?usuario=${usuario}&contrasena=${contrasena}`;
-    return this.http.get(urlLogin);
+  login(email: string, password: string): Observable<any> {
+    return this.http.post(this.url + '/login', { email, password });
   }
 }

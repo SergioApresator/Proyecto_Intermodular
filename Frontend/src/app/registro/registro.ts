@@ -22,9 +22,9 @@ export class Registro {
   formularioRegistro = new FormGroup({
     nombre: new FormControl('',[Validators.required]),
     apellidos: new FormControl('',[Validators.required]),
-    usuario: new FormControl('',[Validators.required, Validators.maxLength(20)]),
-    correo: new FormControl('',[Validators.required, Validators.email]),
-    contrasena: new FormControl('',[Validators.required, Validators.minLength(8)])
+    username: new FormControl('',[Validators.required, Validators.maxLength(20)]),
+    email: new FormControl('',[Validators.required, Validators.email]),
+    password: new FormControl('',[Validators.required, Validators.minLength(8)])
   });
 
   submit() {

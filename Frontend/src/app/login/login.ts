@@ -16,29 +16,29 @@ export class Login {
   private router = inject(Router);
 
   //Inyecto el servicio
-  constructor(private usuariosServicio: Usuarios) {}
+  constructor(private usuariosServicio: Usuarios) { }
 
   formularioLogin = new FormGroup({
-    correo: new FormControl('',[Validators.required, Validators.email]),
-    contrasena: new FormControl('',[Validators.required, Validators.minLength(8)])
+    email: new FormControl('', [Validators.required, Validators.email]),
+    password: new FormControl('', [Validators.required, Validators.minLength(8)])
   });
 
-submit() {
-  if (this.formularioLogin.valid) {
-    const correoInput = this.formularioLogin.value.correo!; // Se pone ! para indicar que no son nulos
-    const passInput = this.formularioLogin.value.contrasena!; // Se pone ! para indicar que no son nulos
+  submit() {
+    if (this.formularioLogin.valid) {
+      const emailInput = this.formularioLogin.value.email!; // Se pone ! para indicar que no son nulos
+      const passInput = this.formularioLogin.value.password!; // Se pone ! para indicar que no son nulos
 
-    //LLama al servicio pasandole datos
-    //El subscribe hace que hasta que no haya una respuesta del servidor, no se ejecute lo de abajo
-    this.usuariosServicio.login(correoInput, passInput).subscribe({
-      //El subscribe tiene 2 caminos, next y error
-      next: (usuarioEncontrado) => {
-        this.router.navigate(['/inicial']);
-      },
-      error: (err) => {
-        alert('Correo o contraseña incorrectos');
-      }
-    });
+      //LLama al servicio pasandole datos
+      //El subscribe hace que hasta que no haya una respuesta del servidor, no se ejecute lo de abajo
+      this.usuariosServicio.login(emailInput, passInput).subscribe({
+        //El subscribe tiene 2 caminos, next y error
+        next: (usuarioEncontrado) => {
+          this.router.navigate(['/inicial']);
+        },
+        error: (err) => {
+          alert('Correo o contraseña incorrectos');
+        }
+      });
+    }
   }
-}
 }
