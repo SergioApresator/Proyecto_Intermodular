@@ -5,6 +5,9 @@ import org.springframework.stereotype.Repository;
 
 import com.ratemygame.datamodel.entities.Usuario;
 
+import java.util.Optional;
+
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
+    Optional<Usuario> findByEmailAndPassword(String email, String password);
 }

@@ -1,0 +1,43 @@
+<form [formGroup]="formularioRegistro" (ngSubmit)="submit()"> 
+<h1>Registrarse</h1>
+    <p>Nombre: 
+        <input type="text" formControlName="nombre"> 
+        @if(this.formularioRegistro.get('nombre')?.errors?.['required']) { 
+            <span>(Obligatorio, no dejar vacío)</span> 
+        } 
+    </p> 
+     <p>Apellidos: 
+        <input type="text" formControlName="apellidos"> 
+        @if(this.formularioRegistro.get('apellidos')?.errors?.['required']) { 
+            <span>(Obligatorio, no dejar vacío)</span> 
+        } 
+    </p>
+    <p>Nombre de Usuario: 
+        <input type="text" formControlName="username"> 
+        @if(this.formularioRegistro.get('username')?.errors?.['required']) { 
+            <span>(Obligatorio, no dejar vacío)</span> 
+        } 
+        @if(this.formularioRegistro.get('username')?.errors?.['maxlength']) { 
+            <span>(Debe tener como máximo 20 caracteres)</span> 
+        }
+    </p>
+    <p>Correo Electrónico: 
+        <input type="text" formControlName="email">
+        @if(this.formularioRegistro.get('email')?.errors?.['required']) { 
+            <span>(Obligatorio, no dejar vacío)</span> 
+        } 
+        @if(this.formularioRegistro.get('email')?.errors?.['email']) { 
+            <span>(Debe seguir el formato de email)</span> 
+        } 
+    </p> 
+    <p>Contraseña: 
+        <input type="text" formControlName="password">
+        @if(this.formularioRegistro.get('password')?.errors?.['required']) { 
+            <span>(Obligatorio, no dejar vacío)</span> 
+        } 
+        @if(this.formularioRegistro.get('password')?.errors?.['minlength']) { 
+            <span>(Debe tener como mínimo 8 caracteres)</span> 
+        } 
+    </p> 
+    <button type="submit" [disabled]="formularioRegistro.invalid">Confirmar</button> 
+</form> 

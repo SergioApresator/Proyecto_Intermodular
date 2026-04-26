@@ -31,6 +31,12 @@ public class Usuario {
     @Column(name = "NOMBRE")
     private String nombre;
 
+    @Column(name = "APELLIDOS")
+    private String apellidos;
+
+    @Column(name = "USERNAME", unique = true)
+    private String username;
+
     @Column(name = "EMAIL")
     private String email;
 
