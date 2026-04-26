@@ -12,10 +12,12 @@ El backend incluye un archivo de configuración de Docker que inicializará la b
 
 1. Abre una terminal.
 2. Dirígete a la carpeta del backend:
+
    ```bash
    cd Backend/ratemygame
    ```
 3. Ejecuta el siguiente comando para levantar los contenedores en segundo plano:
+
    ```bash
    docker-compose up -d --build
    ```
@@ -29,14 +31,17 @@ Para interactuar con el proyecto, necesitas levantar el servidor de desarrollo d
 
 1. Abre una **nueva** terminal.
 2. Dirígete a la carpeta del frontend:
+
    ```bash
    cd Frontend
    ```
 3. Instala las dependencias necesarias (sólo la primera vez):
+
    ```bash
    npm install
    ```
 4. Inicia la aplicación de Angular:
+
    ```bash
    npm start
    ```
