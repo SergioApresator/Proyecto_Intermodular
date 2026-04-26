@@ -1,0 +1,17 @@
+package com.ratemygame.dtos;
+
+import java.time.LocalDate;
+import lombok.Data;
+
+@Data
+public class ResenaDTO {
+    private Long id;
+    private String mensaje;
+    private int puntuacion;
+    private Boolean tieneSpoiler;
+    private Integer meGustas;
+    private Integer noMeGustas;
+    private LocalDate fechaResena;
+    private Long id_usuario;
+    private Long id_videojuego;
+}

@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-EpickeysApplication<epickeys>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.daw.epickeys.EpickeysApplication",
+            "projectName": "epickeys",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
