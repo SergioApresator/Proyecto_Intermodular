@@ -1,0 +1,17 @@
+<form [formGroup]="formularioLogin" (ngSubmit)="submit()"> 
+<h1>Iniciar Sesión</h1>
+
+    <p>Correo Electrónico: 
+        <input type="text" formControlName="correo">
+        @if(this.formularioLogin.get('correo')?.errors?.['required']) { 
+            <span>(Obligatorio, no dejar vacío)</span> 
+        } 
+    </p> 
+    <p>Contraseña: 
+        <input type="text" formControlName="contrasena">
+        @if(this.formularioLogin.get('contrasena')?.errors?.['required']) { 
+            <span>(Obligatorio, no dejar vacío)</span> 
+        } 
+    </p> 
+    <button type="submit" [disabled]="formularioLogin.invalid">Confirmar</button> 
+</form> 
