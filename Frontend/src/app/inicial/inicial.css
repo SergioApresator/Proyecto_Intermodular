@@ -218,3 +218,12 @@
     border-color: #3b82f6;
     color: #3b82f6;
 }
+
+.lista-horizontal {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 12px;
+    scrollbar-width: thin;
+    scrollbar-color: #334155 transparent;
+}

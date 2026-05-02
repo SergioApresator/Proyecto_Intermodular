@@ -1,18 +1,18 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { Videojuegos } from '../videojuegos';
 
 @Component({
   selector: 'app-inicial',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './inicial.html',
   styleUrl: './inicial.css',
 })
 
 export class Inicial implements OnInit, OnDestroy {
 
-  //Inyecto el servicio y el detector de cambios
   constructor(private videojuegosServicio: Videojuegos, private cdr: ChangeDetectorRef) {}
 
   juegosDestacados: any[] = [];
@@ -27,7 +27,6 @@ export class Inicial implements OnInit, OnDestroy {
   proximosLanzamientos: any[] = [];
 
   ngOnInit() {
-
     this.videojuegosServicio.getJuegosDestacados().subscribe({
       next: (respuesta: any) => {
         this.juegosDestacados = respuesta.results;
