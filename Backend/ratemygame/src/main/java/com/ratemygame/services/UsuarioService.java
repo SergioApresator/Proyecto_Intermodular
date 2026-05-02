@@ -2,6 +2,9 @@ package com.ratemygame.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import com.ratemygame.config.JwtService;
+import com.ratemygame.config.CustomUserDetails;
 
 import com.ratemygame.datamodel.entities.Usuario;
 import com.ratemygame.datamodel.repositories.UsuarioRepository;
@@ -17,6 +20,12 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtService jwtService;
+
     public List<UsuarioDTO> getAllUsuarios() {
         return usuarioRepository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
     }
@@ -26,12 +35,26 @@ public class UsuarioService {
     }
 
     public Optional<UsuarioDTO> loginUsuario(String email, String password) {
-        return usuarioRepository.findByEmailAndPassword(email, password).map(this::convertToDTO);
+        Optional<Usuario> optionalUsuario = usuarioRepository.findByEmail(email);
+        if (optionalUsuario.isPresent()) {
+            Usuario usuario = optionalUsuario.get();
+            if (passwordEncoder.matches(password, usuario.getPassword())) {
+                String token = jwtService.generateToken(new CustomUserDetails(usuario));
+                UsuarioDTO dto = convertToDTO(usuario);
+                dto.setToken(token);
+                return Optional.of(dto);
+            }
+        }
+        return Optional.empty();
     }
 
     public UsuarioDTO createUsuario(Usuario usuario) {
+        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         Usuario savedUsuario = usuarioRepository.save(usuario);
-        return convertToDTO(savedUsuario);
+        String token = jwtService.generateToken(new CustomUserDetails(savedUsuario));
+        UsuarioDTO dto = convertToDTO(savedUsuario);
+        dto.setToken(token);
+        return dto;
     }
 
     public Optional<UsuarioDTO> updateUsuario(Long id, Usuario usuarioDetails) {
@@ -40,7 +63,9 @@ public class UsuarioService {
             usuario.setApellidos(usuarioDetails.getApellidos());
             usuario.setUsername(usuarioDetails.getUsername());
             usuario.setEmail(usuarioDetails.getEmail());
-            usuario.setPassword(usuarioDetails.getPassword());
+            if (usuarioDetails.getPassword() != null && !usuarioDetails.getPassword().isEmpty()) {
+                usuario.setPassword(passwordEncoder.encode(usuarioDetails.getPassword()));
+            }
             usuario.setFoto_url(usuarioDetails.getFoto_url());
             Usuario updatedUsuario = usuarioRepository.save(usuario);
             return convertToDTO(updatedUsuario);

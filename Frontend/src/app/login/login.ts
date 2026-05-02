@@ -33,6 +33,9 @@ export class Login {
       this.usuariosServicio.login(emailInput, passInput).subscribe({
         //El subscribe tiene 2 caminos, next y error
         next: (usuarioEncontrado) => {
+          if (usuarioEncontrado && usuarioEncontrado.token) {
+            localStorage.setItem('token', usuarioEncontrado.token);
+          }
           this.router.navigate(['/inicial']);
         },
         error: (err) => {
