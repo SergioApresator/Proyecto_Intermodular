@@ -1,6 +1,121 @@
-<div class="contenedor-inicial">
-    <img src="assets/logoGaming.png" alt="Logo Gaming">
-    
-    <p>Desarrollado por: <br> Sergio, Esteban, Moises</p> 
-    <p>Fecha: Hoy</p>
+<div *ngIf="cargando" class="contenedor-cargando">
+  <p>Cargando...</p>
+</div>
+
+<div *ngIf="!cargando">
+  <!-- CARRUSEL -->
+  <div *ngIf="juegosDestacados.length > 0" class="carrusel">
+    <div class="carrusel-imagen-contenedor">
+      <img 
+        [src]="juegosDestacados[indiceCarrusel].background_image" 
+        [alt]="juegosDestacados[indiceCarrusel].name"
+        class="carrusel-imagen">
+      <div class="carrusel-info">
+        <h2>{{ juegosDestacados[indiceCarrusel].name }}</h2>
+        <p>{{ juegosDestacados[indiceCarrusel].rating }} / 5</p>
+      </div>
+    </div>
+
+    <button class="carrusel-btn izquierda" (click)="anteriorSlide()">&#8249;</button>
+    <button class="carrusel-btn derecha" (click)="siguienteSlide()">&#8250;</button>
+
+    <div class="carrusel-puntos">
+      <span 
+        *ngFor="let juego of juegosDestacados; index as i"
+        class="punto" 
+        [class.activo]="i === indiceCarrusel"
+        >
+      </span>
+    </div>
+  </div>
+
+  <!-- LISTAS HORIZONTALES -->
+  <div class="secciones">
+
+    <!-- Más populares -->
+    <div *ngIf="masPopulares.length > 0" class="seccion">
+      <div class="seccion-cabecera">
+        <h3 class="seccion-titulo">Más Populares</h3>
+        <button class="btn-ver-todos">Ver todos</button>
+      </div>
+      <div class="lista-horizontal">
+        <div *ngFor="let juego of masPopulares" class="tarjeta">
+          <img [src]="juego.background_image" [alt]="juego.name" class="tarjeta-imagen">
+          <div class="tarjeta-info">
+            <p class="tarjeta-nombre">{{ juego.name }}</p>
+            <p class="tarjeta-rating">{{ juego.rating }} / 5</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Acción -->
+    <div *ngIf="juegosAccion.length > 0" class="seccion">
+      <div class="seccion-cabecera">
+        <h3 class="seccion-titulo">Acción</h3>
+        <button class="btn-ver-todos">Ver todos</button>
+      </div>
+      <div class="lista-horizontal">
+        <div *ngFor="let juego of juegosAccion" class="tarjeta">
+          <img [src]="juego.background_image" [alt]="juego.name" class="tarjeta-imagen">
+          <div class="tarjeta-info">
+            <p class="tarjeta-nombre">{{ juego.name }}</p>
+            <p class="tarjeta-rating">{{ juego.rating }} / 5</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Terror -->
+    <div *ngIf="juegosHorror.length > 0" class="seccion">
+      <div class="seccion-cabecera">
+        <h3 class="seccion-titulo">Terror</h3>
+        <button class="btn-ver-todos">Ver todos</button>
+      </div>
+      <div class="lista-horizontal">
+        <div *ngFor="let juego of juegosHorror" class="tarjeta">
+          <img [src]="juego.background_image" [alt]="juego.name" class="tarjeta-imagen">
+          <div class="tarjeta-info">
+            <p class="tarjeta-nombre">{{ juego.name }}</p>
+            <p class="tarjeta-rating">{{ juego.rating }} / 5</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RPG -->
+    <div *ngIf="juegosRPG.length > 0" class="seccion">
+      <div class="seccion-cabecera">
+        <h3 class="seccion-titulo">RPG</h3>
+        <button class="btn-ver-todos">Ver todos</button>
+      </div>
+      <div class="lista-horizontal">
+        <div *ngFor="let juego of juegosRPG" class="tarjeta">
+          <img [src]="juego.background_image" [alt]="juego.name" class="tarjeta-imagen">
+          <div class="tarjeta-info">
+            <p class="tarjeta-nombre">{{ juego.name }}</p>
+            <p class="tarjeta-rating">{{ juego.rating }} / 5</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Próximos Lanzamientos -->
+    <div *ngIf="proximosLanzamientos.length > 0" class="seccion">
+      <div class="seccion-cabecera">
+        <h3 class="seccion-titulo">Próximos Lanzamientos</h3>
+        <button class="btn-ver-todos">Ver todos</button>
+      </div>
+      <div class="lista-horizontal">
+        <div *ngFor="let juego of proximosLanzamientos" class="tarjeta">
+          <img [src]="juego.background_image" [alt]="juego.name" class="tarjeta-imagen">
+          <div class="tarjeta-info">
+            <p class="tarjeta-nombre">{{ juego.name }}</p>
+            <p class="tarjeta-rating">Fecha: {{ juego.released }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>
