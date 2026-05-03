@@ -1,0 +1,55 @@
+:host {
+    display: block;
+    background-color: #0f172a;
+    min-height: 100vh;
+    color: #f1f5f9;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.contenedor {
+    padding: 40px 30px;
+}
+
+.titulo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 30px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #334155;
+}
+
+.lista-reseñas {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.sin-reseñas {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    gap: 10px;
+    color: #64748b;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.btn-explorar {
+    margin-top: 20px;
+    padding: 12px 30px;
+    background: none;
+    border: 1px solid #334155;
+    color: #94a3b8;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-explorar:hover {
+    border-color: #3b82f6;
+    color: #3b82f6;
+}
