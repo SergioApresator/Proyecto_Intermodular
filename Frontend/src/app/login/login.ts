@@ -35,6 +35,9 @@ export class Login {
         next: (usuarioEncontrado) => {
           if (usuarioEncontrado && usuarioEncontrado.token) {
             localStorage.setItem('token', usuarioEncontrado.token);
+            if (usuarioEncontrado.id) {
+              localStorage.setItem('usuarioId', usuarioEncontrado.id.toString());
+            }
           }
           this.router.navigate(['/inicial']);
         },

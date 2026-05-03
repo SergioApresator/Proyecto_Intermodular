@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Videojuegos } from '../videojuegos';
+import { Usuarios } from '../usuarios';
 
 @Component({
   selector: 'app-juego-detalle',
@@ -21,6 +22,12 @@ export class JuegoDetalle implements OnInit {
   mediaItems: any[] = [];
   indiceMediaActual: number = 0;
 
+  // Favoritos
+  esFavorito: boolean = false;
+  listaFavoritoId: number | null = null;
+  usuarioId: number | null = null;
+  cambiandoFavorito: boolean = false;
+
   get tagsJuego(): any[] {
     return this.juego?.tags ? this.juego.tags.slice(0, 15) : [];
   }
@@ -29,10 +36,16 @@ export class JuegoDetalle implements OnInit {
     private route: ActivatedRoute,
     private videojuegosServicio: Videojuegos,
     private sanitizer: DomSanitizer,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private usuariosServicio: Usuarios
   ) {}
 
   ngOnInit() {
+    const uid = localStorage.getItem('usuarioId');
+    if (uid) {
+      this.usuarioId = parseInt(uid, 10);
+    }
+
     this.route.paramMap.subscribe(params => {
       this.id = params.get('id');
       if (this.id) {
@@ -57,6 +70,10 @@ export class JuegoDetalle implements OnInit {
         
         if (this.juego.background_image) {
           this.mediaItems.push({ tipo: 'imagen', url: this.juego.background_image });
+        }
+        
+        if (this.usuarioId) {
+          this.checkFavorito(id);
         }
         
         this.cargarMediaExtra(id);
@@ -87,6 +104,70 @@ export class JuegoDetalle implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  checkFavorito(gameIdStr: string) {
+    if (!this.usuarioId) return;
+    const gameId = parseInt(gameIdStr, 10);
+    
+    this.usuariosServicio.getListasUsuario(this.usuarioId).subscribe({
+      next: (listas: any[]) => {
+        const fav = listas.find(l => l.nombre === 'Favoritos' && l.id_videojuego === gameId);
+        if (fav) {
+          this.esFavorito = true;
+          this.listaFavoritoId = fav.id;
+        } else {
+          this.esFavorito = false;
+          this.listaFavoritoId = null;
+        }
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Error comprobando favoritos', err)
+    });
+  }
+
+  toggleFavorito() {
+    if (!this.usuarioId || !this.juego) return;
+    
+    this.cambiandoFavorito = true;
+    
+    if (this.esFavorito && this.listaFavoritoId) {
+      // Remover de favoritos
+      this.usuariosServicio.eliminarDeLista(this.listaFavoritoId).subscribe({
+        next: () => {
+          this.esFavorito = false;
+          this.listaFavoritoId = null;
+          this.cambiandoFavorito = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Error al remover favorito', err);
+          this.cambiandoFavorito = false;
+          this.cdr.detectChanges();
+        }
+      });
+    } else {
+      // Agregar a favoritos
+      const payload = {
+        nombre: 'Favoritos',
+        id_videojuego: this.juego.id,
+        id_usuario: this.usuarioId
+      };
+      
+      this.usuariosServicio.agregarALista(payload).subscribe({
+        next: (nuevaLista: any) => {
+          this.esFavorito = true;
+          this.listaFavoritoId = nuevaLista.id;
+          this.cambiandoFavorito = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Error al agregar favorito', err);
+          this.cambiandoFavorito = false;
+          this.cdr.detectChanges();
+        }
+      });
+    }
   }
 
   siguienteMedia() {

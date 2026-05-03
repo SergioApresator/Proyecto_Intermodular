@@ -14,7 +14,18 @@
           <span class="plat-tag" *ngFor="let plat of juego.parent_platforms">{{ plat.platform.name }}</span>
         </div>
       </div>
-      <h1 class="juego-titulo">{{ juego.name }}</h1>
+      <div class="juego-titulo-container">
+        <h1 class="juego-titulo">{{ juego.name }}</h1>
+        <button *ngIf="usuarioId" 
+                class="btn-favorito" 
+                [class.activo]="esFavorito" 
+                [disabled]="cambiandoFavorito"
+                (click)="toggleFavorito()">
+          <span class="corazon" [innerHTML]="esFavorito ? '❤️' : '🤍'"></span>
+          <span class="texto-fav">{{ esFavorito ? 'En Favoritos' : 'Añadir a Favoritos' }}</span>
+        </button>
+      </div>
+      
       <div class="juego-stats">
         <div class="stat" title="Rating">
           <span class="stat-icon">⭐</span>
