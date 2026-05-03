@@ -1,14 +1,16 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
 import { Videojuegos } from '../videojuegos';
 import { Usuarios } from '../usuarios';
+import { ResenasService } from '../resenas';
 
 @Component({
   selector: 'app-juego-detalle',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './juego-detalle.html',
   styleUrl: './juego-detalle.css'
 })
@@ -29,16 +31,28 @@ export class JuegoDetalle implements OnInit, OnDestroy {
   usuarioId: number | null = null;
   cambiandoFavorito: boolean = false;
 
+  // Reseñas
+  resenas: any[] = [];
+  mostrarModalResena: boolean = false;
+  enviandoResena: boolean = false;
+  nuevaResena = {
+    puntuacion: 5,
+    mensaje: '',
+    tieneSpoiler: false
+  };
+
   get tagsJuego(): any[] {
     return this.juego?.tags ? this.juego.tags.slice(0, 15) : [];
   }
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private videojuegosServicio: Videojuegos,
     private sanitizer: DomSanitizer,
     private cdr: ChangeDetectorRef,
-    private usuariosServicio: Usuarios
+    private usuariosServicio: Usuarios,
+    private resenasServicio: ResenasService
   ) {}
 
   ngOnInit() {
@@ -62,6 +76,7 @@ export class JuegoDetalle implements OnInit, OnDestroy {
     this.cargando = true;
     this.mediaItems = [];
     this.indiceMediaActual = 0;
+    this.resenas = [];
     this.cdr.detectChanges();
 
     this.videojuegosServicio.getJuegoDetalles(id).subscribe({
@@ -97,6 +112,7 @@ export class JuegoDetalle implements OnInit, OnDestroy {
         }
         
         this.cargarMediaExtra(id);
+        this.cargarResenas(parseInt(id, 10));
       },
       error: (err) => {
         if (this.mediaItems.length > 1) {
@@ -262,5 +278,60 @@ export class JuegoDetalle implements OnInit, OnDestroy {
       this.indiceMediaActual = (this.indiceMediaActual - 1 + this.mediaItems.length) % this.mediaItems.length;
       this.iniciarCarruselMedia(); // Reset timer
     }
+  }
+
+  // --- RESEÑAS ---
+  cargarResenas(idVideojuego: number) {
+    this.resenasServicio.getResenasPorJuego(idVideojuego).subscribe({
+      next: (data) => {
+        this.resenas = data;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Error cargando reseñas', err)
+    });
+  }
+
+  abrirModalResena() {
+    if (!this.usuarioId) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    this.mostrarModalResena = true;
+  }
+
+  cerrarModalResena() {
+    this.mostrarModalResena = false;
+    this.nuevaResena = { puntuacion: 5, mensaje: '', tieneSpoiler: false };
+  }
+
+  enviarResena() {
+    if (!this.usuarioId || !this.juego) return;
+    
+    if (this.nuevaResena.mensaje.trim().length === 0) {
+      alert("El mensaje no puede estar vacío.");
+      return;
+    }
+
+    this.enviandoResena = true;
+    const payload = {
+      ...this.nuevaResena,
+      id_usuario: this.usuarioId,
+      id_videojuego: this.juego.id
+    };
+
+    this.resenasServicio.crearResena(payload).subscribe({
+      next: (data) => {
+        this.resenas.unshift(data); // Añadir al inicio
+        this.enviandoResena = false;
+        this.cerrarModalResena();
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error enviando reseña', err);
+        alert("Ocurrió un error al enviar la reseña.");
+        this.enviandoResena = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 }

@@ -16,14 +16,6 @@
       </div>
       <div class="juego-titulo-container">
         <h1 class="juego-titulo">{{ juego.name }}</h1>
-        <button *ngIf="usuarioId" 
-                class="btn-favorito" 
-                [class.activo]="esFavorito" 
-                [disabled]="cambiandoFavorito"
-                (click)="toggleFavorito()">
-          <span class="corazon" [innerHTML]="esFavorito ? '❤️' : '🤍'"></span>
-          <span class="texto-fav">{{ esFavorito ? 'En Favoritos' : 'Añadir a Favoritos' }}</span>
-        </button>
       </div>
       
       <div class="juego-stats">
@@ -84,6 +76,21 @@
 
     <!-- COLUMNA DERECHA (METADATA) -->
     <div class="columna-lateral">
+
+      <div class="meta-bloque acciones-lateral">
+        <button *ngIf="usuarioId" 
+                class="btn-favorito lateral-btn" 
+                [class.activo]="esFavorito" 
+                [disabled]="cambiandoFavorito"
+                (click)="toggleFavorito()">
+          <span class="corazon" [innerHTML]="esFavorito ? '❤️' : '🤍'"></span>
+          <span class="texto-fav">{{ esFavorito ? 'En Favoritos' : 'Añadir a Favoritos' }}</span>
+        </button>
+        <button class="btn-resenar lateral-btn" (click)="abrirModalResena()">
+          <span class="icono-resena">✍️</span>
+          <span class="texto-resena">{{ usuarioId ? 'Escribir Reseña' : 'Logeate para reseñar' }}</span>
+        </button>
+      </div>
       
       <div class="meta-bloque" *ngIf="juego.genres?.length > 0">
         <h4>Géneros</h4>
@@ -115,6 +122,77 @@
         <a *ngIf="juego.reddit_url" [href]="juego.reddit_url" target="_blank" class="enlace-externo">Reddit</a>
       </div>
 
+    </div>
+  </div>
+
+  <!-- SECCIÓN DE RESEÑAS -->
+  <div class="seccion-resenas-container">
+    <div class="seccion-cabecera">
+      <h3>Reseñas de la Comunidad</h3>
+      <div class="stats-resenas" *ngIf="resenas.length > 0">
+        {{ resenas.length }} reseña(s)
+      </div>
+    </div>
+    
+    <div *ngIf="resenas.length === 0" class="sin-resenas">
+      <p>Todavía no hay reseñas para este juego. ¡Sé el primero en opinar!</p>
+    </div>
+
+    <div class="lista-resenas" *ngIf="resenas.length > 0">
+      <div class="tarjeta-resena" *ngFor="let resena of resenas">
+        <div class="resena-header">
+          <div class="resena-usuario">
+            <div class="avatar-usuario">{{ resena.id_usuario }}</div> <!-- Idealmente mostrar el nombre -->
+            <span class="fecha-resena">{{ resena.fechaResena | date:'mediumDate' }}</span>
+          </div>
+          <div class="resena-puntuacion">
+            <span class="estrella" *ngFor="let _ of [].constructor(resena.puntuacion)">⭐</span>
+          </div>
+        </div>
+        <div class="resena-contenido" [class.tiene-spoiler]="resena.tieneSpoiler">
+          <div class="alerta-spoiler" *ngIf="resena.tieneSpoiler">
+            ⚠️ Contiene Spoilers
+          </div>
+          <p>{{ resena.mensaje }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL DE RESEÑA -->
+<div class="modal-overlay" *ngIf="mostrarModalResena" (click)="cerrarModalResena()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Escribir Reseña para {{ juego?.name }}</h3>
+      <button class="btn-cerrar" (click)="cerrarModalResena()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Puntuación</label>
+        <div class="selector-puntuacion">
+          <button type="button" class="btn-estrella" *ngFor="let val of [1,2,3,4,5]" 
+                  [class.activa]="val <= nuevaResena.puntuacion"
+                  (click)="nuevaResena.puntuacion = val">
+            ⭐
+          </button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="mensaje">Tu Opinión</label>
+        <textarea id="mensaje" [(ngModel)]="nuevaResena.mensaje" rows="4" placeholder="¿Qué te pareció el juego?"></textarea>
+      </div>
+      <div class="form-group-checkbox">
+        <input type="checkbox" id="spoiler" [(ngModel)]="nuevaResena.tieneSpoiler">
+        <label for="spoiler">Esta reseña contiene spoilers</label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secundario" (click)="cerrarModalResena()">Cancelar</button>
+      <button class="btn-primario" (click)="enviarResena()" [disabled]="enviandoResena || !nuevaResena.mensaje.trim()">
+        {{ enviandoResena ? 'Enviando...' : 'Publicar Reseña' }}
+      </button>
     </div>
   </div>
 </div>
