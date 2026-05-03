@@ -33,4 +33,24 @@ export class Videojuegos {
   getMasPopulares(): Observable<any> {
     return this.http.get(`${this.url}/games?key=${this.apiKey}&ordering=-added&page_size=10`);
   }
+
+  //Busca juegos por nombre y filtros opcionales
+  buscarJuegos(termino: string, filtros: any = {}): Observable<any> {
+    let urlBusqueda = `${this.url}/games?key=${this.apiKey}&search=${termino}&search_precise=true&page_size=20`;
+    
+    if (filtros.orden && filtros.orden !== 'relevance') {
+      urlBusqueda += `&ordering=${filtros.orden}`;
+    } else if (!filtros.orden) {
+      urlBusqueda += `&ordering=-added`;
+    }
+
+    if (filtros.genero) {
+      urlBusqueda += `&genres=${filtros.genero}`;
+    }
+    if (filtros.plataforma) {
+      urlBusqueda += `&parent_platforms=${filtros.plataforma}`;
+    }
+    
+    return this.http.get(urlBusqueda);
+  }
 }

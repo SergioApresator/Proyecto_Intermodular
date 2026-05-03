@@ -3,7 +3,59 @@
 </div>
 
 <div *ngIf="!cargando">
-  <!-- CARRUSEL -->
+  <!-- RESULTADOS BUSQUEDA -->
+  <div *ngIf="busquedaRealizada" class="resultados-layout">
+    
+    <div class="seccion-cabecera">
+      <h3 class="seccion-titulo">Resultados para "{{ terminoBusqueda }}"</h3>
+    </div>
+
+    <!-- BARRA FILTROS SUPERIOR -->
+    <div class="filtros-topbar">
+      <div class="grupo-filtros">
+        <label class="filtro-label">Género</label>
+        <select class="filtro-select" [(ngModel)]="filtros.genero" (change)="buscar()">
+          <option *ngFor="let gen of generosDisponibles" [value]="gen.id">{{ gen.nombre }}</option>
+        </select>
+      </div>
+
+      <div class="grupo-filtros">
+        <label class="filtro-label">Plataforma</label>
+        <select class="filtro-select" [(ngModel)]="filtros.plataforma" (change)="buscar()">
+          <option *ngFor="let plat of plataformasDisponibles" [value]="plat.id">{{ plat.nombre }}</option>
+        </select>
+      </div>
+
+      <div class="grupo-filtros">
+        <label class="filtro-label">Ordenar por</label>
+        <select class="filtro-select" [(ngModel)]="filtros.orden" (change)="buscar()">
+          <option *ngFor="let ord of ordenDisponibles" [value]="ord.id">{{ ord.nombre }}</option>
+        </select>
+      </div>
+
+      <button class="btn-limpiar-filtros" *ngIf="filtros.genero || filtros.plataforma || filtros.orden !== '-added'" (click)="limpiarFiltrosSolo()">Limpiar filtros</button>
+    </div>
+
+    <!-- GRID RESULTADOS -->
+    <div class="resultados-contenido">
+      <div *ngIf="buscando" class="mensaje-busqueda">Buscando...</div>
+      <div *ngIf="!buscando && resultadosBusqueda.length === 0" class="mensaje-busqueda">No se encontraron juegos.</div>
+      
+      <div *ngIf="!buscando && resultadosBusqueda.length > 0" class="cuadricula-resultados">
+        <div *ngFor="let juego of resultadosBusqueda" class="tarjeta">
+          <img [src]="juego.background_image || 'https://via.placeholder.com/220x140?text=Sin+Imagen'" [alt]="juego.name" class="tarjeta-imagen">
+          <div class="tarjeta-info">
+            <p class="tarjeta-nombre">{{ juego.name }}</p>
+            <p class="tarjeta-rating">{{ juego.rating }} / 5</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENIDO PRINCIPAL (Oculto si hay busqueda) -->
+  <div *ngIf="!busquedaRealizada">
+    <!-- CARRUSEL -->
   <div *ngIf="juegosDestacados.length > 0" class="carrusel">
     <div class="carrusel-imagen-contenedor">
       <img 
@@ -117,5 +169,6 @@
       </div>
     </div>
 
-  </div>
+  </div> <!-- FIN SECCIONES HORIZONTALES -->
+  </div> <!-- FIN CONTENIDO PRINCIPAL -->
 </div>
