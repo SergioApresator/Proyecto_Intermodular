@@ -5,13 +5,13 @@
 <div *ngIf="!cargando" class="contenedor">
   <h2 class="titulo">Mi Diario</h2>
 
-  //Si no se ha iniciado sesion
+  <!-- Si no se ha iniciado sesion -->
   <div *ngIf="!usuarioId" class="sin-resenas">
     <p>Debes iniciar sesión para ver tu diario.</p>
     <button class="btn-accion" routerLink="/login">Iniciar Sesión</button>
   </div>
 
-  //Si no hay reseñas
+  <!-- Si no hay reseñas -->
   <div *ngIf="usuarioId && resenas.length === 0" class="sin-resenas">
     <p>Todavía no has escrito ninguna reseña.</p>
     <p>¡Empieza a explorar juegos y comparte tu opinión!</p>
