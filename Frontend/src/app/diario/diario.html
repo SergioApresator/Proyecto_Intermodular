@@ -1,13 +1,45 @@
-<div class="contenedor">
+<div *ngIf="cargando" class="contenedor-cargando">
+  <p>Cargando...</p>
+</div>
+
+<div *ngIf="!cargando" class="contenedor">
   <h2 class="titulo">Mi Diario</h2>
 
-  <div class="lista-reseñas">
-
-    <div class="sin-reseñas">
-      <p>Todavía no has escrito ninguna reseña.</p>
-      <p>¡Empieza a explorar juegos y comparte tu opinión!</p>
-      <button class="btn-explorar" routerLink="/inicial">Explorar juegos</button>
-    </div>
-
+  <div *ngIf="!usuarioId" class="sin-resenas">
+    <p>Debes iniciar sesión para ver tu diario.</p>
+    <button class="btn-accion" routerLink="/login">Iniciar Sesión</button>
   </div>
+
+  <div *ngIf="usuarioId && resenas.length === 0" class="sin-resenas">
+    <p>Todavía no has escrito ninguna reseña.</p>
+    <p>¡Empieza a explorar juegos y comparte tu opinión!</p>
+    <button class="btn-accion" routerLink="/inicial">Explorar juegos</button>
+  </div>
+
+  <div *ngIf="usuarioId && resenas.length > 0" class="lista-resenas">
+    <div *ngFor="let resena of resenas" class="tarjeta-resena">
+
+      <!-- Datos del juego -->
+      <div class="resena-juego">
+        <img *ngIf="resena.imagenJuego" [src]="resena.imagenJuego" [alt]="resena.nombreJuego" class="resena-juego-imagen">
+        <span class="resena-juego-nombre">{{ resena.nombreJuego }}</span>
+      </div>
+
+      <div class="resena-cabecera">
+        <div class="resena-puntuacion">
+          <span>&#9733; {{ resena.puntuacion }} / 5</span>
+        </div>
+        <span class="resena-fecha">{{ resena.fechaResena | date:'dd/MM/yyyy' }}</span>
+      </div>
+      <div class="resena-spoiler" *ngIf="resena.tieneSpoiler">
+        Contiene spoilers
+      </div>
+      <p class="resena-mensaje">{{ resena.mensaje }}</p>
+      <div class="resena-pie">
+        <span class="resena-megusta">{{ resena.meGustas }} Me gusta</span>
+        <span class="resena-nomegusta">{{ resena.noMeGustas }} No me gusta</span>
+      </div>
+    </div>
+  </div>
+
 </div>

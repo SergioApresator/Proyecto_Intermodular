@@ -28,4 +28,9 @@ export class ResenasService {
   crearResena(resena: any): Observable<any> {
     return this.http.post(this.urlResenas, resena, this.getHeaders());
   }
+
+  // Obtener reseñas por usuario
+  getResenasPorUsuario(idUsuario: number): Observable<any> {
+    return this.http.get(`${this.urlResenas}/usuario/${idUsuario}`, this.getHeaders());
+  }
 }
