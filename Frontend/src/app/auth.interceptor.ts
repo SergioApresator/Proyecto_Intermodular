@@ -7,7 +7,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   if (isPlatformBrowser(platformId)) {
     const token = localStorage.getItem('token');
-    if (token) {
+    // Solo enviar el token a nuestro backend (localhost o el dominio de produccion), NO a RAWG
+    if (token && req.url.includes('localhost:8080')) {
       const clonedReq = req.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`

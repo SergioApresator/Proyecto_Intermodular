@@ -5,7 +5,7 @@
 <div *ngIf="!cargando" class="contenedor">
   <h2 class="titulo">{{ titulo }}</h2>
   <div class="cuadricula">
-    <div *ngFor="let juego of juegos" class="tarjeta">
+    <div *ngFor="let juego of juegos" class="tarjeta" [routerLink]="['/juego', juego.id]">
       <img [src]="juego.background_image" [alt]="juego.name" class="tarjeta-imagen">
       <div class="tarjeta-info">
         <p class="tarjeta-nombre">{{ juego.name }}</p>
