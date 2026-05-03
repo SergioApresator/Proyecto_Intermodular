@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Videojuegos } from '../videojuegos';
@@ -7,7 +8,7 @@ import { Videojuegos } from '../videojuegos';
 @Component({
   selector: 'app-inicial',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './inicial.html',
   styleUrl: './inicial.css',
 })
@@ -15,7 +16,7 @@ import { Videojuegos } from '../videojuegos';
 export class Inicial implements OnInit, OnDestroy {
 
   //Inyecto el servicio y el detector de cambios
-  constructor(private videojuegosServicio: Videojuegos, private cdr: ChangeDetectorRef, private route: ActivatedRoute) {}
+  constructor(private videojuegosServicio: Videojuegos, private cdr: ChangeDetectorRef, private route: ActivatedRoute) { }
 
   juegosDestacados: any[] = [];
   indiceCarrusel: number = 0;
@@ -163,10 +164,10 @@ export class Inicial implements OnInit, OnDestroy {
 
   buscar() {
     if (this.terminoBusqueda.trim().length === 0 && !this.filtros.genero && !this.filtros.plataforma) {
-        this.limpiarBusqueda();
-        return;
+      this.limpiarBusqueda();
+      return;
     }
-    
+
     this.buscando = true;
     this.busquedaRealizada = true;
     this.videojuegosServicio.buscarJuegos(this.terminoBusqueda, this.filtros).subscribe({
@@ -187,7 +188,7 @@ export class Inicial implements OnInit, OnDestroy {
     this.filtros = { genero: '', plataforma: '', orden: '-added' };
     this.buscar();
   }
-  
+
   limpiarBusqueda() {
     this.terminoBusqueda = '';
     this.filtros = { genero: '', plataforma: '', orden: '-added' };

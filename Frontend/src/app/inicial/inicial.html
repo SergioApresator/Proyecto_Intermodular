@@ -85,8 +85,7 @@
       <span 
         *ngFor="let juego of juegosDestacados; index as i"
         class="punto" 
-        [class.activo]="i === indiceCarrusel"
-        >
+        [class.activo]="i === indiceCarrusel">
       </span>
     </div>
   </div>
@@ -98,7 +97,7 @@
     <div *ngIf="masPopulares.length > 0" class="seccion">
       <div class="seccion-cabecera">
         <h3 class="seccion-titulo">Más Populares</h3>
-        <button class="btn-ver-todos">Ver todos</button>
+        <button class="btn-ver-todos" routerLink="/ver-todos/popular">Ver todos</button>
       </div>
       <div class="lista-horizontal">
         <div *ngFor="let juego of masPopulares" class="tarjeta">
@@ -115,7 +114,7 @@
     <div *ngIf="juegosAccion.length > 0" class="seccion">
       <div class="seccion-cabecera">
         <h3 class="seccion-titulo">Acción</h3>
-        <button class="btn-ver-todos">Ver todos</button>
+        <button class="btn-ver-todos" routerLink="/ver-todos/action">Ver todos</button>
       </div>
       <div class="lista-horizontal">
         <div *ngFor="let juego of juegosAccion" class="tarjeta">
@@ -132,7 +131,7 @@
     <div *ngIf="juegosHorror.length > 0" class="seccion">
       <div class="seccion-cabecera">
         <h3 class="seccion-titulo">Terror</h3>
-        <button class="btn-ver-todos">Ver todos</button>
+        <button class="btn-ver-todos" routerLink="/ver-todos/horror">Ver todos</button>
       </div>
       <div class="lista-horizontal">
         <div *ngFor="let juego of juegosHorror" class="tarjeta">
@@ -149,7 +148,7 @@
     <div *ngIf="juegosRPG.length > 0" class="seccion">
       <div class="seccion-cabecera">
         <h3 class="seccion-titulo">RPG</h3>
-        <button class="btn-ver-todos">Ver todos</button>
+        <button class="btn-ver-todos" routerLink="/ver-todos/role-playing-games-rpg">Ver todos</button>
       </div>
       <div class="lista-horizontal">
         <div *ngFor="let juego of juegosRPG" class="tarjeta">
@@ -166,7 +165,7 @@
     <div *ngIf="proximosLanzamientos.length > 0" class="seccion">
       <div class="seccion-cabecera">
         <h3 class="seccion-titulo">Próximos Lanzamientos</h3>
-        <button class="btn-ver-todos">Ver todos</button>
+        <button class="btn-ver-todos" routerLink="/ver-todos/proximos">Ver todos</button>
       </div>
       <div class="lista-horizontal">
         <div *ngFor="let juego of proximosLanzamientos" class="tarjeta">

@@ -219,6 +219,8 @@
     color: #3b82f6;
 }
 
+
+
 /* ===== BUSCADOR ===== */
 .buscador-contenedor {
     display: flex;
@@ -257,7 +259,8 @@
     cursor: pointer;
 }
 
-.btn-buscar, .btn-limpiar {
+.btn-buscar,
+.btn-limpiar {
     padding: 12px 24px;
     border-radius: 8px;
     font-size: 1rem;
@@ -363,7 +366,8 @@
     outline: none;
 }
 
-.filtro-select:focus, .filtro-input:focus {
+.filtro-select:focus,
+.filtro-input:focus {
     border-color: #3b82f6;
 }
 
@@ -401,7 +405,8 @@
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s;
-    height: 42px; /* Alineado con los selects */
+    height: 42px;
+    /* Alineado con los selects */
 }
 
 .btn-limpiar-filtros:hover {
