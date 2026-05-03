@@ -13,7 +13,6 @@ import java.util.List;
 
 import java.util.Map;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/usuarios")
 public class UsuarioController {

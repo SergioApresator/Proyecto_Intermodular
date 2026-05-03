@@ -74,4 +74,21 @@ export class Videojuegos {
 
     return this.http.get(urlBusqueda);
   }
+
+  ///// DETALLES DEL JUEGO /////
+
+  //Obtiene detalles completos de un juego
+  getJuegoDetalles(id: string): Observable<any> {
+    return this.http.get(`${this.url}/games/${id}?key=${this.apiKey}`);
+  }
+
+  //Obtiene capturas de pantalla de un juego
+  getJuegoScreenshots(id: string): Observable<any> {
+    return this.http.get(`${this.url}/games/${id}/screenshots?key=${this.apiKey}`);
+  }
+
+  //Obtiene trailers/videos de un juego
+  getJuegoTrailers(id: string): Observable<any> {
+    return this.http.get(`${this.url}/games/${id}/movies?key=${this.apiKey}`);
+  }
 }
