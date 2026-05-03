@@ -153,15 +153,25 @@ export class Inicial implements OnInit, OnDestroy {
 
   siguienteSlide() {
     if (this.juegosDestacados.length > 0) {
-      this.indiceCarrusel = (this.indiceCarrusel + 1) % this.juegosDestacados.length;
+        this.indiceCarrusel = (this.indiceCarrusel + 1) % this.juegosDestacados.length;
+        //Se reinicia para no saltar pasos
+        clearInterval(this.intervaloCarrusel);
+        this.intervaloCarrusel = setInterval(() => {
+            this.siguienteSlide();
+        }, 4000);
     }
-  }
+}
 
-  anteriorSlide() {
+anteriorSlide() {
     if (this.juegosDestacados.length > 0) {
-      this.indiceCarrusel = (this.indiceCarrusel - 1 + this.juegosDestacados.length) % this.juegosDestacados.length;
+        this.indiceCarrusel = (this.indiceCarrusel - 1 + this.juegosDestacados.length) % this.juegosDestacados.length;
+        //Se reinicia para no saltar pasos
+        clearInterval(this.intervaloCarrusel);
+        this.intervaloCarrusel = setInterval(() => {
+            this.siguienteSlide();
+        }, 4000);
     }
-  }
+}
 
   buscar() {
     if (this.terminoBusqueda.trim().length === 0 && !this.filtros.genero && !this.filtros.plataforma) {

@@ -38,7 +38,7 @@ export class Diario implements OnInit {
         this.resenas = respuesta.sort((a: any, b: any) => {
           return b.id - a.id;
         });
-        //Por cada resena cargamos los datos del juego de la API
+        //En cada reseña carga esto
         this.resenas.forEach((resena: any) => {
           this.videojuegosServicio.getJuegoDetalles(resena.id_videojuego.toString()).subscribe({
             next: (juego: any) => {
