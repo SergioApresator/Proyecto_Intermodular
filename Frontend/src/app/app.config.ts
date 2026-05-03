@@ -12,7 +12,7 @@ import { authInterceptor } from './auth.interceptor';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes), provideClientHydration(withEventReplay()),
+    provideRouter(routes),
     //Necesario para conectar angular y springboot, 
     //se usa withFetch para indicar que se use la API Fetch del navegador
     provideHttpClient(withFetch(), withInterceptors([authInterceptor])) 
