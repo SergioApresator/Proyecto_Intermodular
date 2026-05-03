@@ -1,19 +1,22 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { Videojuegos } from '../videojuegos';
 
 @Component({
   selector: 'app-inicial',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './inicial.html',
   styleUrl: './inicial.css',
 })
 
 export class Inicial implements OnInit, OnDestroy {
 
-  constructor(private videojuegosServicio: Videojuegos, private cdr: ChangeDetectorRef) {}
+  //Inyecto el servicio y el detector de cambios
+  constructor(private videojuegosServicio: Videojuegos, private cdr: ChangeDetectorRef, private route: ActivatedRoute) { }
 
   juegosDestacados: any[] = [];
   indiceCarrusel: number = 0;
@@ -26,7 +29,55 @@ export class Inicial implements OnInit, OnDestroy {
   masPopulares: any[] = [];
   proximosLanzamientos: any[] = [];
 
+  // Buscador y Filtros
+  terminoBusqueda: string = '';
+  filtros = {
+    genero: '',
+    plataforma: '',
+    orden: '-added'
+  };
+  resultadosBusqueda: any[] = [];
+  buscando: boolean = false;
+  busquedaRealizada: boolean = false;
+
+  generosDisponibles = [
+    { id: '', nombre: 'Todos los géneros' },
+    { id: 'action', nombre: 'Acción' },
+    { id: 'adventure', nombre: 'Aventura' },
+    { id: 'role-playing-games-rpg', nombre: 'RPG' },
+    { id: 'shooter', nombre: 'Shooter' },
+    { id: 'strategy', nombre: 'Estrategia' },
+    { id: 'horror', nombre: 'Terror' }
+  ];
+
+  plataformasDisponibles = [
+    { id: '', nombre: 'Todas las plataformas' },
+    { id: '1', nombre: 'PC' },
+    { id: '2', nombre: 'PlayStation' },
+    { id: '3', nombre: 'Xbox' },
+    { id: '7', nombre: 'Nintendo' },
+    { id: '4', nombre: 'iOS' },
+    { id: '8', nombre: 'Android' }
+  ];
+
+  ordenDisponibles = [
+    { id: '-added', nombre: 'Popularidad' },
+    { id: 'relevance', nombre: 'Relevancia' },
+    { id: '-rating', nombre: 'Puntuación' },
+    { id: '-released', nombre: 'Más recientes' }
+  ];
+
   ngOnInit() {
+
+    this.route.queryParams.subscribe(params => {
+      if (params['q']) {
+        this.terminoBusqueda = params['q'];
+        this.buscar();
+      } else {
+        this.limpiarBusqueda();
+      }
+    });
+
     this.videojuegosServicio.getJuegosDestacados().subscribe({
       next: (respuesta: any) => {
         this.juegosDestacados = respuesta.results;
@@ -109,5 +160,40 @@ export class Inicial implements OnInit, OnDestroy {
     if (this.juegosDestacados.length > 0) {
       this.indiceCarrusel = (this.indiceCarrusel - 1 + this.juegosDestacados.length) % this.juegosDestacados.length;
     }
+  }
+
+  buscar() {
+    if (this.terminoBusqueda.trim().length === 0 && !this.filtros.genero && !this.filtros.plataforma) {
+      this.limpiarBusqueda();
+      return;
+    }
+
+    this.buscando = true;
+    this.busquedaRealizada = true;
+    this.videojuegosServicio.buscarJuegos(this.terminoBusqueda, this.filtros).subscribe({
+      next: (respuesta: any) => {
+        this.resultadosBusqueda = respuesta.results;
+        this.buscando = false;
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        console.log('Error en la búsqueda', err);
+        this.buscando = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  limpiarFiltrosSolo() {
+    this.filtros = { genero: '', plataforma: '', orden: '-added' };
+    this.buscar();
+  }
+
+  limpiarBusqueda() {
+    this.terminoBusqueda = '';
+    this.filtros = { genero: '', plataforma: '', orden: '-added' };
+    this.resultadosBusqueda = [];
+    this.busquedaRealizada = false;
+    this.cdr.detectChanges();
   }
 }
