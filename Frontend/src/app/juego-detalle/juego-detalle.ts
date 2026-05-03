@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -12,7 +12,7 @@ import { Usuarios } from '../usuarios';
   templateUrl: './juego-detalle.html',
   styleUrl: './juego-detalle.css'
 })
-export class JuegoDetalle implements OnInit {
+export class JuegoDetalle implements OnInit, OnDestroy {
   cargando: boolean = true;
   id: string | null = null;
   juego: any = null;
@@ -21,6 +21,7 @@ export class JuegoDetalle implements OnInit {
   // Media Carousel
   mediaItems: any[] = [];
   indiceMediaActual: number = 0;
+  intervaloMedia: any = null;
 
   // Favoritos
   esFavorito: boolean = false;
@@ -66,6 +67,25 @@ export class JuegoDetalle implements OnInit {
     this.videojuegosServicio.getJuegoDetalles(id).subscribe({
       next: (data) => {
         this.juego = data;
+        
+        // Remove Apple Macintosh and map to PC
+        if (this.juego.parent_platforms) {
+          const platforms = new Set<string>();
+          const newPlatforms: any[] = [];
+          this.juego.parent_platforms.forEach((p: any) => {
+            let name = p.platform.name;
+            if (name === 'Apple Macintosh' || name === 'Mac') {
+              name = 'macOS';
+            }
+            if (!platforms.has(name)) {
+              platforms.add(name);
+              p.platform.name = name;
+              newPlatforms.push(p);
+            }
+          });
+          this.juego.parent_platforms = newPlatforms;
+        }
+
         this.descripcionSegura = this.sanitizer.bypassSecurityTrustHtml(this.juego.description || '');
         
         if (this.juego.background_image) {
@@ -79,6 +99,10 @@ export class JuegoDetalle implements OnInit {
         this.cargarMediaExtra(id);
       },
       error: (err) => {
+        if (this.mediaItems.length > 1) {
+          this.iniciarCarruselMedia();
+        }
+        
         this.cargando = false;
         this.cdr.detectChanges();
       }
@@ -96,10 +120,18 @@ export class JuegoDetalle implements OnInit {
           });
         }
         
+        if (this.mediaItems.length > 1) {
+          this.iniciarCarruselMedia();
+        }
+        
         this.cargando = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
+        if (this.mediaItems.length > 1) {
+          this.iniciarCarruselMedia();
+        }
+        
         this.cargando = false;
         this.cdr.detectChanges();
       }
@@ -170,15 +202,65 @@ export class JuegoDetalle implements OnInit {
     }
   }
 
+  ngOnDestroy() {
+    this.detenerCarruselMedia();
+  }
+
+  // --- CAROUSEL SCRUBBING ---
+  isScrubbing: boolean = false;
+
+  onScrubStart(event: MouseEvent | TouchEvent, index: number) {
+    // Evitar drag nativo
+    if (event instanceof MouseEvent) {
+      event.preventDefault();
+    }
+    this.isScrubbing = true;
+    this.indiceMediaActual = index;
+    this.detenerCarruselMedia();
+  }
+
+  onScrubMove(index: number) {
+    if (this.isScrubbing && this.indiceMediaActual !== index) {
+      this.indiceMediaActual = index;
+      this.cdr.detectChanges();
+    }
+  }
+
+  onScrubEnd() {
+    if (this.isScrubbing) {
+      this.isScrubbing = false;
+      this.iniciarCarruselMedia();
+    }
+  }
+
+  iniciarCarruselMedia() {
+    this.detenerCarruselMedia();
+    this.intervaloMedia = setInterval(() => {
+      if (this.mediaItems.length > 0) {
+        this.indiceMediaActual = (this.indiceMediaActual + 1) % this.mediaItems.length;
+        this.cdr.detectChanges();
+      }
+    }, 4000);
+  }
+
+  detenerCarruselMedia() {
+    if (this.intervaloMedia) {
+      clearInterval(this.intervaloMedia);
+      this.intervaloMedia = null;
+    }
+  }
+
   siguienteMedia() {
     if (this.mediaItems.length > 0) {
       this.indiceMediaActual = (this.indiceMediaActual + 1) % this.mediaItems.length;
+      this.iniciarCarruselMedia(); // Reset timer
     }
   }
 
   anteriorMedia() {
     if (this.mediaItems.length > 0) {
       this.indiceMediaActual = (this.indiceMediaActual - 1 + this.mediaItems.length) % this.mediaItems.length;
+      this.iniciarCarruselMedia(); // Reset timer
     }
   }
 }

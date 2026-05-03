@@ -62,10 +62,14 @@
         <button class="carrusel-btn izquierda" (click)="anteriorMedia()" *ngIf="mediaItems.length > 1">&#8249;</button>
         <button class="carrusel-btn derecha" (click)="siguienteMedia()" *ngIf="mediaItems.length > 1">&#8250;</button>
         
-        <div class="carrusel-indicadores" *ngIf="mediaItems.length > 1">
+        <div class="carrusel-indicadores" *ngIf="mediaItems.length > 1"
+             (mouseleave)="onScrubEnd()"
+             (mouseup)="onScrubEnd()">
           <span *ngFor="let item of mediaItems; index as i" 
                 class="indicador" 
                 [class.activo]="i === indiceMediaActual"
+                (mousedown)="onScrubStart($event, i)"
+                (mouseenter)="onScrubMove(i)"
                 (click)="indiceMediaActual = i">
           </span>
         </div>
