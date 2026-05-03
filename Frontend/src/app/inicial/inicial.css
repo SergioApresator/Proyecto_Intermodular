@@ -352,8 +352,41 @@
     cursor: pointer;
 }
 
-.filtro-select:focus {
+.filtro-input {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    background-color: #0f172a;
+    color: #f1f5f9;
+    font-size: 0.95rem;
+    outline: none;
+}
+
+.filtro-select:focus, .filtro-input:focus {
     border-color: #3b82f6;
+}
+
+.busqueda-grupo {
+    flex: 2;
+    min-width: 250px;
+}
+
+.btn-buscar-pequeno {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.btn-buscar-pequeno:hover {
+    background: #2563eb;
 }
 
 .resultados-contenido {

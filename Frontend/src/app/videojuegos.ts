@@ -36,7 +36,7 @@ export class Videojuegos {
 
   //Busca juegos por nombre y filtros opcionales
   buscarJuegos(termino: string, filtros: any = {}): Observable<any> {
-    let urlBusqueda = `${this.url}/games?key=${this.apiKey}&search=${termino}&search_precise=true&page_size=20`;
+    let urlBusqueda = `${this.url}/games?key=${this.apiKey}&search=${termino}&page_size=20`;
     
     if (filtros.orden && filtros.orden !== 'relevance') {
       urlBusqueda += `&ordering=${filtros.orden}`;
