@@ -270,6 +270,53 @@
   margin-bottom: 10px;
 }
 
+/* Vote Buttons */
+.acciones-voto {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.btn-voto {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #a0aec0;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-voto:hover:not([disabled]) {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.btn-voto.like.activo {
+  background: rgba(72, 187, 120, 0.15);
+  border-color: rgba(72, 187, 120, 0.5);
+  color: #68d391;
+}
+
+.btn-voto.dislike.activo {
+  background: rgba(229, 62, 62, 0.15);
+  border-color: rgba(229, 62, 62, 0.5);
+  color: #fc8181;
+}
+
+.btn-voto[disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 /* Modal de Reseña */
 .modal-overlay {
   position: fixed;

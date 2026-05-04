@@ -4,10 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ratemygame.datamodel.entities.Resena;
+import com.ratemygame.datamodel.entities.ResenaVoto;
 import com.ratemygame.datamodel.entities.Usuario;
 import com.ratemygame.datamodel.repositories.ResenaRepository;
+import com.ratemygame.datamodel.repositories.ResenaVotoRepository;
 import com.ratemygame.datamodel.repositories.UsuarioRepository;
 import com.ratemygame.dtos.ResenaDTO;
+
+import jakarta.transaction.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,6 +26,9 @@ public class ResenaService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private ResenaVotoRepository resenaVotoRepository;
 
     public List<ResenaDTO> getResenasByVideojuego(Long idVideojuego) {
         return resenaRepository.findByIdVideojuego(idVideojuego).stream()
@@ -53,6 +60,65 @@ public class ResenaService {
 
         Resena savedResena = resenaRepository.save(resena);
         return Optional.of(convertToDTO(savedResena));
+    }
+
+    @Transactional
+    public Optional<ResenaDTO> votar(Long idResena, Long idUsuario, boolean esMeGusta) {
+        Optional<Resena> resenaOpt = resenaRepository.findById(idResena);
+        Optional<Usuario> usuarioOpt = usuarioRepository.findById(idUsuario);
+
+        if (!resenaOpt.isPresent() || !usuarioOpt.isPresent()) {
+            return Optional.empty();
+        }
+
+        Resena resena = resenaOpt.get();
+        Usuario usuario = usuarioOpt.get();
+        Optional<ResenaVoto> votoExistente = resenaVotoRepository.findByResena_IdAndUsuario_Id(idResena, idUsuario);
+
+        if (votoExistente.isPresent()) {
+            ResenaVoto voto = votoExistente.get();
+            if (voto.getEsMeGusta() == esMeGusta) {
+                // Mismo voto: retirar voto (toggle off)
+                resenaVotoRepository.delete(voto);
+                if (esMeGusta) {
+                    resena.setMeGustas(Math.max(0, resena.getMeGustas() - 1));
+                } else {
+                    resena.setNoMeGustas(Math.max(0, resena.getNoMeGustas() - 1));
+                }
+            } else {
+                // Voto diferente: cambiar voto
+                voto.setEsMeGusta(esMeGusta);
+                resenaVotoRepository.save(voto);
+                if (esMeGusta) {
+                    resena.setMeGustas(resena.getMeGustas() + 1);
+                    resena.setNoMeGustas(Math.max(0, resena.getNoMeGustas() - 1));
+                } else {
+                    resena.setNoMeGustas(resena.getNoMeGustas() + 1);
+                    resena.setMeGustas(Math.max(0, resena.getMeGustas() - 1));
+                }
+            }
+        } else {
+            // Voto nuevo
+            ResenaVoto nuevoVoto = new ResenaVoto();
+            nuevoVoto.setResena(resena);
+            nuevoVoto.setUsuario(usuario);
+            nuevoVoto.setEsMeGusta(esMeGusta);
+            resenaVotoRepository.save(nuevoVoto);
+            if (esMeGusta) {
+                resena.setMeGustas(resena.getMeGustas() + 1);
+            } else {
+                resena.setNoMeGustas(resena.getNoMeGustas() + 1);
+            }
+        }
+
+        Resena savedResena = resenaRepository.save(resena);
+        ResenaDTO dto = convertToDTO(savedResena);
+
+        // Determine the user's current vote state after operation
+        Optional<ResenaVoto> votoFinal = resenaVotoRepository.findByResena_IdAndUsuario_Id(idResena, idUsuario);
+        dto.setVotoUsuarioActual(votoFinal.map(ResenaVoto::getEsMeGusta).orElse(null));
+
+        return Optional.of(dto);
     }
 
     public boolean deleteResena(Long id) {

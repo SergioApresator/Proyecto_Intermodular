@@ -155,6 +155,22 @@
           </div>
           <p>{{ resena.mensaje }}</p>
         </div>
+        <div class="acciones-voto">
+          <button class="btn-voto like" 
+                  [class.activo]="resena.votoUsuarioActual === true"
+                  [disabled]="resena.id_usuario === usuarioId"
+                  (click)="votarResena(resena, true)"
+                  [title]="resena.id_usuario === usuarioId ? 'No puedes votar tu propia reseña' : 'Me gusta'">
+            👍 <span>{{ resena.meGustas || 0 }}</span>
+          </button>
+          <button class="btn-voto dislike"
+                  [class.activo]="resena.votoUsuarioActual === false"
+                  [disabled]="resena.id_usuario === usuarioId"
+                  (click)="votarResena(resena, false)"
+                  [title]="resena.id_usuario === usuarioId ? 'No puedes votar tu propia reseña' : 'No me gusta'">
+            👎 <span>{{ resena.noMeGustas || 0 }}</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>

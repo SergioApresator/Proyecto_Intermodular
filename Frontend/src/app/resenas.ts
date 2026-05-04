@@ -28,4 +28,9 @@ export class ResenasService {
   crearResena(resena: any): Observable<any> {
     return this.http.post(this.urlResenas, resena, this.getHeaders());
   }
+
+  // Votar una reseña (me gusta / no me gusta)
+  votarResena(idResena: number, idUsuario: number, esMeGusta: boolean): Observable<any> {
+    return this.http.post(`${this.urlResenas}/${idResena}/votar`, { idUsuario, esMeGusta }, this.getHeaders());
+  }
 }

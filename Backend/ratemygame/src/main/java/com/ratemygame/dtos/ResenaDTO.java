@@ -14,4 +14,5 @@ public class ResenaDTO {
     private LocalDate fechaResena;
     private Long id_usuario;
     private Long id_videojuego;
+    private Boolean votoUsuarioActual; // true = me gusta, false = no me gusta, null = no ha votado
 }
