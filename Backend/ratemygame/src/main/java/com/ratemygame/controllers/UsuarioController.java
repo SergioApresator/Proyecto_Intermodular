@@ -29,6 +29,13 @@ public class UsuarioController {
                 .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
 
+    // Spring Security already validates the JWT before reaching this method.
+    // Returns 200 OK if the token is valid, 401 Unauthorized otherwise.
+    @GetMapping("/validar-token")
+    public ResponseEntity<Void> validarToken() {
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping
     public ResponseEntity<List<UsuarioDTO>> getAllUsuarios() {
         return ResponseEntity.ok(usuarioService.getAllUsuarios());

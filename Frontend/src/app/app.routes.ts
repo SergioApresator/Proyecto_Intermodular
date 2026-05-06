@@ -10,8 +10,9 @@ export const routes: Routes = [
     //La ruta raiz redirige directamente a inicial
     { path: '', redirectTo: 'inicial', pathMatch: 'full' }, 
     { path: 'registro', component: Registro }, 
-    { path: 'inicial', component: Inicial, canActivate: [authGuard] },
     { path: 'login', component: Login },
-    { path: 'ver-todos/:genero', component: VerTodos },
-    { path: 'juego/:id', component: JuegoDetalle }
+    // Rutas protegidas: requieren token JWT válido
+    { path: 'inicial', component: Inicial, canActivate: [authGuard] },
+    { path: 'ver-todos/:genero', component: VerTodos, canActivate: [authGuard] },
+    { path: 'juego/:id', component: JuegoDetalle, canActivate: [authGuard] },
 ];
