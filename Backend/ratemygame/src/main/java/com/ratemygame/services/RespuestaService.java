@@ -74,4 +74,10 @@ public class RespuestaService {
         }
         return dto;
     }
+
+    public List<RespuestaDTO> getRespuestasByUsuario(Long idUsuario) {
+        return respuestaRepository.findByUsuario_Id(idUsuario).stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+    }
 }

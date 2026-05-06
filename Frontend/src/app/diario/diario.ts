@@ -16,6 +16,8 @@ export class Diario implements OnInit {
 
   constructor(private resenasServicio: ResenasService, private videojuegosServicio: Videojuegos, private cdr: ChangeDetectorRef) {}
 
+  respuestas: any[] = [];
+  mostrandoResenas: boolean = true;
   resenas: any[] = [];
   cargando: boolean = true;
   usuarioId: number | null = null;
@@ -25,6 +27,7 @@ export class Diario implements OnInit {
     if (uid) {
       this.usuarioId = parseInt(uid, 10);
       this.cargarResenas();
+      this.cargarRespuestas();
     } else {
       this.cargando = false;
     }
@@ -59,5 +62,30 @@ export class Diario implements OnInit {
         this.cargando = false;
       }
     });
+  }
+
+  cargarRespuestas() {
+    if (!this.usuarioId) return;
+
+    this.resenasServicio.getRespuestasPorUsuario(this.usuarioId).subscribe({
+      next: (respuesta: any) => {
+        console.log('Respuestas:', respuesta);
+        this.respuestas = respuesta.sort((a: any, b: any) => {
+          return b.id - a.id;
+        });
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        console.log('Error al cargar las respuestas', err);
+      }
+    });
+  }
+
+  mostrarResenas() {
+    this.mostrandoResenas = true;
+  }
+
+  mostrarRespuestas() {
+    this.mostrandoResenas = false;
   }
 }

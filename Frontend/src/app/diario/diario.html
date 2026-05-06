@@ -1,7 +1,9 @@
+<!-- Mientras cargan los datos -->
 <div *ngIf="cargando" class="contenedor-cargando">
   <p>Cargando...</p>
 </div>
 
+<!-- Contenido principal -->
 <div *ngIf="!cargando" class="contenedor">
   <h2 class="titulo">Mi Diario</h2>
 
@@ -11,37 +13,85 @@
     <button class="btn-accion" routerLink="/login">Iniciar Sesión</button>
   </div>
 
-  <!-- Si no hay reseñas -->
-  <div *ngIf="usuarioId && resenas.length === 0" class="sin-resenas">
-    <p>Todavía no has escrito ninguna reseña.</p>
-    <p>¡Empieza a explorar juegos y comparte tu opinión!</p>
-    <button class="btn-accion" routerLink="/inicial">Explorar juegos</button>
-  </div>
+  <div *ngIf="usuarioId">
 
-  <div *ngIf="usuarioId && resenas.length > 0" class="lista-resenas">
-    <div *ngFor="let resena of resenas" class="tarjeta-resena">
+    <!-- Botones para cambiar entre resenas y respuestas -->
+    <div class="selector">
+      <button class="btn-selector" [class.activo]="mostrandoResenas" (click)="mostrarResenas()">Reseñas</button>
+      <button class="btn-selector" [class.activo]="!mostrandoResenas" (click)="mostrarRespuestas()">Respuestas</button>
+    </div>
 
-      <!-- Datos del juego -->
-      <div class="resena-juego">
-        <img *ngIf="resena.imagenJuego" [src]="resena.imagenJuego" [alt]="resena.nombreJuego" class="resena-juego-imagen">
-        <span class="resena-juego-nombre">{{ resena.nombreJuego }}</span>
+    <!-- RESENAS -->
+    <div *ngIf="mostrandoResenas">
+
+      <!-- Si no hay resenas -->
+      <div *ngIf="resenas.length === 0" class="sin-resenas">
+        <p>Todavía no has escrito ninguna reseña.</p>
+        <p>¡Empieza a explorar juegos y comparte tu opinión!</p>
+        <button class="btn-accion" routerLink="/inicial">Explorar juegos</button>
       </div>
 
-      <div class="resena-cabecera">
-        <div class="resena-puntuacion">
-          <span>&#9733; {{ resena.puntuacion }} / 5</span>
+      <!-- Lista de resenas -->
+      <div *ngIf="resenas.length > 0" class="lista-resenas">
+        <div *ngFor="let resena of resenas" class="tarjeta-resena">
+
+          <!-- Datos del juego -->
+          <div class="resena-juego">
+            <img *ngIf="resena.imagenJuego" [src]="resena.imagenJuego" [alt]="resena.nombreJuego" class="resena-juego-imagen">
+            <span class="resena-juego-nombre">{{ resena.nombreJuego }}</span>
+          </div>
+
+          <!-- Puntuacion y fecha -->
+          <div class="resena-cabecera">
+            <div class="resena-puntuacion">
+              <span>&#9733; {{ resena.puntuacion }} / 5</span>
+            </div>
+            <span class="resena-fecha">{{ resena.fechaResena | date:'dd/MM/yyyy' }}</span>
+          </div>
+
+          <!-- Aviso de spoiler -->
+          <div class="resena-spoiler" *ngIf="resena.tieneSpoiler">
+            Contiene spoilers
+          </div>
+
+          <!-- Mensaje de la resena -->
+          <p class="resena-mensaje">{{ resena.mensaje }}</p>
+
+          <!-- Me gusta y no me gusta -->
+          <div class="resena-pie">
+            <span class="resena-megusta">{{ resena.meGustas }} Me gusta</span>
+            <span class="resena-nomegusta">{{ resena.noMeGustas }} No me gusta</span>
+          </div>
+
         </div>
-        <span class="resena-fecha">{{ resena.fechaResena | date:'dd/MM/yyyy' }}</span>
-      </div>
-      <div class="resena-spoiler" *ngIf="resena.tieneSpoiler">
-        Contiene spoilers
-      </div>
-      <p class="resena-mensaje">{{ resena.mensaje }}</p>
-      <div class="resena-pie">
-        <span class="resena-megusta">{{ resena.meGustas }} Me gusta</span>
-        <span class="resena-nomegusta">{{ resena.noMeGustas }} No me gusta</span>
       </div>
     </div>
-  </div>
 
+    <!-- RESPUESTAS -->
+    <div *ngIf="!mostrandoResenas">
+
+      <!-- Si no hay respuestas -->
+      <div *ngIf="respuestas.length === 0" class="sin-resenas">
+        <p>Todavía no has escrito ninguna respuesta.</p>
+        <button class="btn-accion" routerLink="/inicial">Explorar juegos</button>
+      </div>
+
+      <!-- Lista de respuestas -->
+      <div *ngIf="respuestas.length > 0" class="lista-resenas">
+        <div *ngFor="let respuesta of respuestas" class="tarjeta-resena">
+
+          <!-- Mensaje de la respuesta -->
+          <p class="resena-mensaje">{{ respuesta.mensaje }}</p>
+
+          <!-- Me gusta y no me gusta -->
+          <div class="resena-pie">
+            <span class="resena-megusta">{{ respuesta.meGustas }} Me gusta</span>
+            <span class="resena-nomegusta">{{ respuesta.noMeGustas }} No me gusta</span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>

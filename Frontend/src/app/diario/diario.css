@@ -150,3 +150,31 @@
     font-weight: 600;
     color: #ffffff;
 }
+
+.selector {
+    display: flex;
+    gap: 0;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #334155;
+}
+
+.btn-selector {
+    padding: 12px 30px;
+    background: none;
+    border: none;
+    color: #64748b;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+}
+
+.btn-selector:hover {
+    color: #f1f5f9;
+}
+
+.btn-selector.activo {
+    color: #ffffff;
+    border-bottom: 2px solid #3b82f6;
+}
