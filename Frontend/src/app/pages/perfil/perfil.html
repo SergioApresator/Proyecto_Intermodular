@@ -1,0 +1,72 @@
+<div class="perfil-container">
+
+  <!-- HEADER -->
+  <div class="perfil-header">
+    <img [src]="avatarUrl" class="avatar" alt="avatar">
+    <div class="info">
+      <h2>{{ usuario.username }}</h2>
+      <p>{{ usuario.bio }}</p>
+    </div>
+  </div>
+
+  <!-- FAVORITOS Y PENDIENTES -->
+  <div class="listas-container">
+
+    <!-- FAVORITOS -->
+    <div class="card">
+      <h3>⭐ Favoritos</h3>
+
+      <table>
+        <tbody>
+          <tr *ngIf="favoritos.length === 0">
+            <td>No hay registros</td>
+          </tr>
+
+          <tr *ngFor="let juego of favoritos">
+            <td>{{ juego.id_videojuego_api }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PENDIENTES -->
+    <div class="card">
+      <h3>🕒 Pendientes</h3>
+
+      <table>
+        <tbody>
+          <tr *ngIf="pendientes.length === 0">
+            <td>No hay registros</td>
+          </tr>
+
+          <tr *ngFor="let juego of pendientes">
+            <td>{{ juego.id_videojuego_api }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- RESEÑAS -->
+  <div class="card full-width">
+    <h3>📝 Mis Reseñas</h3>
+
+    <table>
+      <tbody>
+        <tr *ngIf="resenas.length === 0">
+          <td>No hay registros</td>
+        </tr>
+
+        <tr *ngFor="let r of resenas">
+          <td>
+            <strong>{{ r.titulo }}</strong><br>
+            {{ r.contenido }}<br>
+            ⭐ {{ r.nota }}/5
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

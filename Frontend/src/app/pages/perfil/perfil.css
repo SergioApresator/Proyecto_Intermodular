@@ -1,0 +1,73 @@
+.perfil-container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* HEADER */
+.perfil-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #ccc;
+  object-fit: cover;
+}
+
+.info h2 {
+  margin: 0;
+  color: white;
+}
+
+.info p {
+  color: #bbb;
+}
+
+/* CONTENEDOR DOS COLUMNAS */
+.listas-container {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+/* CARDS */
+.card {
+  flex: 1;
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 12px;
+  color: white;
+}
+
+/* CARD ANCHA (reseñas) */
+.full-width {
+  width: 100%;
+}
+
+/* TITULOS */
+.card h3 {
+  margin-bottom: 15px;
+}
+
+/* TABLAS */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+td {
+  padding: 10px;
+  border-bottom: 1px solid #333;
+}
+
+/* MENSAJE VACÍO */
+td:only-child {
+  text-align: center;
+  color: #888;
+}
