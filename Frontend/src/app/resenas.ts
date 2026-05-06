@@ -24,6 +24,11 @@ export class ResenasService {
     return this.http.get(`${this.urlResenas}/videojuego/${idVideojuego}`, this.getHeaders());
   }
 
+  // Obtener reseñas por usuario
+  getResenasPorUsuario(idUsuario: number): Observable<any> {
+    return this.http.get(`${this.urlResenas}/usuario/${idUsuario}`, this.getHeaders());
+  }
+
   // Crear una nueva reseña
   crearResena(resena: any): Observable<any> {
     return this.http.post(this.urlResenas, resena, this.getHeaders());

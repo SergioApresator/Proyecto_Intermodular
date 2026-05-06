@@ -67,8 +67,16 @@ public class UsuarioService {
                 usuario.setPassword(passwordEncoder.encode(usuarioDetails.getPassword()));
             }
             usuario.setFoto_url(usuarioDetails.getFoto_url());
+            usuario.setBiografia(usuarioDetails.getBiografia());
             Usuario updatedUsuario = usuarioRepository.save(usuario);
             return convertToDTO(updatedUsuario);
+        });
+    }
+
+    public Optional<UsuarioDTO> actualizarFotoUrl(Long id, String fotoUrl) {
+        return usuarioRepository.findById(id).map(usuario -> {
+            usuario.setFoto_url(fotoUrl);
+            return convertToDTO(usuarioRepository.save(usuario));
         });
     }
 
@@ -88,6 +96,7 @@ public class UsuarioService {
         dto.setUsername(usuario.getUsername());
         dto.setEmail(usuario.getEmail());
         dto.setFoto_url(usuario.getFoto_url());
+        dto.setBiografia(usuario.getBiografia());
         return dto;
     }
 }

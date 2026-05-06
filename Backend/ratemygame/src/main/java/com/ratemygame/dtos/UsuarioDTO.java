@@ -10,5 +10,6 @@ public class UsuarioDTO {
     private String username;
     private String email;
     private String foto_url;
+    private String biografia;
     private String token;
 }
