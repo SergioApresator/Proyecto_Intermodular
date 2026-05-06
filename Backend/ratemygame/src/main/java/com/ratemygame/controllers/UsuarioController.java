@@ -13,7 +13,6 @@ import java.util.List;
 
 import java.util.Map;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/usuarios")
 public class UsuarioController {
@@ -28,6 +27,13 @@ public class UsuarioController {
         return usuarioService.loginUsuario(email, password)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
+    }
+
+    // Spring Security already validates the JWT before reaching this method.
+    // Returns 200 OK if the token is valid, 401 Unauthorized otherwise.
+    @GetMapping("/validar-token")
+    public ResponseEntity<Void> validarToken() {
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping

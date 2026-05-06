@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.ratemygame.dtos.ResenaDTO;
+import com.ratemygame.dtos.VotoRequestDTO;
 import com.ratemygame.services.ResenaService;
 
 import java.util.List;
@@ -32,6 +33,13 @@ public class ResenaController {
         return resenaService.createResena(resenaDTO)
                 .map(dto -> new ResponseEntity<>(dto, HttpStatus.CREATED))
                 .orElse(ResponseEntity.badRequest().build());
+    }
+
+    @PostMapping("/{id}/votar")
+    public ResponseEntity<ResenaDTO> votar(@PathVariable Long id, @RequestBody VotoRequestDTO votoRequest) {
+        return resenaService.votar(id, votoRequest.getIdUsuario(), votoRequest.getEsMeGusta())
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")

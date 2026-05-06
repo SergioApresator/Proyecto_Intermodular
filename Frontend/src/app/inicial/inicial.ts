@@ -53,6 +53,7 @@ export class Inicial implements OnInit, OnDestroy {
   plataformasDisponibles = [
     { id: '', nombre: 'Todas las plataformas' },
     { id: '1', nombre: 'PC' },
+    { id: '5', nombre: 'macOS' },
     { id: '2', nombre: 'PlayStation' },
     { id: '3', nombre: 'Xbox' },
     { id: '7', nombre: 'Nintendo' },

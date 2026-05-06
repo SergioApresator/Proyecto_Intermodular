@@ -35,6 +35,15 @@ export class Login {
         next: (usuarioEncontrado) => {
           if (usuarioEncontrado && usuarioEncontrado.token) {
             localStorage.setItem('token', usuarioEncontrado.token);
+            if (usuarioEncontrado.id) {
+              localStorage.setItem('usuarioId', usuarioEncontrado.id.toString());
+            }
+            if (usuarioEncontrado.username) {
+              localStorage.setItem('username', usuarioEncontrado.username);
+            }
+            if (usuarioEncontrado.foto_url) {
+              localStorage.setItem('foto_url', usuarioEncontrado.foto_url);
+            }
           }
           this.router.navigate(['/inicial']);
         },

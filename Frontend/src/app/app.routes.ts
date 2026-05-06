@@ -3,14 +3,16 @@ import { Registro } from './registro/registro';
 import { Inicial } from './inicial/inicial';
 import { Login } from './login/login';
 import { VerTodos } from './ver-todos/ver-todos';
+import { JuegoDetalle } from './juego-detalle/juego-detalle';
 import { authGuard } from './auth.guard';
 
 export const routes: Routes = [
     //La ruta raiz redirige directamente a inicial
     { path: '', redirectTo: 'inicial', pathMatch: 'full' }, 
     { path: 'registro', component: Registro }, 
-    { path: 'inicial', component: Inicial, canActivate: [authGuard] },
     { path: 'login', component: Login },
-    { path: 'ver-todos/:genero', component: VerTodos }
-
+    // Rutas protegidas: requieren token JWT válido
+    { path: 'inicial', component: Inicial, canActivate: [authGuard] },
+    { path: 'ver-todos/:genero', component: VerTodos, canActivate: [authGuard] },
+    { path: 'juego/:id', component: JuegoDetalle, canActivate: [authGuard] },
 ];
