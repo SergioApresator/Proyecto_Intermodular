@@ -34,6 +34,8 @@ services:
       SPRING_DATASOURCE_PASSWORD: root
     depends_on:
       - db
+    volumes:
+      - ./uploads:/app/uploads:z
 
 volumes:
   db-data:
