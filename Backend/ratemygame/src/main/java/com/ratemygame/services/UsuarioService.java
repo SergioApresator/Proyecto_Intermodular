@@ -66,8 +66,12 @@ public class UsuarioService {
             if (usuarioDetails.getPassword() != null && !usuarioDetails.getPassword().isEmpty()) {
                 usuario.setPassword(passwordEncoder.encode(usuarioDetails.getPassword()));
             }
-            usuario.setFoto_url(usuarioDetails.getFoto_url());
-            usuario.setBiografia(usuarioDetails.getBiografia());
+            if (usuarioDetails.getFoto_url() != null) {
+                usuario.setFoto_url(usuarioDetails.getFoto_url());
+            }
+            if (usuarioDetails.getBiografia() != null) {
+                usuario.setBiografia(usuarioDetails.getBiografia());
+            }
             Usuario updatedUsuario = usuarioRepository.save(usuario);
             return convertToDTO(updatedUsuario);
         });

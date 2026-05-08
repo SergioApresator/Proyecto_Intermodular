@@ -169,7 +169,8 @@ export class Perfil implements OnInit {
       next: (data: any) => {
         this.usuario = data;
         // Actualizar localStorage y navbar
-        if (data.foto_url) localStorage.setItem('foto_url', data.foto_url);
+        const foto = data.foto_url || data.fotoUrl;
+        if (foto) localStorage.setItem('foto_url', foto);
         this.previewFoto = null;
         this.archivoSeleccionado = null;
         this.subiendoFoto = false;
@@ -205,6 +206,7 @@ export class Perfil implements OnInit {
       username: this.usuario.username || '',
       email: this.usuario.email || '',
       biografia: this.usuario.biografia || '',
+      foto_url: this.usuario.foto_url || '',
     };
     this.editando = true;
     this.mensajeExito = '';
@@ -223,7 +225,8 @@ export class Perfil implements OnInit {
       next: (data: any) => {
         this.usuario = data;
         if (data.username) localStorage.setItem('username', data.username);
-        if (data.foto_url) localStorage.setItem('foto_url', data.foto_url);
+        const foto = data.foto_url || data.fotoUrl;
+        if (foto) localStorage.setItem('foto_url', foto);
         this.guardando = false;
         this.editando = false;
         this.mensajeExito = '¡Perfil actualizado correctamente!';
