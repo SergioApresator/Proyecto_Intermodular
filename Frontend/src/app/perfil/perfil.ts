@@ -35,6 +35,10 @@ export class Perfil implements OnInit {
   resenas: any[] = [];
   cargandoResenas: boolean = true;
 
+  // Favoritos
+  favoritos: any[] = [];
+  cargandoFavoritos: boolean = true;
+
   // Edición
   editando: boolean = false;
   guardando: boolean = false;
@@ -56,6 +60,7 @@ export class Perfil implements OnInit {
     const idNum = Number(id);
     this.cargarPerfil(idNum);
     this.cargarResenas(idNum);
+    this.cargarFavoritos(idNum);
   }
 
   cargarPerfil(id: number) {
@@ -117,6 +122,46 @@ export class Perfil implements OnInit {
       },
       error: () => {
         this.cargandoResenas = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  cargarFavoritos(id: number) {
+    this.cargandoFavoritos = true;
+    this.usuariosServicio.getListasUsuario(id).subscribe({
+      next: (listas: any[]) => {
+        const idsFavoritos = listas
+          .filter(l => l.nombre === 'Favoritos')
+          .map(l => l.id_videojuego);
+
+        if (idsFavoritos.length === 0) {
+          this.favoritos = [];
+          this.cargandoFavoritos = false;
+          this.cdr.detectChanges();
+          return;
+        }
+
+        const peticiones = idsFavoritos.map(gameId =>
+          this.videojuegosServicio.getJuegoDetalles(gameId.toString()).pipe(
+            catchError(() => of(null))
+          )
+        );
+
+        forkJoin(peticiones).subscribe({
+          next: (juegos: any[]) => {
+            this.favoritos = juegos.filter(j => j !== null);
+            this.cargandoFavoritos = false;
+            this.cdr.detectChanges();
+          },
+          error: () => {
+            this.cargandoFavoritos = false;
+            this.cdr.detectChanges();
+          }
+        });
+      },
+      error: () => {
+        this.cargandoFavoritos = false;
         this.cdr.detectChanges();
       }
     });
