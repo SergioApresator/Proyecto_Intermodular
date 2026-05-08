@@ -4,13 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ratemygame.datamodel.entities.Respuesta;
+import com.ratemygame.datamodel.entities.RespuestaVoto;
 import com.ratemygame.datamodel.entities.Resena;
 import com.ratemygame.datamodel.entities.Usuario;
 import com.ratemygame.datamodel.repositories.RespuestaRepository;
+import com.ratemygame.datamodel.repositories.RespuestaVotoRepository;
 import com.ratemygame.datamodel.repositories.ResenaRepository;
 import com.ratemygame.datamodel.repositories.UsuarioRepository;
 import com.ratemygame.dtos.RespuestaDTO;
 
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,9 +30,25 @@ public class RespuestaService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private RespuestaVotoRepository respuestaVotoRepository;
+
     public List<RespuestaDTO> getRespuestasByResena(Long idResena) {
         return respuestaRepository.findByResena_Id(idResena).stream()
                 .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<RespuestaDTO> getRespuestasByResenaWithVoto(Long idResena, Long idUsuario) {
+        return respuestaRepository.findByResena_Id(idResena).stream()
+                .map(resp -> {
+                    RespuestaDTO dto = convertToDTO(resp);
+                    if (idUsuario != null) {
+                        Optional<RespuestaVoto> voto = respuestaVotoRepository.findByRespuesta_IdAndUsuario_Id(resp.getId(), idUsuario);
+                        dto.setVotoUsuarioActual(voto.map(RespuestaVoto::getEsMeGusta).orElse(null));
+                    }
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -47,9 +66,69 @@ public class RespuestaService {
         respuesta.setNoMeGustas(0);
         respuesta.setUsuario(usuarioOpt.get());
         respuesta.setResena(resenaOpt.get());
+        respuesta.setId_respuesta_padre(respuestaDTO.getId_respuesta_padre());
 
         Respuesta savedRespuesta = respuestaRepository.save(respuesta);
         return Optional.of(convertToDTO(savedRespuesta));
+    }
+
+    @Transactional
+    public Optional<RespuestaDTO> votar(Long idRespuesta, Long idUsuario, boolean esMeGusta) {
+        Optional<Respuesta> respuestaOpt = respuestaRepository.findById(idRespuesta);
+        Optional<Usuario> usuarioOpt = usuarioRepository.findById(idUsuario);
+
+        if (!respuestaOpt.isPresent() || !usuarioOpt.isPresent()) {
+            return Optional.empty();
+        }
+
+        Respuesta respuesta = respuestaOpt.get();
+        Usuario usuario = usuarioOpt.get();
+        Optional<RespuestaVoto> votoExistente = respuestaVotoRepository.findByRespuesta_IdAndUsuario_Id(idRespuesta, idUsuario);
+
+        if (votoExistente.isPresent()) {
+            RespuestaVoto voto = votoExistente.get();
+            if (voto.getEsMeGusta() == esMeGusta) {
+                // Mismo voto: retirar voto
+                respuestaVotoRepository.delete(voto);
+                if (esMeGusta) {
+                    respuesta.setMeGustas(Math.max(0, respuesta.getMeGustas() - 1));
+                } else {
+                    respuesta.setNoMeGustas(Math.max(0, respuesta.getNoMeGustas() - 1));
+                }
+            } else {
+                // Voto diferente: cambiar voto
+                voto.setEsMeGusta(esMeGusta);
+                respuestaVotoRepository.save(voto);
+                if (esMeGusta) {
+                    respuesta.setMeGustas(respuesta.getMeGustas() + 1);
+                    respuesta.setNoMeGustas(Math.max(0, respuesta.getNoMeGustas() - 1));
+                } else {
+                    respuesta.setNoMeGustas(respuesta.getNoMeGustas() + 1);
+                    respuesta.setMeGustas(Math.max(0, respuesta.getMeGustas() - 1));
+                }
+            }
+        } else {
+            // Voto nuevo
+            RespuestaVoto nuevoVoto = new RespuestaVoto();
+            nuevoVoto.setRespuesta(respuesta);
+            nuevoVoto.setUsuario(usuario);
+            nuevoVoto.setEsMeGusta(esMeGusta);
+            respuestaVotoRepository.save(nuevoVoto);
+            if (esMeGusta) {
+                respuesta.setMeGustas(respuesta.getMeGustas() + 1);
+            } else {
+                respuesta.setNoMeGustas(respuesta.getNoMeGustas() + 1);
+            }
+        }
+
+        Respuesta savedRespuesta = respuestaRepository.save(respuesta);
+        RespuestaDTO dto = convertToDTO(savedRespuesta);
+        
+        // Final state
+        Optional<RespuestaVoto> votoFinal = respuestaVotoRepository.findByRespuesta_IdAndUsuario_Id(idRespuesta, idUsuario);
+        dto.setVotoUsuarioActual(votoFinal.map(RespuestaVoto::getEsMeGusta).orElse(null));
+
+        return Optional.of(dto);
     }
 
     public boolean deleteRespuesta(Long id) {
@@ -68,9 +147,19 @@ public class RespuestaService {
         dto.setNoMeGustas(respuesta.getNoMeGustas());
         if (respuesta.getUsuario() != null) {
             dto.setId_usuario(respuesta.getUsuario().getId());
+            dto.setNombreUsuario(respuesta.getUsuario().getUsername());
+            dto.setFotoUsuario(respuesta.getUsuario().getFoto_url());
         }
         if (respuesta.getResena() != null) {
             dto.setId_resena(respuesta.getResena().getId());
+        }
+        dto.setId_respuesta_padre(respuesta.getId_respuesta_padre());
+        if (respuesta.getId_respuesta_padre() != null) {
+            respuestaRepository.findById(respuesta.getId_respuesta_padre()).ifPresent(padre -> {
+                if (padre.getUsuario() != null) {
+                    dto.setNombreUsuarioPadre(padre.getUsuario().getUsername());
+                }
+            });
         }
         return dto;
     }

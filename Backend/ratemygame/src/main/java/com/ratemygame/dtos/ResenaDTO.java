@@ -13,6 +13,8 @@ public class ResenaDTO {
     private Integer noMeGustas;
     private LocalDate fechaResena;
     private Long id_usuario;
+    private String nombreUsuario;
+    private String fotoUsuario;
     private Long id_videojuego;
     private Boolean votoUsuarioActual; // true = me gusta, false = no me gusta, null = no ha votado
 }

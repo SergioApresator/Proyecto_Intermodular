@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { Videojuegos } from '../videojuegos';
 import { Usuarios } from '../usuarios';
 import { ResenasService } from '../resenas';
+import { RespuestasService } from '../respuestas';
 
 @Component({
   selector: 'app-juego-detalle',
@@ -59,7 +60,8 @@ export class JuegoDetalle implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer,
     private cdr: ChangeDetectorRef,
     private usuariosServicio: Usuarios,
-    private resenasServicio: ResenasService
+    private resenasServicio: ResenasService,
+    private respuestasServicio: RespuestasService
   ) {}
 
   ngOnInit() {
@@ -357,10 +359,84 @@ export class JuegoDetalle implements OnInit, OnDestroy {
   cargarResenas(idVideojuego: number) {
     this.resenasServicio.getResenasPorJuego(idVideojuego).subscribe({
       next: (data) => {
-        this.resenas = data;
+        this.resenas = data.map((r: any) => ({
+          ...r,
+          respuestas: [],
+          mostrarRespuestas: false,
+          nuevaRespuestaTexto: '',
+          respuestaPadreSeleccionada: null as any // { id: number, username: string }
+        }));
+        
+        // Cargar respuestas para cada reseña
+        this.resenas.forEach(resena => {
+          this.respuestasServicio.getRespuestasPorResena(resena.id, this.usuarioId || undefined).subscribe({
+            next: (respuestas) => {
+              resena.respuestas = respuestas;
+              this.cdr.detectChanges();
+            }
+          });
+        });
+        
         this.cdr.detectChanges();
       },
       error: (err) => console.error('Error cargando reseñas', err)
+    });
+  }
+
+  toggleRespuestas(resena: any) {
+    resena.mostrarRespuestas = !resena.mostrarRespuestas;
+    this.cdr.detectChanges();
+  }
+
+  enviarRespuesta(resena: any) {
+    if (!this.usuarioId || !resena.nuevaRespuestaTexto.trim()) return;
+
+    const parentId = resena.respuestaPadreSeleccionada?.id;
+
+    this.respuestasServicio.crearRespuesta(resena.id, this.usuarioId, resena.nuevaRespuestaTexto, parentId).subscribe({
+      next: (nuevaRespuesta) => {
+        // Inicializar campos de UI para la nueva respuesta
+        nuevaRespuesta.votoUsuarioActual = null;
+        resena.respuestas.push(nuevaRespuesta);
+        resena.nuevaRespuestaTexto = '';
+        resena.mostrarRespuestas = true;
+        resena.respuestaPadreSeleccionada = null; // Limpiar selección
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Error enviando respuesta', err)
+    });
+  }
+
+  seleccionarParaResponder(resena: any, resp: any) {
+    resena.respuestaPadreSeleccionada = {
+      id: resp.id,
+      username: resp.nombreUsuario || 'Usuario'
+    };
+    // Scroll al input si es necesario (opcional)
+    this.cdr.detectChanges();
+  }
+
+  cancelarRespuesta(resena: any) {
+    resena.respuestaPadreSeleccionada = null;
+    this.cdr.detectChanges();
+  }
+
+  votarRespuesta(resp: any, esMeGusta: boolean) {
+    if (!this.usuarioId) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    if (resp.id_usuario === this.usuarioId) return;
+
+    this.respuestasServicio.votarRespuesta(resp.id, this.usuarioId, esMeGusta).subscribe({
+      next: (data) => {
+        resp.meGustas = data.meGustas;
+        resp.noMeGustas = data.noMeGustas;
+        resp.votoUsuarioActual = data.votoUsuarioActual;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Error al votar respuesta', err)
     });
   }
 

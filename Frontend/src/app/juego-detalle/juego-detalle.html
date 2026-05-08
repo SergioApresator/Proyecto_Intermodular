@@ -149,8 +149,14 @@
       <div class="tarjeta-resena" *ngFor="let resena of resenas">
         <div class="resena-header">
           <div class="resena-usuario">
-            <div class="avatar-usuario">{{ resena.id_usuario }}</div> <!-- Idealmente mostrar el nombre -->
-            <span class="fecha-resena">{{ resena.fechaResena | date:'mediumDate' }}</span>
+            <div class="avatar-usuario">
+              <img *ngIf="resena.fotoUsuario" [src]="resena.fotoUsuario" [alt]="resena.nombreUsuario" class="avatar-img-mini">
+              <span *ngIf="!resena.fotoUsuario">{{ resena.nombreUsuario?.charAt(0) || '?' }}</span>
+            </div>
+            <div class="usuario-meta-info">
+              <span class="nombre-usuario-texto">{{ resena.nombreUsuario || 'Usuario' }}</span>
+              <span class="fecha-resena">{{ resena.fechaResena | date:'mediumDate' }}</span>
+            </div>
           </div>
           <div class="resena-puntuacion">
             <span class="estrella" *ngFor="let _ of [].constructor(resena.puntuacion)">⭐</span>
@@ -162,6 +168,76 @@
           </div>
           <p>{{ resena.mensaje }}</p>
         </div>
+
+        <!-- SECCIÓN DE RESPUESTAS (COMENTARIOS) -->
+        <div class="seccion-respuestas">
+          <div class="respuestas-header">
+            <button class="btn-toggle-respuestas" (click)="toggleRespuestas(resena)">
+              {{ resena.mostrarRespuestas ? 'Ocultar' : 'Ver' }} comentarios ({{ resena.respuestas?.length || 0 }})
+            </button>
+          </div>
+
+          <div class="lista-respuestas" *ngIf="resena.mostrarRespuestas">
+            <div class="tarjeta-respuesta" *ngFor="let resp of resena.respuestas">
+              <!-- Indicador de respuesta a otro comentario -->
+              <div class="mencion-padre" *ngIf="resp.nombreUsuarioPadre">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 10 20 15 15 20"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg>
+                Respondiendo a @{{ resp.nombreUsuarioPadre }}
+              </div>
+
+              <div class="respuesta-meta">
+                <div class="avatar-respuesta">
+                  <img *ngIf="resp.fotoUsuario" [src]="resp.fotoUsuario" [alt]="resp.nombreUsuario" class="avatar-img-micro">
+                  <span *ngIf="!resp.fotoUsuario">{{ resp.nombreUsuario?.charAt(0) || '?' }}</span>
+                </div>
+                <span class="respuesta-usuario">@{{ resp.nombreUsuario || 'Usuario' }}</span>
+              </div>
+              <p class="respuesta-mensaje">{{ resp.mensaje }}</p>
+              
+              <!-- Votos y Acción de Responder -->
+              <div class="acciones-respuesta-footer">
+                <div class="votos-grupo">
+                  <button class="btn-voto-mini" 
+                          [class.activo]="resp.votoUsuarioActual === true"
+                          [disabled]="resp.id_usuario === usuarioId"
+                          (click)="votarRespuesta(resp, true)">
+                    👍 <span>{{ resp.meGustas || 0 }}</span>
+                  </button>
+                  <button class="btn-voto-mini"
+                          [class.activo]="resp.votoUsuarioActual === false"
+                          [disabled]="resp.id_usuario === usuarioId"
+                          (click)="votarRespuesta(resp, false)">
+                    👎 <span>{{ resp.noMeGustas || 0 }}</span>
+                  </button>
+                </div>
+                
+                <button class="btn-responder-comentario" (click)="seleccionarParaResponder(resena, resp)" *ngIf="usuarioId">
+                  Responder
+                </button>
+              </div>
+            </div>
+
+            <!-- Formulario para responder -->
+            <div class="form-respuesta-contenedor" *ngIf="usuarioId">
+              <div class="indicador-respuesta-activa" *ngIf="resena.respuestaPadreSeleccionada">
+                <span>Respondiendo a <strong>@{{ resena.respuestaPadreSeleccionada.username }}</strong></span>
+                <button (click)="cancelarRespuesta(resena)" class="btn-cancelar-mencion">&times;</button>
+              </div>
+
+              <div class="form-respuesta">
+                <input type="text" 
+                       [(ngModel)]="resena.nuevaRespuestaTexto" 
+                       placeholder="Escribe un comentario..."
+                       (keyup.enter)="enviarRespuesta(resena)">
+                <button (click)="enviarRespuesta(resena)" [disabled]="!resena.nuevaRespuestaTexto.trim()">
+                  {{ resena.respuestaPadreSeleccionada ? 'Responder' : 'Comentar' }}
+                </button>
+              </div>
+            </div>
+            <p class="login-prompt" *ngIf="!usuarioId">Logeate para comentar</p>
+          </div>
+        </div>
+
         <div class="acciones-voto">
           <button class="btn-voto like" 
                   [class.activo]="resena.votoUsuarioActual === true"

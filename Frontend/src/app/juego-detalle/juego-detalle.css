@@ -243,9 +243,28 @@
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: white;
   box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  overflow: hidden;
+}
+
+.avatar-img-mini {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.usuario-meta-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nombre-usuario-texto {
+  font-weight: bold;
+  color: #fff;
+  font-size: 1rem;
 }
 
 .fecha-resena {
@@ -778,6 +797,240 @@ textarea:focus {
     height: 0;
     width: 0;
 }
+
+  /* --- ESTILOS DE RESPUESTAS --- */
+  .seccion-respuestas {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.03);
+  }
+
+  .btn-toggle-respuestas {
+    background: transparent;
+    border: none;
+    color: #63b3ed;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 5px 0;
+    transition: color 0.2s;
+  }
+
+  .btn-toggle-respuestas:hover {
+    color: #4299e1;
+    text-decoration: underline;
+  }
+
+  .lista-respuestas {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-left: 20px;
+    border-left: 2px solid rgba(255,255,255,0.05);
+  }
+
+  .tarjeta-respuesta {
+    background: rgba(255,255,255,0.02);
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.03);
+  }
+
+  .respuesta-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .avatar-respuesta {
+    width: 28px;
+    height: 28px;
+    background: #334155;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: #cbd5e1;
+  }
+
+  .avatar-img-micro {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .respuesta-usuario {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #63b3ed;
+  }
+
+  .respuesta-mensaje {
+    font-size: 0.9rem;
+    color: #cbd5e1;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .form-respuesta {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .form-respuesta input {
+    flex: 1;
+    background: rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+  }
+
+  .form-respuesta button {
+    background: #3182ce;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .form-respuesta button:hover:not(:disabled) {
+    background: #2b6cb0;
+  }
+
+  .form-respuesta button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .login-prompt {
+    font-size: 0.8rem;
+    color: #718096;
+    font-style: italic;
+    margin-top: 5px;
+  }
+
+  .acciones-respuesta-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+  }
+
+  .votos-grupo {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn-responder-comentario {
+    background: transparent;
+    border: none;
+    color: #718096;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+
+  .btn-responder-comentario:hover {
+    color: #63b3ed;
+    background: rgba(255,255,255,0.05);
+  }
+
+  .mencion-padre {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: #718096;
+    margin-bottom: 8px;
+    background: rgba(255,255,255,0.03);
+    padding: 4px 8px;
+    border-radius: 4px;
+    width: fit-content;
+  }
+
+  .indicador-respuesta-activa {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    padding: 8px 12px;
+    border-radius: 8px 8px 0 0;
+    font-size: 0.85rem;
+    color: #cbd5e1;
+  }
+
+  .indicador-respuesta-activa strong {
+    color: #63b3ed;
+  }
+
+  .btn-cancelar-mencion {
+    background: transparent;
+    border: none;
+    color: #a0aec0;
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 4px;
+  }
+
+  .form-respuesta-contenedor {
+    margin-top: 10px;
+    background: rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .form-respuesta-contenedor .form-respuesta {
+    margin-top: 0;
+    border-radius: 0 0 8px 8px;
+    border: 1px solid rgba(255,255,255,0.05);
+    border-top: none;
+  }
+
+  .btn-voto-mini {
+    background: transparent;
+    border: none;
+    color: #a0aec0;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+
+  .btn-voto-mini:hover:not(:disabled) {
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+  }
+
+  .btn-voto-mini.activo {
+    color: #3b82f6;
+    background: rgba(59, 130, 246, 0.1);
+  }
+
+  .btn-voto-mini:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 
 .checkmark {
     position: absolute;

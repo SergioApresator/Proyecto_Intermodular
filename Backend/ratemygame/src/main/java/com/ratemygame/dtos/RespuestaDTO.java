@@ -10,4 +10,9 @@ public class RespuestaDTO {
     private Integer noMeGustas;
     private Long id_resena;
     private Long id_usuario;
+    private String nombreUsuario;
+    private String fotoUsuario;
+    private Boolean votoUsuarioActual;
+    private Long id_respuesta_padre;
+    private String nombreUsuarioPadre;
 }
