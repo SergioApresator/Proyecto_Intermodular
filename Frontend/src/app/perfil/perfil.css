@@ -245,6 +245,20 @@
 
 .vacio-placeholder { color: #475569; font-size: 0.9rem; text-align: center; padding: 20px 0; }
 
+.spinner-mini {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(59, 130, 246, 0.1);
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 10px;
+}
+
+.lista-seccion {
+  margin-bottom: 24px;
+}
+
 /* ─── FORM EDICIÓN ─── */
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
 .form-grupo { display: flex; flex-direction: column; gap: 6px; }

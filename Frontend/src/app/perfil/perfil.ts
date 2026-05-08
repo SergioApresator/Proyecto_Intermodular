@@ -35,9 +35,13 @@ export class Perfil implements OnInit {
   resenas: any[] = [];
   cargandoResenas: boolean = true;
 
-  // Favoritos
-  favoritos: any[] = [];
-  cargandoFavoritos: boolean = true;
+  listas: any[] = []; // Array de { nombre: string, juegos: any[] }
+  cargandoListas: boolean = true;
+
+  get favoritosCount(): number {
+    const favList = this.listas.find(l => l.nombre === 'Favoritos');
+    return favList ? favList.juegos.length : 0;
+  }
 
   // Edición
   editando: boolean = false;
@@ -60,7 +64,7 @@ export class Perfil implements OnInit {
     const idNum = Number(id);
     this.cargarPerfil(idNum);
     this.cargarResenas(idNum);
-    this.cargarFavoritos(idNum);
+    this.cargarTodasLasListas(idNum);
   }
 
   cargarPerfil(id: number) {
@@ -127,41 +131,60 @@ export class Perfil implements OnInit {
     });
   }
 
-  cargarFavoritos(id: number) {
-    this.cargandoFavoritos = true;
+  cargarTodasLasListas(id: number) {
+    this.cargandoListas = true;
     this.usuariosServicio.getListasUsuario(id).subscribe({
-      next: (listas: any[]) => {
-        const idsFavoritos = listas
-          .filter(l => l.nombre === 'Favoritos')
-          .map(l => l.id_videojuego);
-
-        if (idsFavoritos.length === 0) {
-          this.favoritos = [];
-          this.cargandoFavoritos = false;
+      next: (listasBrutas: any[]) => {
+        if (listasBrutas.length === 0) {
+          this.listas = [];
+          this.cargandoListas = false;
           this.cdr.detectChanges();
           return;
         }
 
-        const peticiones = idsFavoritos.map(gameId =>
-          this.videojuegosServicio.getJuegoDetalles(gameId.toString()).pipe(
-            catchError(() => of(null))
-          )
-        );
+        // Agrupar IDs por nombre de lista
+        const grupos: { [key: string]: number[] } = {};
+        listasBrutas.forEach(item => {
+          if (!grupos[item.nombre]) grupos[item.nombre] = [];
+          grupos[item.nombre].push(item.id_videojuego);
+        });
 
-        forkJoin(peticiones).subscribe({
-          next: (juegos: any[]) => {
-            this.favoritos = juegos.filter(j => j !== null);
-            this.cargandoFavoritos = false;
+        const nombresListas = Object.keys(grupos);
+        const peticionesListas = nombresListas.map(nombre => {
+          const ids = grupos[nombre];
+          const peticionesJuegos = ids.map(gameId => 
+            this.videojuegosServicio.getJuegoDetalles(gameId.toString()).pipe(
+              catchError(() => of(null))
+            )
+          );
+          
+          return forkJoin(peticionesJuegos).pipe(
+            map(juegos => ({
+              nombre,
+              juegos: juegos.filter(j => j !== null)
+            }))
+          );
+        });
+
+        forkJoin(peticionesListas).subscribe({
+          next: (resultado: any[]) => {
+            // Ordenar para que "Favoritos" sea la primera si existe
+            this.listas = resultado.sort((a, b) => {
+              if (a.nombre === 'Favoritos') return -1;
+              if (b.nombre === 'Favoritos') return 1;
+              return a.nombre.localeCompare(b.nombre);
+            });
+            this.cargandoListas = false;
             this.cdr.detectChanges();
           },
           error: () => {
-            this.cargandoFavoritos = false;
+            this.cargandoListas = false;
             this.cdr.detectChanges();
           }
         });
       },
       error: () => {
-        this.cargandoFavoritos = false;
+        this.cargandoListas = false;
         this.cdr.detectChanges();
       }
     });

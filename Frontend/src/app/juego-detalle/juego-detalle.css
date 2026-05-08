@@ -679,3 +679,219 @@ textarea:focus {
     justify-content: center;
     margin-top: 0;
 }
+
+/* BOTÓN LISTAS */
+.btn-listas {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 2px solid #334155;
+    color: #f1f5f9;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-listas:hover {
+    background: #334155;
+    border-color: #475569;
+}
+
+.icono-lista {
+    font-size: 1rem;
+    color: #3b82f6;
+}
+
+/* MODAL LISTAS */
+.modal-listas {
+    max-width: 420px;
+    width: 95%;
+}
+
+.listas-existentes {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 24px;
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 8px;
+    /* Evitar que se vea cortado el último */
+    padding-bottom: 10px;
+}
+
+/* Scrollbar personalizada para las listas */
+.listas-existentes::-webkit-scrollbar {
+    width: 6px;
+}
+
+.listas-existentes::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
+}
+
+.listas-existentes::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    border: 2px solid #1a202c; /* Crear un efecto de margen */
+}
+
+.listas-existentes::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.lista-item {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.lista-item:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(59, 130, 246, 0.4);
+    transform: scale(1.01);
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: 10px 12px 10px 48px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: #e2e8f0;
+    user-select: none;
+    width: 100%;
+    min-height: 44px;
+}
+
+.checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkmark {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    height: 22px;
+    width: 22px;
+    background-color: #0f172a;
+    border: 2px solid #334155;
+    border-radius: 6px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.checkbox-container:hover input ~ .checkmark {
+    border-color: #3b82f6;
+    background-color: rgba(59, 130, 246, 0.1);
+}
+
+.checkbox-container input:checked ~ .checkmark {
+    background-color: #3b82f6;
+    border-color: #3b82f6;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.checkbox-container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.checkbox-container .checkmark:after {
+    left: 6px;
+    top: 2px;
+    width: 6px;
+    height: 11px;
+    border: solid white;
+    border-width: 0 2.5px 2.5px 0;
+    transform: rotate(45deg);
+}
+
+.nombre-lista {
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+.sin-listas {
+    text-align: center;
+    color: #64748b;
+    padding: 30px 0;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+    margin-bottom: 20px;
+}
+
+.nueva-lista-form {
+    padding-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.input-con-boton {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.input-con-boton input {
+    flex: 1;
+    background: #0f172a;
+    border: 1px solid #334155;
+    color: #f1f5f9;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.input-con-boton input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    background: #1e293b;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.btn-crear {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 0 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.btn-crear:hover:not(:disabled) {
+    background: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-crear:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.btn-crear:disabled {
+    opacity: 0.5;
+    background: #1e293b;
+    cursor: not-allowed;
+    box-shadow: none;
+}

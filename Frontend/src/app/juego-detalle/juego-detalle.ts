@@ -41,6 +41,13 @@ export class JuegoDetalle implements OnInit, OnDestroy {
     tieneSpoiler: false
   };
 
+  // Listas Personalizadas
+  listasUsuario: string[] = []; // Nombres de listas únicas
+  juegosEnListas: any[] = []; // Items de lista brutos
+  mostrarModalListas: boolean = false;
+  nuevaListaNombre: string = "";
+  procesandoLista: boolean = false;
+
   get tagsJuego(): any[] {
     return this.juego?.tags ? this.juego.tags.slice(0, 15) : [];
   }
@@ -160,6 +167,9 @@ export class JuegoDetalle implements OnInit, OnDestroy {
     
     this.usuariosServicio.getListasUsuario(this.usuarioId).subscribe({
       next: (listas: any[]) => {
+        this.juegosEnListas = listas;
+        
+        // Actualizar favoritos
         const fav = listas.find(l => l.nombre === 'Favoritos' && l.id_videojuego === gameId);
         if (fav) {
           this.esFavorito = true;
@@ -168,10 +178,74 @@ export class JuegoDetalle implements OnInit, OnDestroy {
           this.esFavorito = false;
           this.listaFavoritoId = null;
         }
+
+        // Actualizar nombres de listas únicas
+        this.listasUsuario = [...new Set(listas.map(l => l.nombre))];
+        
         this.cdr.detectChanges();
       },
-      error: (err) => console.error('Error comprobando favoritos', err)
+      error: (err) => console.error('Error comprobando listas', err)
     });
+  }
+
+  // --- LISTAS PERSONALIZADAS ---
+  abrirModalListas() {
+    if (!this.usuarioId) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    this.mostrarModalListas = true;
+    if (this.id) this.checkFavorito(this.id);
+  }
+
+  cerrarModalListas() {
+    this.mostrarModalListas = false;
+    this.nuevaListaNombre = "";
+  }
+
+  estaEnLista(nombre: string): boolean {
+    const gameId = this.juego?.id;
+    return this.juegosEnListas.some(l => l.nombre === nombre && l.id_videojuego === gameId);
+  }
+
+  toggleJuegoEnLista(nombre: string) {
+    if (!this.usuarioId || !this.juego || this.procesandoLista) return;
+
+    const itemExistente = this.juegosEnListas.find(l => l.nombre === nombre && l.id_videojuego === this.juego.id);
+    this.procesandoLista = true;
+
+    if (itemExistente) {
+      // Quitar de la lista
+      this.usuariosServicio.eliminarDeLista(itemExistente.id).subscribe({
+        next: () => {
+          if (this.id) this.checkFavorito(this.id);
+          this.procesandoLista = false;
+        },
+        error: () => this.procesandoLista = false
+      });
+    } else {
+      // Añadir a la lista
+      const payload = {
+        nombre: nombre,
+        id_videojuego: this.juego.id,
+        id_usuario: this.usuarioId
+      };
+      this.usuariosServicio.agregarALista(payload).subscribe({
+        next: () => {
+          if (this.id) this.checkFavorito(this.id);
+          this.procesandoLista = false;
+        },
+        error: () => this.procesandoLista = false
+      });
+    }
+  }
+
+  crearYAgregarALista() {
+    const nombre = this.nuevaListaNombre.trim();
+    if (!nombre || this.procesandoLista) return;
+    
+    this.toggleJuegoEnLista(nombre);
+    this.nuevaListaNombre = "";
   }
 
   toggleFavorito() {
@@ -226,7 +300,6 @@ export class JuegoDetalle implements OnInit, OnDestroy {
   isScrubbing: boolean = false;
 
   onScrubStart(event: MouseEvent | TouchEvent, index: number) {
-    // Evitar drag nativo
     if (event instanceof MouseEvent) {
       event.preventDefault();
     }
@@ -269,14 +342,14 @@ export class JuegoDetalle implements OnInit, OnDestroy {
   siguienteMedia() {
     if (this.mediaItems.length > 0) {
       this.indiceMediaActual = (this.indiceMediaActual + 1) % this.mediaItems.length;
-      this.iniciarCarruselMedia(); // Reset timer
+      this.iniciarCarruselMedia();
     }
   }
 
   anteriorMedia() {
     if (this.mediaItems.length > 0) {
       this.indiceMediaActual = (this.indiceMediaActual - 1 + this.mediaItems.length) % this.mediaItems.length;
-      this.iniciarCarruselMedia(); // Reset timer
+      this.iniciarCarruselMedia();
     }
   }
 
@@ -321,7 +394,7 @@ export class JuegoDetalle implements OnInit, OnDestroy {
 
     this.resenasServicio.crearResena(payload).subscribe({
       next: (data) => {
-        this.resenas.unshift(data); // Añadir al inicio
+        this.resenas.unshift(data);
         this.enviandoResena = false;
         this.cerrarModalResena();
         this.cdr.detectChanges();
@@ -342,12 +415,10 @@ export class JuegoDetalle implements OnInit, OnDestroy {
       return;
     }
 
-    // Prevent voting on own review
     if (resena.id_usuario === this.usuarioId) return;
 
     this.resenasServicio.votarResena(resena.id, this.usuarioId, esMeGusta).subscribe({
       next: (data) => {
-        // Update the review in the list in-place with fresh data from server
         resena.meGustas = data.meGustas;
         resena.noMeGustas = data.noMeGustas;
         resena.votoUsuarioActual = data.votoUsuarioActual;

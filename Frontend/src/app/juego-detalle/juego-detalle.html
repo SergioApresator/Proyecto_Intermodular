@@ -86,6 +86,13 @@
           <span class="corazon" [innerHTML]="esFavorito ? '❤️' : '🤍'"></span>
           <span class="texto-fav">{{ esFavorito ? 'En Favoritos' : 'Añadir a Favoritos' }}</span>
         </button>
+
+        <!-- BOTÓN AÑADIR A LISTA -->
+        <button *ngIf="usuarioId" class="btn-listas lateral-btn" (click)="abrirModalListas()">
+          <span class="icono-lista">➕</span>
+          <span class="texto-lista">Añadir a una lista</span>
+        </button>
+
         <button class="btn-resenar lateral-btn" (click)="abrirModalResena()">
           <span class="icono-resena">✍️</span>
           <span class="texto-resena">{{ usuarioId ? 'Escribir Reseña' : 'Logeate para reseñar' }}</span>
@@ -209,6 +216,54 @@
       <button class="btn-primario" (click)="enviarResena()" [disabled]="enviandoResena || !nuevaResena.mensaje.trim()">
         {{ enviandoResena ? 'Enviando...' : 'Publicar Reseña' }}
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DE LISTAS PERSONALIZADAS -->
+<div class="modal-overlay" *ngIf="mostrarModalListas" (click)="cerrarModalListas()">
+  <div class="modal-content modal-listas" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Guardar en mis listas</h3>
+      <button class="btn-cerrar" (click)="cerrarModalListas()">&times;</button>
+    </div>
+    
+    <div class="modal-body">
+      <!-- Listas Existentes -->
+      <div class="listas-existentes" *ngIf="listasUsuario.length > 0">
+        <div class="lista-item" *ngFor="let nombre of listasUsuario">
+          <label class="checkbox-container">
+            <input type="checkbox" 
+                   [checked]="estaEnLista(nombre)" 
+                   (change)="toggleJuegoEnLista(nombre)">
+            <span class="checkmark"></span>
+            <span class="nombre-lista">{{ nombre }}</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="sin-listas" *ngIf="listasUsuario.length === 0">
+        <p>No tienes listas todavía. ¡Crea la primera!</p>
+      </div>
+
+      <!-- Crear Nueva Lista -->
+      <div class="nueva-lista-form">
+        <div class="form-group">
+          <label for="nueva-lista">Nueva Lista</label>
+          <div class="input-con-boton">
+            <input id="nueva-lista" 
+                   type="text" 
+                   [(ngModel)]="nuevaListaNombre" 
+                   placeholder="Nombre de la lista..."
+                   (keyup.enter)="crearYAgregarALista()">
+            <button class="btn-crear" 
+                    [disabled]="!nuevaListaNombre.trim() || procesandoLista"
+                    (click)="crearYAgregarALista()">
+              Añadir
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
