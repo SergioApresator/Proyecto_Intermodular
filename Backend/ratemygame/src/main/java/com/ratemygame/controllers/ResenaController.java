@@ -49,4 +49,11 @@ public class ResenaController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ResenaDTO> getResenaById(@PathVariable Long id) {
+        return resenaService.getResenaById(id)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
+    }
 }

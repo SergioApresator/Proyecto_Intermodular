@@ -36,4 +36,9 @@ public class RespuestaController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/usuario/{idUsuario}")
+    public ResponseEntity<List<RespuestaDTO>> getRespuestasByUsuario(@PathVariable Long idUsuario) {
+        return ResponseEntity.ok(respuestaService.getRespuestasByUsuario(idUsuario));
+    }
 }

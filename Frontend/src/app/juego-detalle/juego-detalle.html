@@ -149,11 +149,21 @@
             <span class="estrella" *ngFor="let _ of [].constructor(resena.puntuacion)">⭐</span>
           </div>
         </div>
-        <div class="resena-contenido" [class.tiene-spoiler]="resena.tieneSpoiler">
-          <div class="alerta-spoiler" *ngIf="resena.tieneSpoiler">
-            ⚠️ Contiene Spoilers
+        <div class="resena-contenido">
+  
+          <!-- Si tiene spoiler lo ocultamos con un boton para verlo -->
+          <div *ngIf="resena.tieneSpoiler">
+            <div class="alerta-spoiler">
+              ⚠️ Contiene Spoilers
+              <button class="btn-spoiler" (click)="resena.mostrarSpoiler = !resena.mostrarSpoiler">
+                {{ resena.mostrarSpoiler ? 'Ocultar' : 'Ver igualmente' }}
+              </button>
+            </div>
+              <p *ngIf="resena.mostrarSpoiler">{{ resena.mensaje }}</p>
           </div>
-          <p>{{ resena.mensaje }}</p>
+
+          <!-- Si no tiene spoiler se muestra normal -->
+            <p *ngIf="!resena.tieneSpoiler">{{ resena.mensaje }}</p>
         </div>
         <div class="acciones-voto">
           <button class="btn-voto like" 

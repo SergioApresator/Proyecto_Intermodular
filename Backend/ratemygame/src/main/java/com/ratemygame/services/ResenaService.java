@@ -144,4 +144,8 @@ public class ResenaService {
         }
         return dto;
     }
+
+    public Optional<ResenaDTO> getResenaById(Long id) {
+        return resenaRepository.findById(id).map(this::convertToDTO);
+    }
 }
