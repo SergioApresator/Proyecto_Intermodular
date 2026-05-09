@@ -52,6 +52,18 @@ export class Usuarios {
     });
   }
 
+  // Subir banner de perfil (multipart)
+  subirBanner(id: number, file: File): Observable<any> {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post(`${this.url}/${id}/banner`, formData, {
+      headers: new HttpHeaders({
+        'Authorization': token ? `Bearer ${token}` : ''
+      })
+    });
+}
+
   // --- LISTAS Y FAVORITOS ---
   private urlListas = 'http://localhost:9999/api/listas';
 

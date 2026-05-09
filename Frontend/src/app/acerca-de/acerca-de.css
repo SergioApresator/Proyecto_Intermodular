@@ -1,0 +1,60 @@
+:host {
+    display: block;
+    background-color: #0f172a;
+    min-height: 100vh;
+    color: #f1f5f9;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.contenedor {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 60px 30px;
+}
+
+.cabecera {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.logo {
+    width: 120px;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.titulo {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+
+.subtitulo {
+    font-size: 1rem;
+    color: #64748b;
+}
+
+.seccion {
+    margin-bottom: 40px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid #334155;
+}
+
+.seccion:last-child {
+    border-bottom: none;
+}
+
+.seccion-titulo {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 15px;
+}
+
+.seccion-texto {
+    font-size: 0.95rem;
+    color: #94a3b8;
+    line-height: 1.8;
+    margin: 0;
+}
