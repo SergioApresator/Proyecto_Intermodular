@@ -334,4 +334,26 @@ export class JuegoDetalle implements OnInit, OnDestroy {
       }
     });
   }
+
+  // --- VOTOS ---
+  votarResena(resena: any, esMeGusta: boolean) {
+    if (!this.usuarioId) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    // Prevent voting on own review
+    if (resena.id_usuario === this.usuarioId) return;
+
+    this.resenasServicio.votarResena(resena.id, this.usuarioId, esMeGusta).subscribe({
+      next: (data) => {
+        // Update the review in the list in-place with fresh data from server
+        resena.meGustas = data.meGustas;
+        resena.noMeGustas = data.noMeGustas;
+        resena.votoUsuarioActual = data.votoUsuarioActual;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Error al votar reseña', err)
+    });
+  }
 }
