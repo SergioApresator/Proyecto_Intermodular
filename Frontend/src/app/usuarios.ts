@@ -76,4 +76,5 @@ export class Usuarios {
   eliminarDeLista(listaId: number): Observable<any> {
     return this.http.delete(`${this.urlListas}/${listaId}`, this.getHeaders());
   }
+  
 }

@@ -1,0 +1,23 @@
+.footer {
+    background-color: #080a12;
+    border-top: 1px solid #334155;
+    padding: 2rem 5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-texto {
+    font-size: 0.75rem;
+    color: #64748b;
+    letter-spacing: 1px;
+    margin: 0;
+}
+
+.footer-api {
+    font-size: 0.65rem;
+    color: #64748b;
+    opacity: 0.5;
+    letter-spacing: 1px;
+    margin: 0;
+}

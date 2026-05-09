@@ -9,7 +9,8 @@
       <img [src]="juego.background_image" [alt]="juego.name" class="tarjeta-imagen">
       <div class="tarjeta-info">
         <p class="tarjeta-nombre">{{ juego.name }}</p>
-        <p class="tarjeta-rating">{{ juego.rating }} / 5</p>
+        <p class="tarjeta-rating" *ngIf="genero !== 'proximos'">{{ juego.rating }} / 5</p>
+        <p class="tarjeta-rating" *ngIf="genero === 'proximos'">Fecha: {{ juego.released }}</p>
       </div>
     </div>
   </div>

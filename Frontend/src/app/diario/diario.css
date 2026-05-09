@@ -1,0 +1,196 @@
+:host {
+    display: block;
+    background-color: #0f172a;
+    min-height: 100vh;
+    color: #f1f5f9;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.contenedor-cargando {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    color: #94a3b8;
+    font-size: 1.2rem;
+}
+
+.contenedor {
+    padding: 40px 30px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.titulo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 30px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #334155;
+}
+
+.sin-resenas {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    gap: 10px;
+    color: #64748b;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.btn-accion {
+    margin-top: 20px;
+    padding: 12px 30px;
+    background: none;
+    border: 1px solid #334155;
+    color: #94a3b8;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-accion:hover {
+    border-color: #3b82f6;
+    color: #3b82f6;
+}
+
+.lista-resenas {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.tarjeta-resena {
+    background: #1e293b;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #334155;
+    transition: border-color 0.2s ease;
+}
+
+.tarjeta-resena:hover {
+    border-color: #3b82f6;
+}
+
+.resena-cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.resena-puntuacion {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #f59e0b;
+    font-size: 1.1rem;
+}
+
+.resena-puntuacion-texto {
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
+
+.resena-fecha {
+    color: #64748b;
+    font-size: 0.85rem;
+}
+
+.resena-spoiler {
+    background: #7f1d1d;
+    color: #fca5a5;
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    display: inline-block;
+}
+
+.resena-mensaje {
+    color: #e2e8f0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0 0 15px 0;
+}
+
+.resena-pie {
+    display: flex;
+    gap: 20px;
+    color: #64748b;
+    font-size: 0.82rem;
+    border-top: 1px solid #334155;
+    padding-top: 12px;
+}
+
+.resena-juego {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #334155;
+}
+
+.resena-juego-imagen {
+    width: 80px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.resena-juego-nombre {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.selector {
+    display: flex;
+    gap: 0;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #334155;
+}
+
+.btn-selector {
+    padding: 12px 30px;
+    background: none;
+    border: none;
+    color: #64748b;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+}
+
+.btn-selector:hover {
+    color: #f1f5f9;
+}
+
+.btn-selector.activo {
+    color: #ffffff;
+    border-bottom: 2px solid #3b82f6;
+}
+
+.btn-spoiler {
+    margin-left: 10px;
+    background: none;
+    border: 1px solid #fca5a5;
+    color: #fca5a5;
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.btn-spoiler:hover {
+    background: #7f1d1d;
+}
