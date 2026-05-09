@@ -26,11 +26,14 @@ export class JuegoDetalle implements OnInit, OnDestroy {
   indiceMediaActual: number = 0;
   intervaloMedia: any = null;
 
-  // Favoritos
+  // Favoritos y Listas Especiales
   esFavorito: boolean = false;
   listaFavoritoId: number | null = null;
+  esPendiente: boolean = false;
+  listaPendienteId: number | null = null;
   usuarioId: number | null = null;
   cambiandoFavorito: boolean = false;
+  cambiandoPendiente: boolean = false;
 
   // Reseñas
   resenas: any[] = [];
@@ -117,7 +120,7 @@ export class JuegoDetalle implements OnInit, OnDestroy {
         }
         
         if (this.usuarioId) {
-          this.checkFavorito(id);
+          this.checkListas(id);
         }
         
         this.cargarMediaExtra(id);
@@ -163,7 +166,7 @@ export class JuegoDetalle implements OnInit, OnDestroy {
     });
   }
 
-  checkFavorito(gameIdStr: string) {
+  checkListas(gameIdStr: string) {
     if (!this.usuarioId) return;
     const gameId = parseInt(gameIdStr, 10);
     
@@ -179,6 +182,16 @@ export class JuegoDetalle implements OnInit, OnDestroy {
         } else {
           this.esFavorito = false;
           this.listaFavoritoId = null;
+        }
+
+        // Actualizar pendientes
+        const pen = listas.find(l => l.nombre === 'Videojuegos Pendientes' && l.id_videojuego === gameId);
+        if (pen) {
+          this.esPendiente = true;
+          this.listaPendienteId = pen.id;
+        } else {
+          this.esPendiente = false;
+          this.listaPendienteId = null;
         }
 
         // Actualizar nombres de listas únicas
@@ -197,7 +210,7 @@ export class JuegoDetalle implements OnInit, OnDestroy {
       return;
     }
     this.mostrarModalListas = true;
-    if (this.id) this.checkFavorito(this.id);
+    if (this.id) this.checkListas(this.id);
   }
 
   cerrarModalListas() {
@@ -220,7 +233,7 @@ export class JuegoDetalle implements OnInit, OnDestroy {
       // Quitar de la lista
       this.usuariosServicio.eliminarDeLista(itemExistente.id).subscribe({
         next: () => {
-          if (this.id) this.checkFavorito(this.id);
+          if (this.id) this.checkListas(this.id);
           this.procesandoLista = false;
         },
         error: () => this.procesandoLista = false
@@ -234,7 +247,7 @@ export class JuegoDetalle implements OnInit, OnDestroy {
       };
       this.usuariosServicio.agregarALista(payload).subscribe({
         next: () => {
-          if (this.id) this.checkFavorito(this.id);
+          if (this.id) this.checkListas(this.id);
           this.procesandoLista = false;
         },
         error: () => this.procesandoLista = false
@@ -288,6 +301,50 @@ export class JuegoDetalle implements OnInit, OnDestroy {
         error: (err) => {
           console.error('Error al agregar favorito', err);
           this.cambiandoFavorito = false;
+          this.cdr.detectChanges();
+        }
+      });
+    }
+  }
+
+  togglePendiente() {
+    if (!this.usuarioId || !this.juego) return;
+    
+    this.cambiandoPendiente = true;
+    
+    if (this.esPendiente && this.listaPendienteId) {
+      // Remover de pendientes
+      this.usuariosServicio.eliminarDeLista(this.listaPendienteId).subscribe({
+        next: () => {
+          this.esPendiente = false;
+          this.listaPendienteId = null;
+          this.cambiandoPendiente = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Error al remover de pendientes', err);
+          this.cambiandoPendiente = false;
+          this.cdr.detectChanges();
+        }
+      });
+    } else {
+      // Agregar a pendientes
+      const payload = {
+        nombre: 'Videojuegos Pendientes',
+        id_videojuego: this.juego.id,
+        id_usuario: this.usuarioId
+      };
+      
+      this.usuariosServicio.agregarALista(payload).subscribe({
+        next: (nuevaLista: any) => {
+          this.esPendiente = true;
+          this.listaPendienteId = nuevaLista.id;
+          this.cambiandoPendiente = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Error al agregar a pendientes', err);
+          this.cambiandoPendiente = false;
           this.cdr.detectChanges();
         }
       });

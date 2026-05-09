@@ -87,6 +87,16 @@
           <span class="texto-fav">{{ esFavorito ? 'En Favoritos' : 'Añadir a Favoritos' }}</span>
         </button>
 
+        <!-- BOTÓN VIDEOJUEGOS PENDIENTES -->
+        <button *ngIf="usuarioId" 
+                class="btn-pendiente lateral-btn" 
+                [class.activo]="esPendiente" 
+                [disabled]="cambiandoPendiente"
+                (click)="togglePendiente()">
+          <span class="icono-pendiente">{{ esPendiente ? '🔖' : '📑' }}</span>
+          <span class="texto-pendiente">{{ esPendiente ? 'En Pendientes' : 'Añadir a Pendientes' }}</span>
+        </button>
+
         <!-- BOTÓN AÑADIR A LISTA -->
         <button *ngIf="usuarioId" class="btn-listas lateral-btn" (click)="abrirModalListas()">
           <span class="icono-lista">➕</span>

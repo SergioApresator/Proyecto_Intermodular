@@ -19,8 +19,8 @@ import lombok.ToString;
 @Entity
 @Table(name="USUARIO")
 @Data
-@EqualsAndHashCode(exclude = {"videojuegosPendientes", "listas", "resenas"})
-@ToString(exclude = {"videojuegosPendientes", "listas", "resenas"})
+@EqualsAndHashCode(exclude = {"listas", "resenas"})
+@ToString(exclude = {"listas", "resenas"})
 public class Usuario {
     
     @Id
@@ -48,10 +48,6 @@ public class Usuario {
 
     @Column(name = "BIOGRAFIA", length = 500)
     private String biografia;
-
-    @JsonIgnore
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "usuario")
-    private Set<VideojuegosPendientes> videojuegosPendientes;
 
     @JsonIgnore
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "usuario")
