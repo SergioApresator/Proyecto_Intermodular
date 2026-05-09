@@ -41,8 +41,9 @@ export class Login {
             if (usuarioEncontrado.username) {
               localStorage.setItem('username', usuarioEncontrado.username);
             }
-            if (usuarioEncontrado.foto_url) {
-              localStorage.setItem('foto_url', usuarioEncontrado.foto_url);
+            const foto = usuarioEncontrado.foto_url || usuarioEncontrado.fotoUrl;
+            if (foto) {
+              localStorage.setItem('foto_url', foto);
             }
           }
           this.router.navigate(['/inicial']);

@@ -5,6 +5,7 @@ import { Login } from './login/login';
 import { VerTodos } from './ver-todos/ver-todos';
 import { Diario } from './diario/diario';
 import { JuegoDetalle } from './juego-detalle/juego-detalle';
+import { Perfil } from './perfil/perfil';
 import { authGuard } from './auth.guard';
 
 export const routes: Routes = [
@@ -17,4 +18,5 @@ export const routes: Routes = [
     { path: 'inicial', component: Inicial, canActivate: [authGuard] },
     { path: 'ver-todos/:genero', component: VerTodos, canActivate: [authGuard] },
     { path: 'juego/:id', component: JuegoDetalle, canActivate: [authGuard] },
+    { path: 'perfil', component: Perfil, canActivate: [authGuard] },
 ];

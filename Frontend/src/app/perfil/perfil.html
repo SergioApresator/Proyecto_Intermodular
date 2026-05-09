@@ -1,0 +1,200 @@
+<div class="perfil-page">
+  <!-- Input de archivo oculto -->
+  <input #fileInput type="file" accept="image/*" style="display:none" (change)="onArchivoSeleccionado($event)">
+
+  <!-- CARGANDO -->
+  <div class="estado-centrado" *ngIf="cargando">
+    <div class="spinner"></div>
+    <p>Cargando perfil...</p>
+  </div>
+
+  <!-- ERROR -->
+  <div class="estado-centrado" *ngIf="!cargando && error">
+    <p class="texto-error">{{ error }}</p>
+  </div>
+
+  <!-- CONTENIDO -->
+  <div class="perfil-contenedor" *ngIf="!cargando && usuario">
+
+    <!-- Mensaje de éxito -->
+    <div class="toast-exito" *ngIf="mensajeExito">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      {{ mensajeExito }}
+    </div>
+
+    <!-- CABECERA / BANNER -->
+    <div class="perfil-banner">
+      <div class="banner-bg"></div>
+      <div class="perfil-identidad">
+        <!-- Avatar con botón de subida -->
+        <div class="avatar-container">
+          <div class="avatar-grande">
+            <img *ngIf="previewFoto" [src]="previewFoto" alt="Vista previa" class="avatar-imagen">
+            <img *ngIf="!previewFoto && usuario.foto_url" [src]="usuario.foto_url" [alt]="usuario.username" class="avatar-imagen">
+            <div *ngIf="!previewFoto && !usuario.foto_url" class="avatar-iniciales-grande">{{ getInitials() }}</div>
+          </div>
+          <button class="btn-cambiar-foto" (click)="abrirSelectorFoto()" title="Cambiar foto de perfil" id="btn-cambiar-foto">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          </button>
+
+          <!-- Panel de confirmación de foto -->
+          <div class="foto-preview-panel" *ngIf="previewFoto">
+            <div class="preview-acciones">
+              <button class="btn-subir-foto" (click)="subirFoto()" [disabled]="subiendoFoto" id="btn-subir-foto">
+                <span *ngIf="!subiendoFoto">✓ Guardar</span>
+                <span *ngIf="subiendoFoto">...</span>
+              </button>
+              <button class="btn-cancelar-foto" (click)="cancelarFoto()" id="btn-cancelar-foto">✕</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="perfil-info-header">
+          <h1 class="perfil-username">{{ usuario.username }}</h1>
+          <div class="perfil-stats-header">
+            <span class="stat-badge">⭐ {{ favoritosCount }} Favoritos</span>
+            <span class="stat-badge">📝 {{ resenas.length }} Reseñas</span>
+          </div>
+        </div>
+
+        <button class="btn-editar" (click)="iniciarEdicion()" *ngIf="!editando" id="btn-editar-perfil">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+          Editar perfil
+        </button>
+      </div>
+    </div>
+
+    <!-- CUERPO GRID -->
+    <div class="perfil-grid">
+      
+      <!-- SIDEBAR -->
+      <aside class="perfil-sidebar">
+        <!-- Biografía -->
+        <div class="seccion-card">
+          <h2 class="seccion-titulo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            Sobre mí
+          </h2>
+          <p class="bio-texto" *ngIf="usuario.biografia">{{ usuario.biografia }}</p>
+          <div class="bio-vacia" *ngIf="!usuario.biografia">
+            <p>Todavía no tienes biografía.</p>
+            <button class="link-editar" (click)="iniciarEdicion()">Escribir una</button>
+          </div>
+        </div>
+
+        <!-- Información -->
+        <div class="seccion-card">
+          <h2 class="seccion-titulo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            Detalles
+          </h2>
+          <div class="info-vertical">
+            <div class="info-item">
+              <span class="info-label">Nombre</span>
+              <span class="info-valor">{{ usuario.nombre || '—' }} {{ usuario.apellidos || '' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Email</span>
+              <span class="info-valor">{{ usuario.email }}</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- CONTENIDO PRINCIPAL -->
+      <main class="perfil-main">
+        
+        <!-- MODO EDICIÓN -->
+        <div class="seccion-card edicion-card" *ngIf="editando">
+          <h2 class="seccion-titulo">Editar Perfil</h2>
+          <div class="form-grid">
+            <div class="form-grupo"><label class="form-label">Nombre</label><input class="form-input" [(ngModel)]="formEdicion.nombre"></div>
+            <div class="form-grupo"><label class="form-label">Apellidos</label><input class="form-input" [(ngModel)]="formEdicion.apellidos"></div>
+            <div class="form-grupo"><label class="form-label">Username</label><input class="form-input" [(ngModel)]="formEdicion.username"></div>
+            <div class="form-grupo"><label class="form-label">Email</label><input class="form-input" [(ngModel)]="formEdicion.email"></div>
+            <div class="form-grupo full-width"><label class="form-label">Biografía</label><textarea class="form-textarea" [(ngModel)]="formEdicion.biografia" rows="4"></textarea></div>
+          </div>
+          <div class="form-acciones">
+            <button class="btn-cancelar" (click)="cancelarEdicion()">Cancelar</button>
+            <button class="btn-guardar" (click)="guardarCambios()" [disabled]="guardando">Guardar cambios</button>
+          </div>
+        </div>
+
+        <!-- MODO LECTURA: FAVORITOS Y RESEÑAS -->
+        <ng-container *ngIf="!editando">
+          
+          <!-- SECCIÓN LISTAS (Favoritos y Personalizadas) -->
+          <div *ngIf="cargandoListas" class="vacio-placeholder">
+            <div class="spinner-mini"></div>
+            <p>Cargando tus listas...</p>
+          </div>
+
+          <div *ngIf="!cargandoListas && listas.length === 0" class="seccion-card">
+            <h2 class="seccion-titulo">Mis Listas</h2>
+            <div class="vacio-placeholder">
+              <p>No tienes listas de juegos todavía.</p>
+            </div>
+          </div>
+
+          <div class="lista-seccion" *ngFor="let lista of listas">
+            <div class="seccion-card">
+              <h2 class="seccion-titulo">
+                <svg *ngIf="lista.nombre === 'Favoritos'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.72-8.72 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                <svg *ngIf="lista.nombre === 'Videojuegos Pendientes'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                <svg *ngIf="lista.nombre !== 'Favoritos' && lista.nombre !== 'Videojuegos Pendientes'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                {{ lista.nombre }}
+                <span class="count-badge">{{ lista.juegos.length }}</span>
+              </h2>
+
+              <div class="favoritos-grid">
+                <div class="favorito-item" *ngFor="let juego of lista.juegos" [routerLink]="['/juego', juego.id]">
+                  <div class="favorito-imagen">
+                    <img [src]="juego.background_image" [alt]="juego.name">
+                    <div class="favorito-overlay"><span>⭐ {{ juego.rating }}</span></div>
+                  </div>
+                  <p class="favorito-nombre">{{ juego.name }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RESEÑAS -->
+          <div class="seccion-card">
+            <h2 class="seccion-titulo">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+              Mis Reseñas
+              <span class="count-badge" *ngIf="!cargandoResenas && resenas.length > 0">{{ resenas.length }}</span>
+            </h2>
+
+            <div class="lista-resenas-perfil" *ngIf="!cargandoResenas && resenas.length > 0">
+              <div class="tarjeta-resena-perfil" *ngFor="let resena of resenas">
+                <a [routerLink]="['/juego', resena.id_videojuego]" class="resena-juego-link">
+                  <div class="resena-juego-imagen">
+                    <img *ngIf="resena.imagenJuego" [src]="resena.imagenJuego" [alt]="resena.nombreJuego">
+                  </div>
+                </a>
+                <div class="resena-contenido-perfil">
+                  <div class="resena-cabecera-perfil">
+                    <a [routerLink]="['/juego', resena.id_videojuego]" class="resena-nombre-juego">{{ resena.nombreJuego }}</a>
+                    <span class="resena-fecha">{{ resena.fechaResena | date:'mediumDate' }}</span>
+                  </div>
+                  <div class="resena-estrellas">
+                    <span class="estrella llena" *ngFor="let s of getStars(resena.puntuacion)">★</span>
+                    <span class="estrella vacia" *ngFor="let s of getEmptyStars(resena.puntuacion)">★</span>
+                  </div>
+                  <p class="resena-mensaje">{{ resena.mensaje }}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="vacio-placeholder" *ngIf="!cargandoResenas && resenas.length === 0">
+              <p>Aún no has escrito ninguna reseña.</p>
+            </div>
+          </div>
+
+        </ng-container>
+      </main>
+
+    </div>
+  </div>
+</div>

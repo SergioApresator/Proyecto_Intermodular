@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { Videojuegos } from '../videojuegos';
 import { Usuarios } from '../usuarios';
 import { ResenasService } from '../resenas';
+import { RespuestasService } from '../respuestas';
 
 @Component({
   selector: 'app-juego-detalle',
@@ -25,11 +26,14 @@ export class JuegoDetalle implements OnInit, OnDestroy {
   indiceMediaActual: number = 0;
   intervaloMedia: any = null;
 
-  // Favoritos
+  // Favoritos y Listas Especiales
   esFavorito: boolean = false;
   listaFavoritoId: number | null = null;
+  esPendiente: boolean = false;
+  listaPendienteId: number | null = null;
   usuarioId: number | null = null;
   cambiandoFavorito: boolean = false;
+  cambiandoPendiente: boolean = false;
 
   // Reseñas
   resenas: any[] = [];
@@ -40,6 +44,13 @@ export class JuegoDetalle implements OnInit, OnDestroy {
     mensaje: '',
     tieneSpoiler: false
   };
+
+  // Listas Personalizadas
+  listasUsuario: string[] = []; // Nombres de listas únicas
+  juegosEnListas: any[] = []; // Items de lista brutos
+  mostrarModalListas: boolean = false;
+  nuevaListaNombre: string = "";
+  procesandoLista: boolean = false;
 
   get tagsJuego(): any[] {
     return this.juego?.tags ? this.juego.tags.slice(0, 15) : [];
@@ -52,7 +63,8 @@ export class JuegoDetalle implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer,
     private cdr: ChangeDetectorRef,
     private usuariosServicio: Usuarios,
-    private resenasServicio: ResenasService
+    private resenasServicio: ResenasService,
+    private respuestasServicio: RespuestasService
   ) {}
 
   ngOnInit() {
@@ -108,7 +120,7 @@ export class JuegoDetalle implements OnInit, OnDestroy {
         }
         
         if (this.usuarioId) {
-          this.checkFavorito(id);
+          this.checkListas(id);
         }
         
         this.cargarMediaExtra(id);
@@ -154,12 +166,15 @@ export class JuegoDetalle implements OnInit, OnDestroy {
     });
   }
 
-  checkFavorito(gameIdStr: string) {
+  checkListas(gameIdStr: string) {
     if (!this.usuarioId) return;
     const gameId = parseInt(gameIdStr, 10);
     
     this.usuariosServicio.getListasUsuario(this.usuarioId).subscribe({
       next: (listas: any[]) => {
+        this.juegosEnListas = listas;
+        
+        // Actualizar favoritos
         const fav = listas.find(l => l.nombre === 'Favoritos' && l.id_videojuego === gameId);
         if (fav) {
           this.esFavorito = true;
@@ -168,10 +183,84 @@ export class JuegoDetalle implements OnInit, OnDestroy {
           this.esFavorito = false;
           this.listaFavoritoId = null;
         }
+
+        // Actualizar pendientes
+        const pen = listas.find(l => l.nombre === 'Videojuegos Pendientes' && l.id_videojuego === gameId);
+        if (pen) {
+          this.esPendiente = true;
+          this.listaPendienteId = pen.id;
+        } else {
+          this.esPendiente = false;
+          this.listaPendienteId = null;
+        }
+
+        // Actualizar nombres de listas únicas
+        this.listasUsuario = [...new Set(listas.map(l => l.nombre))];
+        
         this.cdr.detectChanges();
       },
-      error: (err) => console.error('Error comprobando favoritos', err)
+      error: (err) => console.error('Error comprobando listas', err)
     });
+  }
+
+  // --- LISTAS PERSONALIZADAS ---
+  abrirModalListas() {
+    if (!this.usuarioId) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    this.mostrarModalListas = true;
+    if (this.id) this.checkListas(this.id);
+  }
+
+  cerrarModalListas() {
+    this.mostrarModalListas = false;
+    this.nuevaListaNombre = "";
+  }
+
+  estaEnLista(nombre: string): boolean {
+    const gameId = this.juego?.id;
+    return this.juegosEnListas.some(l => l.nombre === nombre && l.id_videojuego === gameId);
+  }
+
+  toggleJuegoEnLista(nombre: string) {
+    if (!this.usuarioId || !this.juego || this.procesandoLista) return;
+
+    const itemExistente = this.juegosEnListas.find(l => l.nombre === nombre && l.id_videojuego === this.juego.id);
+    this.procesandoLista = true;
+
+    if (itemExistente) {
+      // Quitar de la lista
+      this.usuariosServicio.eliminarDeLista(itemExistente.id).subscribe({
+        next: () => {
+          if (this.id) this.checkListas(this.id);
+          this.procesandoLista = false;
+        },
+        error: () => this.procesandoLista = false
+      });
+    } else {
+      // Añadir a la lista
+      const payload = {
+        nombre: nombre,
+        id_videojuego: this.juego.id,
+        id_usuario: this.usuarioId
+      };
+      this.usuariosServicio.agregarALista(payload).subscribe({
+        next: () => {
+          if (this.id) this.checkListas(this.id);
+          this.procesandoLista = false;
+        },
+        error: () => this.procesandoLista = false
+      });
+    }
+  }
+
+  crearYAgregarALista() {
+    const nombre = this.nuevaListaNombre.trim();
+    if (!nombre || this.procesandoLista) return;
+    
+    this.toggleJuegoEnLista(nombre);
+    this.nuevaListaNombre = "";
   }
 
   toggleFavorito() {
@@ -218,6 +307,50 @@ export class JuegoDetalle implements OnInit, OnDestroy {
     }
   }
 
+  togglePendiente() {
+    if (!this.usuarioId || !this.juego) return;
+    
+    this.cambiandoPendiente = true;
+    
+    if (this.esPendiente && this.listaPendienteId) {
+      // Remover de pendientes
+      this.usuariosServicio.eliminarDeLista(this.listaPendienteId).subscribe({
+        next: () => {
+          this.esPendiente = false;
+          this.listaPendienteId = null;
+          this.cambiandoPendiente = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Error al remover de pendientes', err);
+          this.cambiandoPendiente = false;
+          this.cdr.detectChanges();
+        }
+      });
+    } else {
+      // Agregar a pendientes
+      const payload = {
+        nombre: 'Videojuegos Pendientes',
+        id_videojuego: this.juego.id,
+        id_usuario: this.usuarioId
+      };
+      
+      this.usuariosServicio.agregarALista(payload).subscribe({
+        next: (nuevaLista: any) => {
+          this.esPendiente = true;
+          this.listaPendienteId = nuevaLista.id;
+          this.cambiandoPendiente = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Error al agregar a pendientes', err);
+          this.cambiandoPendiente = false;
+          this.cdr.detectChanges();
+        }
+      });
+    }
+  }
+
   ngOnDestroy() {
     this.detenerCarruselMedia();
   }
@@ -226,7 +359,6 @@ export class JuegoDetalle implements OnInit, OnDestroy {
   isScrubbing: boolean = false;
 
   onScrubStart(event: MouseEvent | TouchEvent, index: number) {
-    // Evitar drag nativo
     if (event instanceof MouseEvent) {
       event.preventDefault();
     }
@@ -269,14 +401,14 @@ export class JuegoDetalle implements OnInit, OnDestroy {
   siguienteMedia() {
     if (this.mediaItems.length > 0) {
       this.indiceMediaActual = (this.indiceMediaActual + 1) % this.mediaItems.length;
-      this.iniciarCarruselMedia(); // Reset timer
+      this.iniciarCarruselMedia();
     }
   }
 
   anteriorMedia() {
     if (this.mediaItems.length > 0) {
       this.indiceMediaActual = (this.indiceMediaActual - 1 + this.mediaItems.length) % this.mediaItems.length;
-      this.iniciarCarruselMedia(); // Reset timer
+      this.iniciarCarruselMedia();
     }
   }
 
@@ -284,10 +416,84 @@ export class JuegoDetalle implements OnInit, OnDestroy {
   cargarResenas(idVideojuego: number) {
     this.resenasServicio.getResenasPorJuego(idVideojuego).subscribe({
       next: (data) => {
-        this.resenas = data;
+        this.resenas = data.map((r: any) => ({
+          ...r,
+          respuestas: [],
+          mostrarRespuestas: false,
+          nuevaRespuestaTexto: '',
+          respuestaPadreSeleccionada: null as any // { id: number, username: string }
+        }));
+        
+        // Cargar respuestas para cada reseña
+        this.resenas.forEach(resena => {
+          this.respuestasServicio.getRespuestasPorResena(resena.id, this.usuarioId || undefined).subscribe({
+            next: (respuestas) => {
+              resena.respuestas = respuestas;
+              this.cdr.detectChanges();
+            }
+          });
+        });
+        
         this.cdr.detectChanges();
       },
       error: (err) => console.error('Error cargando reseñas', err)
+    });
+  }
+
+  toggleRespuestas(resena: any) {
+    resena.mostrarRespuestas = !resena.mostrarRespuestas;
+    this.cdr.detectChanges();
+  }
+
+  enviarRespuesta(resena: any) {
+    if (!this.usuarioId || !resena.nuevaRespuestaTexto.trim()) return;
+
+    const parentId = resena.respuestaPadreSeleccionada?.id;
+
+    this.respuestasServicio.crearRespuesta(resena.id, this.usuarioId, resena.nuevaRespuestaTexto, parentId).subscribe({
+      next: (nuevaRespuesta) => {
+        // Inicializar campos de UI para la nueva respuesta
+        nuevaRespuesta.votoUsuarioActual = null;
+        resena.respuestas.push(nuevaRespuesta);
+        resena.nuevaRespuestaTexto = '';
+        resena.mostrarRespuestas = true;
+        resena.respuestaPadreSeleccionada = null; // Limpiar selección
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Error enviando respuesta', err)
+    });
+  }
+
+  seleccionarParaResponder(resena: any, resp: any) {
+    resena.respuestaPadreSeleccionada = {
+      id: resp.id,
+      username: resp.nombreUsuario || 'Usuario'
+    };
+    // Scroll al input si es necesario (opcional)
+    this.cdr.detectChanges();
+  }
+
+  cancelarRespuesta(resena: any) {
+    resena.respuestaPadreSeleccionada = null;
+    this.cdr.detectChanges();
+  }
+
+  votarRespuesta(resp: any, esMeGusta: boolean) {
+    if (!this.usuarioId) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    if (resp.id_usuario === this.usuarioId) return;
+
+    this.respuestasServicio.votarRespuesta(resp.id, this.usuarioId, esMeGusta).subscribe({
+      next: (data) => {
+        resp.meGustas = data.meGustas;
+        resp.noMeGustas = data.noMeGustas;
+        resp.votoUsuarioActual = data.votoUsuarioActual;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Error al votar respuesta', err)
     });
   }
 
@@ -321,7 +527,7 @@ export class JuegoDetalle implements OnInit, OnDestroy {
 
     this.resenasServicio.crearResena(payload).subscribe({
       next: (data) => {
-        this.resenas.unshift(data); // Añadir al inicio
+        this.resenas.unshift(data);
         this.enviandoResena = false;
         this.cerrarModalResena();
         this.cdr.detectChanges();
@@ -342,12 +548,10 @@ export class JuegoDetalle implements OnInit, OnDestroy {
       return;
     }
 
-    // Prevent voting on own review
     if (resena.id_usuario === this.usuarioId) return;
 
     this.resenasServicio.votarResena(resena.id, this.usuarioId, esMeGusta).subscribe({
       next: (data) => {
-        // Update the review in the list in-place with fresh data from server
         resena.meGustas = data.meGustas;
         resena.noMeGustas = data.noMeGustas;
         resena.votoUsuarioActual = data.votoUsuarioActual;

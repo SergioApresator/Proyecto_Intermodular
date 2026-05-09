@@ -29,6 +29,29 @@ export class Usuarios {
     return this.http.post(this.url + '/login', { email, password });
   }
 
+  // Obtener usuario por ID
+  getUsuarioById(id: number): Observable<any> {
+    return this.http.get(`${this.url}/${id}`, this.getHeaders());
+  }
+
+  // Actualizar usuario
+  actualizarUsuario(id: number, datos: any): Observable<any> {
+    return this.http.put(`${this.url}/${id}`, datos, this.getHeaders());
+  }
+
+  // Subir foto de perfil (multipart)
+  subirFotoPerfil(id: number, file: File): Observable<any> {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    const formData = new FormData();
+    formData.append('file', file);
+    // No incluir 'Content-Type' manualmente — el navegador lo pone con el boundary correcto
+    return this.http.post(`${this.url}/${id}/foto`, formData, {
+      headers: new HttpHeaders({
+        'Authorization': token ? `Bearer ${token}` : ''
+      })
+    });
+  }
+
   // --- LISTAS Y FAVORITOS ---
   private urlListas = 'http://localhost:9999/api/listas';
 

@@ -45,4 +45,7 @@ public class Respuesta {
     nullable = false, 
     foreignKey=@ForeignKey(value = ConstraintMode.CONSTRAINT, name = "FK_RESPUESTA_USUARIO"))
     private Usuario usuario;
+
+    @Column(name = "ID_RESPUESTA_PADRE")
+    private Long id_respuesta_padre;
 }

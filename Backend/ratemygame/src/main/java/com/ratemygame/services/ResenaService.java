@@ -141,6 +141,8 @@ public class ResenaService {
         dto.setId_videojuego(resena.getId_videojuego());
         if (resena.getUsuario() != null) {
             dto.setId_usuario(resena.getUsuario().getId());
+            dto.setNombreUsuario(resena.getUsuario().getUsername());
+            dto.setFotoUsuario(resena.getUsuario().getFoto_url());
         }
         return dto;
     }

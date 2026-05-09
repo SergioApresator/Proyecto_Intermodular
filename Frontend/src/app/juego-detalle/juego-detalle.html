@@ -86,6 +86,23 @@
           <span class="corazon" [innerHTML]="esFavorito ? '❤️' : '🤍'"></span>
           <span class="texto-fav">{{ esFavorito ? 'En Favoritos' : 'Añadir a Favoritos' }}</span>
         </button>
+
+        <!-- BOTÓN VIDEOJUEGOS PENDIENTES -->
+        <button *ngIf="usuarioId" 
+                class="btn-pendiente lateral-btn" 
+                [class.activo]="esPendiente" 
+                [disabled]="cambiandoPendiente"
+                (click)="togglePendiente()">
+          <span class="icono-pendiente">{{ esPendiente ? '🔖' : '📑' }}</span>
+          <span class="texto-pendiente">{{ esPendiente ? 'En Pendientes' : 'Añadir a Pendientes' }}</span>
+        </button>
+
+        <!-- BOTÓN AÑADIR A LISTA -->
+        <button *ngIf="usuarioId" class="btn-listas lateral-btn" (click)="abrirModalListas()">
+          <span class="icono-lista">➕</span>
+          <span class="texto-lista">Añadir a una lista</span>
+        </button>
+
         <button class="btn-resenar lateral-btn" (click)="abrirModalResena()">
           <span class="icono-resena">✍️</span>
           <span class="texto-resena">{{ usuarioId ? 'Escribir Reseña' : 'Logeate para reseñar' }}</span>
@@ -142,8 +159,14 @@
       <div class="tarjeta-resena" *ngFor="let resena of resenas">
         <div class="resena-header">
           <div class="resena-usuario">
-            <div class="avatar-usuario">{{ resena.id_usuario }}</div> <!-- Idealmente mostrar el nombre -->
-            <span class="fecha-resena">{{ resena.fechaResena | date:'mediumDate' }}</span>
+            <div class="avatar-usuario">
+              <img *ngIf="resena.fotoUsuario" [src]="resena.fotoUsuario" [alt]="resena.nombreUsuario" class="avatar-img-mini">
+              <span *ngIf="!resena.fotoUsuario">{{ resena.nombreUsuario?.charAt(0) || '?' }}</span>
+            </div>
+            <div class="usuario-meta-info">
+              <span class="nombre-usuario-texto">{{ resena.nombreUsuario || 'Usuario' }}</span>
+              <span class="fecha-resena">{{ resena.fechaResena | date:'mediumDate' }}</span>
+            </div>
           </div>
           <div class="resena-puntuacion">
             <span class="estrella" *ngFor="let _ of [].constructor(resena.puntuacion)">⭐</span>
@@ -165,6 +188,76 @@
           <!-- Si no tiene spoiler se muestra normal -->
             <p *ngIf="!resena.tieneSpoiler">{{ resena.mensaje }}</p>
         </div>
+
+        <!-- SECCIÓN DE RESPUESTAS (COMENTARIOS) -->
+        <div class="seccion-respuestas">
+          <div class="respuestas-header">
+            <button class="btn-toggle-respuestas" (click)="toggleRespuestas(resena)">
+              {{ resena.mostrarRespuestas ? 'Ocultar' : 'Ver' }} comentarios ({{ resena.respuestas?.length || 0 }})
+            </button>
+          </div>
+
+          <div class="lista-respuestas" *ngIf="resena.mostrarRespuestas">
+            <div class="tarjeta-respuesta" *ngFor="let resp of resena.respuestas">
+              <!-- Indicador de respuesta a otro comentario -->
+              <div class="mencion-padre" *ngIf="resp.nombreUsuarioPadre">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 10 20 15 15 20"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></svg>
+                Respondiendo a @{{ resp.nombreUsuarioPadre }}
+              </div>
+
+              <div class="respuesta-meta">
+                <div class="avatar-respuesta">
+                  <img *ngIf="resp.fotoUsuario" [src]="resp.fotoUsuario" [alt]="resp.nombreUsuario" class="avatar-img-micro">
+                  <span *ngIf="!resp.fotoUsuario">{{ resp.nombreUsuario?.charAt(0) || '?' }}</span>
+                </div>
+                <span class="respuesta-usuario">@{{ resp.nombreUsuario || 'Usuario' }}</span>
+              </div>
+              <p class="respuesta-mensaje">{{ resp.mensaje }}</p>
+              
+              <!-- Votos y Acción de Responder -->
+              <div class="acciones-respuesta-footer">
+                <div class="votos-grupo">
+                  <button class="btn-voto-mini" 
+                          [class.activo]="resp.votoUsuarioActual === true"
+                          [disabled]="resp.id_usuario === usuarioId"
+                          (click)="votarRespuesta(resp, true)">
+                    👍 <span>{{ resp.meGustas || 0 }}</span>
+                  </button>
+                  <button class="btn-voto-mini"
+                          [class.activo]="resp.votoUsuarioActual === false"
+                          [disabled]="resp.id_usuario === usuarioId"
+                          (click)="votarRespuesta(resp, false)">
+                    👎 <span>{{ resp.noMeGustas || 0 }}</span>
+                  </button>
+                </div>
+                
+                <button class="btn-responder-comentario" (click)="seleccionarParaResponder(resena, resp)" *ngIf="usuarioId">
+                  Responder
+                </button>
+              </div>
+            </div>
+
+            <!-- Formulario para responder -->
+            <div class="form-respuesta-contenedor" *ngIf="usuarioId">
+              <div class="indicador-respuesta-activa" *ngIf="resena.respuestaPadreSeleccionada">
+                <span>Respondiendo a <strong>@{{ resena.respuestaPadreSeleccionada.username }}</strong></span>
+                <button (click)="cancelarRespuesta(resena)" class="btn-cancelar-mencion">&times;</button>
+              </div>
+
+              <div class="form-respuesta">
+                <input type="text" 
+                       [(ngModel)]="resena.nuevaRespuestaTexto" 
+                       placeholder="Escribe un comentario..."
+                       (keyup.enter)="enviarRespuesta(resena)">
+                <button (click)="enviarRespuesta(resena)" [disabled]="!resena.nuevaRespuestaTexto.trim()">
+                  {{ resena.respuestaPadreSeleccionada ? 'Responder' : 'Comentar' }}
+                </button>
+              </div>
+            </div>
+            <p class="login-prompt" *ngIf="!usuarioId">Logeate para comentar</p>
+          </div>
+        </div>
+
         <div class="acciones-voto">
           <button class="btn-voto like" 
                   [class.activo]="resena.votoUsuarioActual === true"
@@ -219,6 +312,54 @@
       <button class="btn-primario" (click)="enviarResena()" [disabled]="enviandoResena || !nuevaResena.mensaje.trim()">
         {{ enviandoResena ? 'Enviando...' : 'Publicar Reseña' }}
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DE LISTAS PERSONALIZADAS -->
+<div class="modal-overlay" *ngIf="mostrarModalListas" (click)="cerrarModalListas()">
+  <div class="modal-content modal-listas" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Guardar en mis listas</h3>
+      <button class="btn-cerrar" (click)="cerrarModalListas()">&times;</button>
+    </div>
+    
+    <div class="modal-body">
+      <!-- Listas Existentes -->
+      <div class="listas-existentes" *ngIf="listasUsuario.length > 0">
+        <div class="lista-item" *ngFor="let nombre of listasUsuario">
+          <label class="checkbox-container">
+            <input type="checkbox" 
+                   [checked]="estaEnLista(nombre)" 
+                   (change)="toggleJuegoEnLista(nombre)">
+            <span class="checkmark"></span>
+            <span class="nombre-lista">{{ nombre }}</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="sin-listas" *ngIf="listasUsuario.length === 0">
+        <p>No tienes listas todavía. ¡Crea la primera!</p>
+      </div>
+
+      <!-- Crear Nueva Lista -->
+      <div class="nueva-lista-form">
+        <div class="form-group">
+          <label for="nueva-lista">Nueva Lista</label>
+          <div class="input-con-boton">
+            <input id="nueva-lista" 
+                   type="text" 
+                   [(ngModel)]="nuevaListaNombre" 
+                   placeholder="Nombre de la lista..."
+                   (keyup.enter)="crearYAgregarALista()">
+            <button class="btn-crear" 
+                    [disabled]="!nuevaListaNombre.trim() || procesandoLista"
+                    (click)="crearYAgregarALista()">
+              Añadir
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
