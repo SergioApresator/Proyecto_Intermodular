@@ -69,9 +69,20 @@ export class Diario implements OnInit {
 
     this.resenasServicio.getRespuestasPorUsuario(this.usuarioId).subscribe({
       next: (respuesta: any) => {
-        console.log('Respuestas:', respuesta);
         this.respuestas = respuesta.sort((a: any, b: any) => {
           return b.id - a.id;
+        });
+        //Por cada respuesta cargamos el mensaje de la resena a la que pertenece
+        this.respuestas.forEach((resp: any) => {
+          this.resenasServicio.getResenaPorId(resp.id_resena).subscribe({
+            next: (resena: any) => {
+              resp.mensajeResena = resena.mensaje;
+              this.cdr.detectChanges();
+            },
+            error: (err: any) => {
+              console.log('Error al cargar la resena', err);
+            }
+          });
         });
         this.cdr.detectChanges();
       },

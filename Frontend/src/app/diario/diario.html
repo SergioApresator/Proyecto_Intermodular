@@ -49,13 +49,19 @@
             <span class="resena-fecha">{{ resena.fechaResena | date:'dd/MM/yyyy' }}</span>
           </div>
 
-          <!-- Aviso de spoiler -->
-          <div class="resena-spoiler" *ngIf="resena.tieneSpoiler">
-            Contiene spoilers
+          <!-- Si tiene spoiler lo ocultamos con un boton para verlo -->
+          <div *ngIf="resena.tieneSpoiler">
+            <div class="resena-spoiler">
+                Contiene spoilers
+              <button class="btn-spoiler" (click)="resena.mostrarSpoiler = !resena.mostrarSpoiler">
+                {{ resena.mostrarSpoiler ? 'Ocultar' : 'Ver igualmente' }}
+              </button>
+            </div>
+            <p class="resena-mensaje" *ngIf="resena.mostrarSpoiler">{{ resena.mensaje }}</p>
           </div>
 
-          <!-- Mensaje de la resena -->
-          <p class="resena-mensaje">{{ resena.mensaje }}</p>
+          <!-- Si no tiene spoiler se muestra normal -->
+            <p class="resena-mensaje" *ngIf="!resena.tieneSpoiler">{{ resena.mensaje }}</p>
 
           <!-- Me gusta y no me gusta -->
           <div class="resena-pie">
@@ -79,6 +85,11 @@
       <!-- Lista de respuestas -->
       <div *ngIf="respuestas.length > 0" class="lista-resenas">
         <div *ngFor="let respuesta of respuestas" class="tarjeta-resena">
+
+          <!-- Mensaje de la resena a la que se ha respondido -->
+          <div class="resena-juego" *ngIf="respuesta.mensajeResena">
+            <span class="resena-juego-nombre">Respondiendo a: "{{ respuesta.mensajeResena }}"</span>
+          </div>
 
           <!-- Mensaje de la respuesta -->
           <p class="resena-mensaje">{{ respuesta.mensaje }}</p>

@@ -38,4 +38,9 @@ export class ResenasService {
   getRespuestasPorUsuario(idUsuario: number): Observable<any> {
     return this.http.get(`http://localhost:9999/api/respuestas/usuario/${idUsuario}`, this.getHeaders());
   }
+
+  // Obtener reseña por id
+  getResenaPorId(id: number): Observable<any> {
+    return this.http.get(`${this.urlResenas}/${id}`, this.getHeaders());
+  }
 }

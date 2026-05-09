@@ -4,11 +4,12 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Videojuegos } from '../videojuegos';
+import { Footer } from '../footer/footer';
 
 @Component({
   selector: 'app-inicial',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, Footer],
   templateUrl: './inicial.html',
   styleUrl: './inicial.css',
 })

@@ -79,7 +79,7 @@ export class Videojuegos {
 
   //Obtiene detalles completos de un juego
   getJuegoDetalles(id: string): Observable<any> {
-    return this.http.get(`${this.url}/games/${id}?key=${this.apiKey}`);
+    return this.http.get(`${this.url}/games/${id}?key=${this.apiKey}&language=es`);
   }
 
   //Obtiene capturas de pantalla de un juego
