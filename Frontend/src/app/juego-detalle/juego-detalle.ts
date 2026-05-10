@@ -166,6 +166,8 @@ export class JuegoDetalle implements OnInit, OnDestroy {
     });
   }
 
+
+
   checkListas(gameIdStr: string) {
     if (!this.usuarioId) return;
     const gameId = parseInt(gameIdStr, 10);
@@ -264,7 +266,11 @@ export class JuegoDetalle implements OnInit, OnDestroy {
   }
 
   toggleFavorito() {
-    if (!this.usuarioId || !this.juego) return;
+    if (!this.usuarioId) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    if (!this.juego) return;
     
     this.cambiandoFavorito = true;
     
@@ -308,7 +314,11 @@ export class JuegoDetalle implements OnInit, OnDestroy {
   }
 
   togglePendiente() {
-    if (!this.usuarioId || !this.juego) return;
+    if (!this.usuarioId) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    if (!this.juego) return;
     
     this.cambiandoPendiente = true;
     
@@ -445,8 +455,21 @@ export class JuegoDetalle implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
-  enviarRespuesta(resena: any) {
-    if (!this.usuarioId || !resena.nuevaRespuestaTexto.trim()) return;
+  seleccionarParaResponder(resena: any, respuesta: any) {
+    if (!this.usuarioId) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    resena.respuestaPadreSeleccionada = respuesta;
+    this.cdr.detectChanges();
+  }
+
+  crearRespuesta(resena: any) {
+    if (!this.usuarioId) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    if (!resena.nuevaRespuestaTexto?.trim()) return;
 
     const parentId = resena.respuestaPadreSeleccionada?.id;
 
@@ -464,33 +487,24 @@ export class JuegoDetalle implements OnInit, OnDestroy {
     });
   }
 
-  seleccionarParaResponder(resena: any, resp: any) {
-    resena.respuestaPadreSeleccionada = {
-      id: resp.id,
-      username: resp.nombreUsuario || 'Usuario'
-    };
-    // Scroll al input si es necesario (opcional)
-    this.cdr.detectChanges();
-  }
-
   cancelarRespuesta(resena: any) {
     resena.respuestaPadreSeleccionada = null;
     this.cdr.detectChanges();
   }
 
-  votarRespuesta(resp: any, esMeGusta: boolean) {
+  votarRespuesta(resena: any, respuesta: any, esMeGusta: boolean) {
     if (!this.usuarioId) {
       this.router.navigate(['/login']);
       return;
     }
-
-    if (resp.id_usuario === this.usuarioId) return;
-
-    this.respuestasServicio.votarRespuesta(resp.id, this.usuarioId, esMeGusta).subscribe({
+    
+    const yaVotoLoMismo = (esMeGusta && respuesta.votoUsuario === 1) || (!esMeGusta && respuesta.votoUsuario === -1);
+    
+    this.respuestasServicio.votarRespuesta(respuesta.id, this.usuarioId, esMeGusta).subscribe({
       next: (data) => {
-        resp.meGustas = data.meGustas;
-        resp.noMeGustas = data.noMeGustas;
-        resp.votoUsuarioActual = data.votoUsuarioActual;
+        respuesta.meGustas = data.meGustas;
+        respuesta.noMeGustas = data.noMeGustas;
+        respuesta.votoUsuarioActual = data.votoUsuarioActual;
         this.cdr.detectChanges();
       },
       error: (err) => console.error('Error al votar respuesta', err)
@@ -547,8 +561,9 @@ export class JuegoDetalle implements OnInit, OnDestroy {
       this.router.navigate(['/login']);
       return;
     }
-
-    if (resena.id_usuario === this.usuarioId) return;
+    
+    // Si ya votó lo mismo, quitamos el voto
+    const yaVotoLoMismo = (esMeGusta && resena.votoUsuario === 1) || (!esMeGusta && resena.votoUsuario === -1);
 
     this.resenasServicio.votarResena(resena.id, this.usuarioId, esMeGusta).subscribe({
       next: (data) => {
