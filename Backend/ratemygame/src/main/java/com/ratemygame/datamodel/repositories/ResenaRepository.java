@@ -14,4 +14,6 @@ public interface ResenaRepository extends JpaRepository<Resena, Long> {
     
     @Query("SELECT r FROM Resena r WHERE r.id_videojuego = :idVideojuego")
     List<Resena> findByIdVideojuego(@Param("idVideojuego") Long idVideojuego);
+
+    List<Resena> findTop10ByOrderByFechaResenaDescIdDesc();
 }

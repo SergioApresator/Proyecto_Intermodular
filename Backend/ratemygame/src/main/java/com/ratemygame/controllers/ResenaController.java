@@ -28,6 +28,11 @@ public class ResenaController {
         return ResponseEntity.ok(resenaService.getResenasByUsuario(idUsuario));
     }
 
+    @GetMapping("/recientes")
+    public ResponseEntity<List<ResenaDTO>> getRecentReviews() {
+        return ResponseEntity.ok(resenaService.getRecentReviews());
+    }
+
     @PostMapping
     public ResponseEntity<ResenaDTO> createResena(@RequestBody ResenaDTO resenaDTO) {
         return resenaService.createResena(resenaDTO)

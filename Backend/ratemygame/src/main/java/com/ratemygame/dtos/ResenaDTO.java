@@ -16,5 +16,7 @@ public class ResenaDTO {
     private String nombreUsuario;
     private String fotoUsuario;
     private Long id_videojuego;
+    private String nombreVideojuego;
+    private String fotoVideojuego;
     private Boolean votoUsuarioActual; // true = me gusta, false = no me gusta, null = no ha votado
 }

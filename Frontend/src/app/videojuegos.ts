@@ -14,9 +14,32 @@ export class Videojuegos {
 
   ///// PAGINA INICIAL - LISTAS HORIZONTALES /////
 
-  //Obtiene juegos destacados para el carrusel
+  //Obtiene juegos destacados para el carrusel (Top Rated All Time)
   getJuegosDestacados(): Observable<any> {
     return this.http.get(`${this.url}/games?key=${this.apiKey}&ordering=-rating&page_size=10`);
+  }
+
+  // NUEVO: Obtiene juegos en tendencia (lanzados en los últimos 30 días con más actividad)
+  getTrendingLast30Days(): Observable<any> {
+    const hoy = new Date();
+    const hace30Dias = new Date();
+    hace30Dias.setDate(hoy.getDate() - 30);
+    
+    const hoyStr = hoy.toISOString().split('T')[0];
+    const hace30DiasStr = hace30Dias.toISOString().split('T')[0];
+    
+    return this.http.get(`${this.url}/games?key=${this.apiKey}&dates=${hace30DiasStr},${hoyStr}&ordering=-added&page_size=10`);
+  }
+
+  // NUEVO: Mejores juegos del año actual
+  getBestGamesOfYear(): Observable<any> {
+    const anioActual = new Date().getFullYear();
+    return this.http.get(`${this.url}/games?key=${this.apiKey}&dates=${anioActual}-01-01,${anioActual}-12-31&ordering=-rating&page_size=10`);
+  }
+
+  // NUEVO: Top Metacritic
+  getMetacriticTop(): Observable<any> {
+    return this.http.get(`${this.url}/games?key=${this.apiKey}&ordering=-metacritic&page_size=10`);
   }
 
   //Obtiene juegos por genero para las listas horizontales

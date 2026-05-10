@@ -538,7 +538,9 @@ export class JuegoDetalle implements OnInit, OnDestroy {
     const payload = {
       ...this.nuevaResena,
       id_usuario: this.usuarioId,
-      id_videojuego: this.juego.id
+      id_videojuego: this.juego.id,
+      nombreVideojuego: this.juego.name,
+      fotoVideojuego: this.juego.background_image
     };
 
     this.resenasServicio.crearResena(payload).subscribe({

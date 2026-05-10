@@ -52,4 +52,10 @@ public class Resena {
 
     @Column(name = "ID_VIDEOJUEGO")
     private Long id_videojuego;
+
+    @Column(name = "NOMBRE_VIDEOJUEGO")
+    private String nombreVideojuego;
+
+    @Column(name = "FOTO_VIDEOJUEGO")
+    private String fotoVideojuego;
 }

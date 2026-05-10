@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Videojuegos } from '../videojuegos';
+import { ResenasService } from '../resenas';
 import { Footer } from '../footer/footer';
 
 @Component({
@@ -16,10 +17,15 @@ import { Footer } from '../footer/footer';
 
 export class Inicial implements OnInit, OnDestroy {
 
-  //Inyecto el servicio y el detector de cambios
-  constructor(private videojuegosServicio: Videojuegos, private cdr: ChangeDetectorRef, private route: ActivatedRoute) { }
+  constructor(
+    private videojuegosServicio: Videojuegos, 
+    private resenasServicio: ResenasService,
+    private cdr: ChangeDetectorRef, 
+    private route: ActivatedRoute
+  ) { }
 
   juegosDestacados: any[] = [];
+  juegoSpotlight: any = null;
   indiceCarrusel: number = 0;
   intervaloCarrusel: any = null;
   cargando: boolean = true;
@@ -29,6 +35,12 @@ export class Inicial implements OnInit, OnDestroy {
   juegosRPG: any[] = [];
   masPopulares: any[] = [];
   proximosLanzamientos: any[] = [];
+  
+  // Nuevas fuentes de datos
+  juegosTendencia: any[] = [];
+  mejoresDelAnio: any[] = [];
+  topMetacritic: any[] = [];
+  resenasRecientes: any[] = [];
 
   // Buscador y Filtros
   terminoBusqueda: string = '';
@@ -70,7 +82,6 @@ export class Inicial implements OnInit, OnDestroy {
   ];
 
   ngOnInit() {
-
     this.route.queryParams.subscribe(params => {
       if (params['q']) {
         this.terminoBusqueda = params['q'];
@@ -80,70 +91,66 @@ export class Inicial implements OnInit, OnDestroy {
       }
     });
 
-    this.videojuegosServicio.getJuegosDestacados().subscribe({
-      next: (respuesta: any) => {
-        this.juegosDestacados = respuesta.results;
+    // Cargar datos iniciales
+    this.cargarDatosPrincipales();
+  }
+
+  cargarDatosPrincipales() {
+    this.cargando = true;
+
+    // 1. Juegos Tendencia (para Spotlight)
+    this.videojuegosServicio.getTrendingLast30Days().subscribe({
+      next: (resp) => {
+        this.juegosTendencia = resp.results;
+        if (this.juegosTendencia.length > 0) {
+          this.juegoSpotlight = this.juegosTendencia[0];
+          // Los demás al carrusel
+          this.juegosDestacados = this.juegosTendencia.slice(1, 6);
+          this.iniciarCarrusel();
+        }
         this.cargando = false;
         this.cdr.detectChanges();
-        this.intervaloCarrusel = setInterval(() => {
-          this.siguienteSlide();
-        }, 4000);
       },
-      error: (err: any) => {
-        console.log('Error al cargar juegos destacados', err);
-        this.cargando = false;
+      error: (err) => console.error(err)
+    });
+
+    // 2. Mejores del Año
+    this.videojuegosServicio.getBestGamesOfYear().subscribe({
+      next: (resp) => {
+        this.mejoresDelAnio = resp.results;
+        this.cdr.detectChanges();
       }
     });
 
-    this.videojuegosServicio.getJuegosPorGenero('action').subscribe({
-      next: (respuesta: any) => {
-        this.juegosAccion = respuesta.results;
+    // 3. Top Metacritic
+    this.videojuegosServicio.getMetacriticTop().subscribe({
+      next: (resp) => {
+        this.topMetacritic = resp.results;
         this.cdr.detectChanges();
-      },
-      error: (err: any) => {
-        console.log('Error al cargar juegos de accion', err);
       }
     });
 
-    this.videojuegosServicio.getJuegosPorGenero('horror').subscribe({
-      next: (respuesta: any) => {
-        this.juegosHorror = respuesta.results;
+    // 4. Reseñas Recientes (Backend)
+    this.resenasServicio.getResenasRecientes().subscribe({
+      next: (resp) => {
+        this.resenasRecientes = resp;
         this.cdr.detectChanges();
-      },
-      error: (err: any) => {
-        console.log('Error al cargar juegos de terror', err);
       }
     });
 
-    this.videojuegosServicio.getJuegosPorGenero('role-playing-games-rpg').subscribe({
-      next: (respuesta: any) => {
-        this.juegosRPG = respuesta.results;
-        this.cdr.detectChanges();
-      },
-      error: (err: any) => {
-        console.log('Error al cargar juegos RPG', err);
-      }
-    });
+    // Cargar géneros y populares (mantener algunos para las secciones)
+    this.videojuegosServicio.getJuegosPorGenero('action').subscribe(r => { this.juegosAccion = r.results; this.cdr.detectChanges(); });
+    this.videojuegosServicio.getJuegosPorGenero('horror').subscribe(r => { this.juegosHorror = r.results; this.cdr.detectChanges(); });
+    this.videojuegosServicio.getJuegosPorGenero('role-playing-games-rpg').subscribe(r => { this.juegosRPG = r.results; this.cdr.detectChanges(); });
+    this.videojuegosServicio.getMasPopulares().subscribe(r => { this.masPopulares = r.results; this.cdr.detectChanges(); });
+    this.videojuegosServicio.getProximosLanzamientos().subscribe(r => { this.proximosLanzamientos = r.results; this.cdr.detectChanges(); });
+  }
 
-    this.videojuegosServicio.getMasPopulares().subscribe({
-      next: (respuesta: any) => {
-        this.masPopulares = respuesta.results;
-        this.cdr.detectChanges();
-      },
-      error: (err: any) => {
-        console.log('Error al cargar populares', err);
-      }
-    });
-
-    this.videojuegosServicio.getProximosLanzamientos().subscribe({
-      next: (respuesta: any) => {
-        this.proximosLanzamientos = respuesta.results;
-        this.cdr.detectChanges();
-      },
-      error: (err: any) => {
-        console.log('Error al cargar proximos lanzamientos', err);
-      }
-    });
+  iniciarCarrusel() {
+    if (this.intervaloCarrusel) clearInterval(this.intervaloCarrusel);
+    this.intervaloCarrusel = setInterval(() => {
+      this.siguienteSlide();
+    }, 5000);
   }
 
   ngOnDestroy() {
@@ -154,25 +161,17 @@ export class Inicial implements OnInit, OnDestroy {
 
   siguienteSlide() {
     if (this.juegosDestacados.length > 0) {
-        this.indiceCarrusel = (this.indiceCarrusel + 1) % this.juegosDestacados.length;
-        //Se reinicia para no saltar pasos
-        clearInterval(this.intervaloCarrusel);
-        this.intervaloCarrusel = setInterval(() => {
-            this.siguienteSlide();
-        }, 4000);
+      this.indiceCarrusel = (this.indiceCarrusel + 1) % this.juegosDestacados.length;
+      this.iniciarCarrusel();
     }
-}
+  }
 
-anteriorSlide() {
+  anteriorSlide() {
     if (this.juegosDestacados.length > 0) {
-        this.indiceCarrusel = (this.indiceCarrusel - 1 + this.juegosDestacados.length) % this.juegosDestacados.length;
-        //Se reinicia para no saltar pasos
-        clearInterval(this.intervaloCarrusel);
-        this.intervaloCarrusel = setInterval(() => {
-            this.siguienteSlide();
-        }, 4000);
+      this.indiceCarrusel = (this.indiceCarrusel - 1 + this.juegosDestacados.length) % this.juegosDestacados.length;
+      this.iniciarCarrusel();
     }
-}
+  }
 
   buscar() {
     if (this.terminoBusqueda.trim().length === 0 && !this.filtros.genero && !this.filtros.plataforma) {
@@ -207,5 +206,9 @@ anteriorSlide() {
     this.resultadosBusqueda = [];
     this.busquedaRealizada = false;
     this.cdr.detectChanges();
+  }
+
+  getEstrellas(puntuacion: number): number[] {
+    return Array(Math.floor(puntuacion)).fill(0);
   }
 }

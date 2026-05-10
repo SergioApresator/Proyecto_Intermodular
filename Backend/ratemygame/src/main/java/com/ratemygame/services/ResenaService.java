@@ -56,6 +56,8 @@ public class ResenaService {
         resena.setNoMeGustas(0);
         resena.setFechaResena(LocalDate.now());
         resena.setId_videojuego(resenaDTO.getId_videojuego());
+        resena.setNombreVideojuego(resenaDTO.getNombreVideojuego());
+        resena.setFotoVideojuego(resenaDTO.getFotoVideojuego());
         resena.setUsuario(usuarioOpt.get());
 
         Resena savedResena = resenaRepository.save(resena);
@@ -139,6 +141,8 @@ public class ResenaService {
         dto.setNoMeGustas(resena.getNoMeGustas());
         dto.setFechaResena(resena.getFechaResena());
         dto.setId_videojuego(resena.getId_videojuego());
+        dto.setNombreVideojuego(resena.getNombreVideojuego());
+        dto.setFotoVideojuego(resena.getFotoVideojuego());
         if (resena.getUsuario() != null) {
             dto.setId_usuario(resena.getUsuario().getId());
             dto.setNombreUsuario(resena.getUsuario().getUsername());
@@ -149,5 +153,11 @@ public class ResenaService {
 
     public Optional<ResenaDTO> getResenaById(Long id) {
         return resenaRepository.findById(id).map(this::convertToDTO);
+    }
+
+    public List<ResenaDTO> getRecentReviews() {
+        return resenaRepository.findTop10ByOrderByFechaResenaDescIdDesc().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 }

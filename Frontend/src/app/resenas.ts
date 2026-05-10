@@ -48,4 +48,9 @@ export class ResenasService {
   votarResena(idResena: number, idUsuario: number, esMeGusta: boolean): Observable<any> {
     return this.http.post(`${this.urlResenas}/${idResena}/votar`, { idUsuario, esMeGusta }, this.getHeaders());
   }
+
+  // Obtener reseñas recientes de toda la comunidad
+  getResenasRecientes(): Observable<any> {
+    return this.http.get(`${this.urlResenas}/recientes`, this.getHeaders());
+  }
 }
