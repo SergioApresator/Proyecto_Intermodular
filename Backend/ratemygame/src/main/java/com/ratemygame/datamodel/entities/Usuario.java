@@ -46,6 +46,9 @@ public class Usuario {
     @Column(name = "FOTO_URL")
     private String foto_url;
 
+    @Column(name = "BANNER_URL")
+    private String bannerUrl;
+
     @Column(name = "BIOGRAFIA", length = 500)
     private String biografia;
 

@@ -128,4 +128,47 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    /**
+     * Endpoint para subir la foto de banner de un usuario.
+     * Acepta multipart/form-data con el campo "file".
+     * Guarda la imagen en disco y actualiza banner_url en la BD.
+     */
+    @PostMapping(value = "/{id}/banner", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<UsuarioDTO> subirBanner(
+        @PathVariable Long id,
+        @RequestParam("file") MultipartFile file) {
+
+    if (file.isEmpty()) {
+        return ResponseEntity.badRequest().build();
+    }
+
+    String contentType = file.getContentType();
+    if (contentType == null || !contentType.startsWith("image/")) {
+        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).build();
+    }
+
+    try {
+        Path uploadPath = Paths.get(uploadDir);
+        Files.createDirectories(uploadPath);
+
+        String originalFilename = file.getOriginalFilename();
+        String extension = (originalFilename != null && originalFilename.contains("."))
+                ? originalFilename.substring(originalFilename.lastIndexOf("."))
+                : ".jpg";
+        String uniqueFilename = "banner_" + id + "_" + UUID.randomUUID().toString().substring(0, 8) + extension;
+
+        Path filePath = uploadPath.resolve(uniqueFilename);
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+        String bannerUrl = "http://localhost:9999/uploads/fotos-perfil/" + uniqueFilename;
+
+        return usuarioService.actualizarBannerUrl(id, bannerUrl)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+
+    } catch (IOException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }

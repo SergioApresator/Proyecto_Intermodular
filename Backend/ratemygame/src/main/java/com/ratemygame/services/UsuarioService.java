@@ -84,6 +84,13 @@ public class UsuarioService {
         });
     }
 
+    public Optional<UsuarioDTO> actualizarBannerUrl(Long id, String bannerUrl) {
+    return usuarioRepository.findById(id).map(usuario -> {
+        usuario.setBannerUrl(bannerUrl);
+        return convertToDTO(usuarioRepository.save(usuario));
+    });
+}
+
     public boolean deleteUsuario(Long id) {
         if (usuarioRepository.existsById(id)) {
             usuarioRepository.deleteById(id);
@@ -100,6 +107,7 @@ public class UsuarioService {
         dto.setUsername(usuario.getUsername());
         dto.setEmail(usuario.getEmail());
         dto.setFoto_url(usuario.getFoto_url());
+        dto.setBanner_url(usuario.getBannerUrl());
         dto.setBiografia(usuario.getBiografia());
         return dto;
     }
