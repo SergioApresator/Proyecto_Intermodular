@@ -250,8 +250,8 @@
                 <input type="text" 
                        [(ngModel)]="resena.nuevaRespuestaTexto" 
                        placeholder="Escribe un comentario..."
-                       (keyup.enter)="crearRespuesta(resena)">
-                <button (click)="crearRespuesta(resena)" [disabled]="!resena.nuevaRespuestaTexto?.trim()">
+                       (keyup.enter)="enviarRespuesta(resena)">
+                <button (click)="enviarRespuesta(resena)" [disabled]="!resena.nuevaRespuestaTexto?.trim()">
                   {{ resena.respuestaPadreSeleccionada ? 'Responder' : 'Comentar' }}
                 </button>
               </div>

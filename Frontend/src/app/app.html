@@ -1,13 +1,13 @@
 <div class="navbar">
-  <img src="assets/logoGaming-removebg-preview.png" alt="Logo Gaming">
+  <img src="assets/logo-clean.png" alt="Logo Gaming" class="navbar-logo">
 
   <div class="nav-links">
-    <a routerLink="/inicial" routerLinkActive="active-link">Página Inicial</a>
-    <a routerLink="/diario" routerLinkActive="active-link">Diario</a>
-    <a routerLink="/acerca-de" routerLinkActive="active-link">Acerca de</a>
+    <a routerLink="/inicial" routerLinkActive="active-link"><span>Página Inicial</span></a>
+    <a routerLink="/diario" routerLinkActive="active-link"><span>Diario</span></a>
+    <a routerLink="/acerca-de" routerLinkActive="active-link"><span>Acerca de</span></a>
     <ng-container *ngIf="!estaLogueado">
-      <a routerLink="/registro" routerLinkActive="active-link">Registrarse</a>
-      <a routerLink="/login" routerLinkActive="active-link">Iniciar Sesión</a>
+      <a routerLink="/registro" routerLinkActive="active-link"><span>Registrarse</span></a>
+      <a routerLink="/login" routerLinkActive="active-link"><span>Iniciar Sesión</span></a>
     </ng-container>
   </div>
 
@@ -23,45 +23,53 @@
     </button>
   </div>
 
-  <!-- User menu (shown when logged in) -->
-  <div class="user-menu" *ngIf="estaLogueado" (click)="toggleDropdown()">
-    <div class="avatar-wrapper">
-      <img *ngIf="fotoUrl" [src]="fotoUrl" alt="Foto de perfil" class="avatar-img">
-      <div *ngIf="!fotoUrl" class="avatar-initials">{{ getInitials() }}</div>
-    </div>
-    <span class="username-label">{{ username }}</span>
-    <svg class="chevron" [class.rotated]="mostrarDropdown" xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-      stroke-linejoin="round">
-      <polyline points="6 9 12 15 18 9"></polyline>
-    </svg>
+  <!-- Overwatch Style User Menu -->
+  <div class="user-menu-ow" *ngIf="estaLogueado">
+    
+    <!-- Large Profile Picture (Clickable) -->
+    <a routerLink="/perfil" class="avatar-container-ow">
+      <img *ngIf="fotoUrl" [src]="fotoUrl" alt="Foto de perfil" class="avatar-img-ow">
+      <div *ngIf="!fotoUrl" class="avatar-initials-ow">{{ getInitials() }}</div>
+    </a>
 
-    <!-- Dropdown -->
-    <div class="dropdown-menu" *ngIf="mostrarDropdown" (click)="$event.stopPropagation()">
-      <div class="dropdown-header">
-        <div class="avatar-wrapper sm">
-          <img *ngIf="fotoUrl" [src]="fotoUrl" alt="Foto de perfil" class="avatar-img">
-          <div *ngIf="!fotoUrl" class="avatar-initials">{{ getInitials() }}</div>
-        </div>
-        <div class="dropdown-user-info">
-          <span class="dropdown-username">{{ username }}</span>
+    <!-- Dropdown Player Card (Shows on Hover) -->
+    <div class="player-card-ow">
+      <div class="player-card-header">
+        
+        <!-- Banner Background -->
+        <div class="card-banner-img" [style.backgroundImage]="'url(' + bannerUrl + ')'"></div>
+        <div class="card-banner-overlay"></div>
+
+        <div class="card-header-content">
+          <div class="card-avatar-mini">
+            <img *ngIf="fotoUrl" [src]="fotoUrl" alt="Mini foto" class="avatar-img-ow">
+            <div *ngIf="!fotoUrl" class="avatar-initials-ow sm">{{ getInitials() }}</div>
+          </div>
+          
+          <div class="card-user-info">
+            <div class="player-card-banner">
+              <div class="banner-accent"></div>
+              <span class="player-card-name">{{ username }}</span>
+            </div>
+            <div class="player-card-sub">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"></path></svg>
+              <span>{{ username }} #{{ userId || '0000' }}</span>
+            </div>
+          </div>
         </div>
       </div>
-      <hr class="dropdown-divider">
-      <a class="dropdown-item perfil-item" routerLink="/perfil" (click)="mostrarDropdown = false" id="link-mi-perfil">
-        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-        Mi perfil
-      </a>
-      <hr class="dropdown-divider">
-      <button class="dropdown-item logout-item" (click)="cerrarSesion()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-          <polyline points="16 17 21 12 16 7"></polyline>
-          <line x1="21" y1="12" x2="9" y2="12"></line>
-        </svg>
-        Cerrar sesión
-      </button>
+      
+      <div class="player-card-options">
+        <div class="options-label">OPCIONES DE JUGADOR</div>
+        <a class="card-item" routerLink="/perfil">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          <span>MI PERFIL</span>
+        </a>
+        <button class="card-item logout" (click)="cerrarSesion()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          <span>CERRAR SESIÓN</span>
+        </button>
+      </div>
     </div>
 
   </div>

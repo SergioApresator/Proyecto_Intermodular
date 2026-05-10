@@ -44,6 +44,8 @@ export class JuegoDetalle implements OnInit, OnDestroy {
     mensaje: '',
     tieneSpoiler: false
   };
+  mensajeLogin: string = '';
+
 
   // Listas Personalizadas
   listasUsuario: string[] = []; // Nombres de listas únicas
@@ -464,7 +466,7 @@ export class JuegoDetalle implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
-  crearRespuesta(resena: any) {
+  enviarRespuesta(resena: any) {
     if (!this.usuarioId) {
       this.router.navigate(['/login']);
       return;

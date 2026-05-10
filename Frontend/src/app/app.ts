@@ -1,12 +1,12 @@
 import { Component, signal, inject, OnInit, HostListener } from '@angular/core';
-import { RouterOutlet, RouterLink, Router, NavigationEnd } from '@angular/router';
+import { RouterOutlet, RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, CommonModule, FormsModule],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule, FormsModule],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -20,12 +20,13 @@ export class App implements OnInit {
   // Auth state
   estaLogueado: boolean = false;
   username: string = '';
+  userId: string = '';
   fotoUrl: string = '';
+  bannerUrl: string = '';
   mostrarDropdown: boolean = false;
 
   ngOnInit() {
     this.actualizarEstadoAuth();
-    // Refresh auth state on every navigation (e.g. after login/logout)
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.actualizarEstadoAuth();
@@ -38,7 +39,9 @@ export class App implements OnInit {
       const token = localStorage.getItem('token');
       this.estaLogueado = !!token;
       this.username = localStorage.getItem('username') || '';
+      this.userId = localStorage.getItem('usuarioId') || '';
       this.fotoUrl = localStorage.getItem('foto_url') || '';
+      this.bannerUrl = localStorage.getItem('banner_url') || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=600&auto=format&fit=crop';
     }
   }
 
@@ -49,7 +52,7 @@ export class App implements OnInit {
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
     const target = event.target as HTMLElement;
-    if (!target.closest('.user-menu')) {
+    if (!target.closest('.user-menu-ow')) {
       this.mostrarDropdown = false;
     }
   }
@@ -59,9 +62,12 @@ export class App implements OnInit {
     localStorage.removeItem('usuarioId');
     localStorage.removeItem('username');
     localStorage.removeItem('foto_url');
+    localStorage.removeItem('banner_url');
     this.estaLogueado = false;
     this.username = '';
+    this.userId = '';
     this.fotoUrl = '';
+    this.bannerUrl = '';
     this.mostrarDropdown = false;
     this.router.navigate(['/inicial']);
   }

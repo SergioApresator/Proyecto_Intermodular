@@ -79,6 +79,12 @@ export class Perfil implements OnInit {
     this.usuariosServicio.getUsuarioById(id).subscribe({
       next: (data: any) => {
         this.usuario = data;
+        // Sync with localStorage for navbar
+        const banner = data.banner_url || data.bannerUrl;
+        if (banner) localStorage.setItem('banner_url', banner);
+        const foto = data.foto_url || data.fotoUrl;
+        if (foto) localStorage.setItem('foto_url', foto);
+        
         this.cargando = false;
         this.cdr.detectChanges();
       },
@@ -310,7 +316,10 @@ export class Perfil implements OnInit {
             this.usuario = data;
             //Mostramos la imagen directamente sin esperar click
             const banner = data.banner_url || data.bannerUrl;
-            if (banner) this.usuario.banner_url = banner;
+            if (banner) {
+                this.usuario.banner_url = banner;
+                localStorage.setItem('banner_url', banner);
+            }
             this.previewBanner = null;
             this.archivoBannerSeleccionado = null;
             this.subiendoBanner = false;
