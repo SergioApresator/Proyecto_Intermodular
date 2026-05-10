@@ -16,9 +16,8 @@
   </div>
 
   <div class="contenedor-boton">
-    <button *ngIf="hayMas" class="btn-cargar-mas" (click)="cargarMas()" [disabled]="cargandoMas">
-      {{ cargandoMas ? 'Cargando...' : 'Cargar más' }}
-    </button>
-    <button class="btn-volver" routerLink="/inicial">Volver al inicio</button>
+    <button class="btn-pagina" (click)="paginaAnterior()" [disabled]="paginaActual === 1">Anterior</button>
+    <span class="pagina-actual">Página {{ paginaActual }}</span>
+    <button class="btn-pagina" (click)="paginaSiguiente()" [disabled]="!hayPaginaSiguiente">Siguiente</button>
   </div>
 </div>

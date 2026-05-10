@@ -17,11 +17,10 @@ export class VerTodos implements OnInit {
 
   juegos: any[] = [];
   cargando: boolean = true;
-  cargandoMas: boolean = false;
   titulo: string = '';
   genero: string = '';
   paginaActual: number = 1;
-  hayMas: boolean = true;
+  hayPaginaSiguiente: boolean = true;
 
   ngOnInit() {
     this.genero = this.ruta.snapshot.paramMap.get('genero') || '';
@@ -37,60 +36,64 @@ export class VerTodos implements OnInit {
   }
 
   cargarJuegos() {
+    this.cargando = true; this.cdr.detectChanges();
     if (this.genero === 'popular') {
       this.videojuegosServicio.getPopularesPaginados(this.paginaActual).subscribe({
         next: (respuesta: any) => {
           //Añade los juegos nuevos a la lista existente
-          this.juegos = [...this.juegos, ...respuesta.results];
+          this.juegos = respuesta.results
           //Si no hay siguiente pagina desactiva el boton
-          this.hayMas = respuesta.next !== null;
+          this.hayPaginaSiguiente = respuesta.next !== null;
           this.cargando = false;
-          this.cargandoMas = false;
           this.cdr.detectChanges();
         },
         error: (err: any) => {
           console.log('Error al cargar juegos', err);
           this.cargando = false;
-          this.cargandoMas = false;
         }
       });
     } else if (this.genero === 'proximos') {
       this.videojuegosServicio.getProximosPaginados(this.paginaActual).subscribe({
         next: (respuesta: any) => {
-          this.juegos = [...this.juegos, ...respuesta.results];
-          this.hayMas = respuesta.next !== null;
+          this.juegos = respuesta.results
+          this.hayPaginaSiguiente = respuesta.next !== null;
           this.cargando = false;
-          this.cargandoMas = false;
           this.cdr.detectChanges();
         },
         error: (err: any) => {
           console.log('Error al cargar proximos lanzamientos', err);
           this.cargando = false;
-          this.cargandoMas = false;
         }
       });
     } else {
       this.videojuegosServicio.getJuegosPaginados(this.genero, this.paginaActual).subscribe({
         next: (respuesta: any) => {
-          this.juegos = [...this.juegos, ...respuesta.results];
-          this.hayMas = respuesta.next !== null;
+          this.juegos = respuesta.results
+          this.hayPaginaSiguiente = respuesta.next !== null;
           this.cargando = false;
-          this.cargandoMas = false;
           this.cdr.detectChanges();
         },
         error: (err: any) => {
           console.log('Error al cargar juegos', err);
           this.cargando = false;
-          this.cargandoMas = false;
         }
       });
     }
   }
 
-  //Se llama al pulsar el boton cargar mas
-  cargarMas() {
-    this.cargandoMas = true;
-    this.paginaActual++;
-    this.cargarJuegos();
+  paginaAnterior() {
+    if (this.paginaActual > 1) {
+        this.paginaActual--;
+        this.cargarJuegos();
+        window.scrollTo(0, 0);
+    }
+  }
+
+  paginaSiguiente() {
+    if (this.hayPaginaSiguiente) {
+        this.paginaActual++;
+        this.cargarJuegos();
+        window.scrollTo(0, 0);
+    }
   }
 }
