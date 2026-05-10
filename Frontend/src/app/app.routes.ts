@@ -14,9 +14,11 @@ export const routes: Routes = [
     { path: 'registro', component: Registro },
     { path: 'login', component: Login },
     { path: 'diario', component: Diario },
+    // Rutas públicas
+    { path: 'inicial', component: Inicial },
+    { path: 'ver-todos/:genero', component: VerTodos },
+    { path: 'juego/:id', component: JuegoDetalle },
+    
     // Rutas protegidas: requieren token JWT válido
-    { path: 'inicial', component: Inicial, canActivate: [authGuard] },
-    { path: 'ver-todos/:genero', component: VerTodos, canActivate: [authGuard] },
-    { path: 'juego/:id', component: JuegoDetalle, canActivate: [authGuard] },
     { path: 'perfil', component: Perfil, canActivate: [authGuard] },
 ];

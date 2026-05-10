@@ -4,6 +4,8 @@
 
 <div *ngIf="!cargando && juego" class="detalle-contenedor">
   
+
+
   <!-- HERO BANNER -->
   <div class="hero-banner" [style.background-image]="'url(' + juego.background_image + ')'">
     <div class="hero-overlay"></div>
@@ -220,13 +222,13 @@
                   <button class="btn-voto-mini" 
                           [class.activo]="resp.votoUsuarioActual === true"
                           [disabled]="resp.id_usuario === usuarioId"
-                          (click)="votarRespuesta(resp, true)">
+                          (click)="votarRespuesta(resena, resp, true)">
                     👍 <span>{{ resp.meGustas || 0 }}</span>
                   </button>
                   <button class="btn-voto-mini"
                           [class.activo]="resp.votoUsuarioActual === false"
                           [disabled]="resp.id_usuario === usuarioId"
-                          (click)="votarRespuesta(resp, false)">
+                          (click)="votarRespuesta(resena, resp, false)">
                     👎 <span>{{ resp.noMeGustas || 0 }}</span>
                   </button>
                 </div>
@@ -248,8 +250,8 @@
                 <input type="text" 
                        [(ngModel)]="resena.nuevaRespuestaTexto" 
                        placeholder="Escribe un comentario..."
-                       (keyup.enter)="enviarRespuesta(resena)">
-                <button (click)="enviarRespuesta(resena)" [disabled]="!resena.nuevaRespuestaTexto.trim()">
+                       (keyup.enter)="crearRespuesta(resena)">
+                <button (click)="crearRespuesta(resena)" [disabled]="!resena.nuevaRespuestaTexto?.trim()">
                   {{ resena.respuestaPadreSeleccionada ? 'Responder' : 'Comentar' }}
                 </button>
               </div>
