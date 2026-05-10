@@ -7,6 +7,7 @@ import { Diario } from './diario/diario';
 import { JuegoDetalle } from './juego-detalle/juego-detalle';
 import { Perfil } from './perfil/perfil';
 import { authGuard } from './auth.guard';
+import { AcercaDe } from './acerca-de/acerca-de';
 
 export const routes: Routes = [
     //La ruta raiz redirige directamente a inicial
@@ -19,4 +20,5 @@ export const routes: Routes = [
     { path: 'ver-todos/:genero', component: VerTodos, canActivate: [authGuard] },
     { path: 'juego/:id', component: JuegoDetalle, canActivate: [authGuard] },
     { path: 'perfil', component: Perfil, canActivate: [authGuard] },
+    { path: 'acerca-de', component: AcercaDe }
 ];

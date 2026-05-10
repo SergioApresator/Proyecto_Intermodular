@@ -19,6 +19,7 @@ export class Perfil implements OnInit {
   private router = inject(Router);
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('bannerInput') bannerInput!: ElementRef<HTMLInputElement>;
 
   constructor(
     private usuariosServicio: Usuarios,
@@ -54,6 +55,12 @@ export class Perfil implements OnInit {
   previewFoto: string | null = null;
   subiendoFoto: boolean = false;
   errorFoto: string = '';
+
+  // Banner
+  archivoBannerSeleccionado: File | null = null;
+  previewBanner: string | null = null;
+  subiendoBanner: boolean = false;
+  errorBanner: string = '';
 
   ngOnInit() {
     const id = typeof window !== 'undefined' ? localStorage.getItem('usuarioId') : null;
@@ -262,6 +269,66 @@ export class Perfil implements OnInit {
     this.previewFoto = null;
     this.errorFoto = '';
     this.fileInput.nativeElement.value = '';
+    this.cdr.detectChanges();
+  }
+
+  abrirSelectorBanner() {
+    this.bannerInput.nativeElement.click();
+}
+
+  onBannerSeleccionado(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    const file = input.files[0];
+    this.errorBanner = '';
+
+    if (!file.type.startsWith('image/')) {
+        this.errorBanner = 'Solo se permiten imágenes (JPG, PNG, GIF, WebP…)';
+        this.cdr.detectChanges();
+        return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+        this.errorBanner = 'La imagen no puede superar los 5 MB.';
+        this.cdr.detectChanges();
+        return;
+    }
+
+    this.archivoBannerSeleccionado = file;
+    //Subimos directamente sin preview ni confirmacion
+    this.subirBanner();
+}
+
+  subirBanner() {
+    if (!this.archivoBannerSeleccionado || !this.usuario?.id) return;
+
+    this.subiendoBanner = true;
+    this.errorBanner = '';
+    this.usuariosServicio.subirBanner(this.usuario.id, this.archivoBannerSeleccionado).subscribe({
+        next: (data: any) => {
+            this.usuario = data;
+            //Mostramos la imagen directamente sin esperar click
+            const banner = data.banner_url || data.bannerUrl;
+            if (banner) this.usuario.banner_url = banner;
+            this.previewBanner = null;
+            this.archivoBannerSeleccionado = null;
+            this.subiendoBanner = false;
+            this.cdr.detectChanges();
+        },
+        error: () => {
+            this.errorBanner = 'Error al subir el banner. Inténtalo de nuevo.';
+            this.subiendoBanner = false;
+            this.cdr.detectChanges();
+        }
+    });
+}
+
+  cancelarBanner() {
+    this.archivoBannerSeleccionado = null;
+    this.previewBanner = null;
+    this.errorBanner = '';
+    this.bannerInput.nativeElement.value = '';
     this.cdr.detectChanges();
   }
 

@@ -1,6 +1,7 @@
 <div class="perfil-page">
   <!-- Input de archivo oculto -->
   <input #fileInput type="file" accept="image/*" style="display:none" (change)="onArchivoSeleccionado($event)">
+  <input #bannerInput type="file" accept="image/*" style="display:none" (change)="onBannerSeleccionado($event)">
 
   <!-- CARGANDO -->
   <div class="estado-centrado" *ngIf="cargando">
@@ -24,7 +25,23 @@
 
     <!-- CABECERA / BANNER -->
     <div class="perfil-banner">
-      <div class="banner-bg"></div>
+      
+      <div class="banner-bg" [style.background-image]="previewBanner ? 'url(' + previewBanner + ')' : (usuario.banner_url ? 'url(' + usuario.banner_url + ')' : '')">
+    <button class="btn-cambiar-banner" (click)="abrirSelectorBanner()" title="Cambiar banner">
+        Cambiar banner
+    </button>
+
+
+      <!-- Panel de confirmacion del banner -->
+      <div class="banner-preview-panel" *ngIf="previewBanner">
+        <button class="btn-subir-foto" (click)="subirBanner()" [disabled]="subiendoBanner">
+            <span *ngIf="!subiendoBanner">✓ Guardar</span>
+            <span *ngIf="subiendoBanner">...</span>
+        </button>
+        <button class="btn-cancelar-foto" (click)="cancelarBanner()">✕</button>
+      </div>
+    </div>
+
       <div class="perfil-identidad">
         <!-- Avatar con botón de subida -->
         <div class="avatar-container">
