@@ -30,12 +30,21 @@ public class UsuarioController {
 
     @Value("${app.upload.dir}")
     private String uploadDir;
+    
+    @PostMapping("/login-username")
+    public ResponseEntity<UsuarioDTO> loginUsuarioUsername(@RequestBody Map<String, String> credentials) {
+        String username = credentials.get("username");
+        String password = credentials.get("password");
+        return usuarioService.loginUsuarioUsername(username, password)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
+    }
 
-    @PostMapping("/login")
-    public ResponseEntity<UsuarioDTO> loginUsuario(@RequestBody Map<String, String> credentials) {
+    @PostMapping("/login-email")
+    public ResponseEntity<UsuarioDTO> loginUsuarioEmail(@RequestBody Map<String, String> credentials) {
         String email = credentials.get("email");
         String password = credentials.get("password");
-        return usuarioService.loginUsuario(email, password)
+        return usuarioService.loginUsuarioEmail(email, password)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }

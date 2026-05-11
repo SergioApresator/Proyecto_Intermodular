@@ -33,8 +33,22 @@ public class UsuarioService {
     public Optional<UsuarioDTO> getUsuarioById(Long id) {
         return usuarioRepository.findById(id).map(this::convertToDTO);
     }
+    
+    public Optional<UsuarioDTO> loginUsuarioUsername(String username, String password) {
+        Optional<Usuario> optionalUsuario = usuarioRepository.findByUsername(username);
+        if (optionalUsuario.isPresent()) {
+            Usuario usuario = optionalUsuario.get();
+            if (passwordEncoder.matches(password, usuario.getPassword())) {
+                String token = jwtService.generateToken(new CustomUserDetails(usuario));
+                UsuarioDTO dto = convertToDTO(usuario);
+                dto.setToken(token);
+                return Optional.of(dto);
+            }
+        }
+        return Optional.empty();
+    }
 
-    public Optional<UsuarioDTO> loginUsuario(String email, String password) {
+    public Optional<UsuarioDTO> loginUsuarioEmail(String email, String password) {
         Optional<Usuario> optionalUsuario = usuarioRepository.findByEmail(email);
         if (optionalUsuario.isPresent()) {
             Usuario usuario = optionalUsuario.get();

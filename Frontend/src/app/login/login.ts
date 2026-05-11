@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Usuarios } from '../usuarios';
@@ -10,7 +10,7 @@ import { Usuarios } from '../usuarios';
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
-export class Login {
+export class Login implements OnInit {
 
   //Injección necesaria para viajar entre páginas
   private router = inject(Router);
@@ -19,39 +19,66 @@ export class Login {
   constructor(private usuariosServicio: Usuarios) { }
 
   formularioLogin = new FormGroup({
-    email: new FormControl('', [Validators.required, Validators.email]),
+    identity: new FormControl('', [Validators.required]),
     password: new FormControl('', [Validators.required, Validators.minLength(8)])
   });
 
+  // Variable para controlar qué modo de login se está mostrando (Por defecto: Username)
+  loginConEmail: boolean = false;
+
+  ngOnInit() {
+    
+    this.formularioLogin.get('identity')?.valueChanges.subscribe(value => {
+      const control = this.formularioLogin.get('identity');
+      if (!value) return;
+
+      if (value.includes('@')) {
+        // Si contiene un arroba, se le pone el validador de email
+        control?.setValidators([Validators.required, Validators.email]);
+      } else {
+        // Cambia a el validador de Nombre de Usuario (solo requerido)
+        control?.setValidators([Validators.required]);
+      }
+      
+      // Actualizamos el estado interno sin disparar otro evento de cambio infinito
+      control?.updateValueAndValidity({ emitEvent: false });
+    });
+  }
+
   submit() {
     if (this.formularioLogin.valid) {
-      const emailInput = this.formularioLogin.value.email!; // Se pone ! para indicar que no son nulos
-      const passInput = this.formularioLogin.value.password!; // Se pone ! para indicar que no son nulos
+      const identityValue = this.formularioLogin.value.identity!;
+      const passInput = this.formularioLogin.value.password!;
 
-      //LLama al servicio pasandole datos
-      //El subscribe hace que hasta que no haya una respuesta del servidor, no se ejecute lo de abajo
-      this.usuariosServicio.login(emailInput, passInput).subscribe({
-        //El subscribe tiene 2 caminos, next y error
-        next: (usuarioEncontrado) => {
-          if (usuarioEncontrado && usuarioEncontrado.token) {
-            localStorage.setItem('token', usuarioEncontrado.token);
-            if (usuarioEncontrado.id) {
-              localStorage.setItem('usuarioId', usuarioEncontrado.id.toString());
-            }
-            if (usuarioEncontrado.username) {
-              localStorage.setItem('username', usuarioEncontrado.username);
-            }
-            const foto = usuarioEncontrado.foto_url || usuarioEncontrado.fotoUrl;
-            if (foto) {
-              localStorage.setItem('foto_url', foto);
-            }
-          }
-          this.router.navigate(['/inicial']);
-        },
-        error: (err) => {
-          alert('Correo o contraseña incorrectos');
-        }
-      });
+      if (identityValue.includes('@')) {
+        this.usuariosServicio.loginEmail(identityValue, passInput).subscribe({
+          next: (usuarioEncontrado) => this.guardarSesionYRedirigir(usuarioEncontrado),
+          error: () => alert('Correo o contraseña incorrectos')
+        });
+      } else {
+        this.usuariosServicio.loginUsername(identityValue, passInput).subscribe({
+          next: (usuarioEncontrado) => this.guardarSesionYRedirigir(usuarioEncontrado),
+          error: () => alert('Usuario o contraseña incorrectos')
+        });
+      }
     }
+  }
+
+  // Guardado de la información de la sesion en localStorage
+  private guardarSesionYRedirigir(usuarioEncontrado: any) {
+    if (usuarioEncontrado && usuarioEncontrado.token) {
+      localStorage.setItem('token', usuarioEncontrado.token);
+      if (usuarioEncontrado.id) {
+        localStorage.setItem('usuarioId', usuarioEncontrado.id.toString());
+      }
+      if (usuarioEncontrado.username) {
+        localStorage.setItem('username', usuarioEncontrado.username);
+      }
+      const foto = usuarioEncontrado.foto_url || usuarioEncontrado.fotoUrl;
+      if (foto) {
+        localStorage.setItem('foto_url', foto);
+      }
+    }
+    this.router.navigate(['/inicial']);
   }
 }

@@ -31,9 +31,13 @@ export class Usuarios {
     return this.http.post(this.url, datos);
   }
 
-  //Metodo para login
-  login(email: string, password: string): Observable<any> {
-    return this.http.post(this.url + '/login', { email, password });
+  //Metodos para login
+  loginUsername(username: string, password: string): Observable<any> {
+    return this.http.post(this.url + '/login-username', { username, password });
+  }
+  
+  loginEmail(email: string, password: string): Observable<any> {
+    return this.http.post(this.url + '/login-email', { email, password });
   }
 
   // Obtener usuario por ID
