@@ -101,14 +101,29 @@
         </div>
         <div class="listas-container" *ngIf="!cargandoListas">
           <div class="lista-group" *ngFor="let lista of listas">
-            <h2 class="pane-title">{{ lista.nombre | uppercase }} <span class="count">{{ lista.juegos.length }}</span></h2>
+            <div class="lista-header-row">
+              <h2 class="pane-title">{{ lista.nombre | uppercase }} <span class="count">{{ lista.juegos.length }}</span></h2>
+              <button class="btn-edit-list" [class.editing]="listaEnEdicion === lista.nombre" (click)="toggleEditarLista(lista.nombre)">
+                {{ listaEnEdicion === lista.nombre ? 'LISTO' : 'EDITAR' }}
+              </button>
+            </div>
             <div class="horizontal-scroll-grid">
-              <div class="juego-card" *ngFor="let juego of lista.juegos" [routerLink]="['/juego', juego.id]">
-                <div class="juego-thumb">
+              <div class="juego-card" *ngFor="let juego of lista.juegos">
+                <div class="juego-thumb" [routerLink]="listaEnEdicion ? null : ['/juego', juego.id]">
                   <img [src]="juego.background_image">
-                  <div class="rating-tag">⭐ {{ juego.rating }}</div>
+                  <div class="rating-tag" *ngIf="!listaEnEdicion">⭐ {{ juego.rating }}</div>
+                  <button class="btn-remove-from-list" *ngIf="listaEnEdicion === lista.nombre" (click)="eliminarDeLista(juego.entryId, lista.nombre)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                  </button>
                 </div>
                 <p class="juego-title">{{ juego.name }}</p>
+              </div>
+
+              <div class="juego-card add-card">
+                <div class="add-thumb" (click)="abrirModalBusqueda(lista.nombre)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </div>
+                <p class="juego-title" (click)="abrirModalBusqueda(lista.nombre)">AÑADIR JUEGO</p>
               </div>
             </div>
           </div>
@@ -194,6 +209,47 @@
     <!-- Toasts -->
     <div class="toast-overlay" *ngIf="mensajeExito">
       {{ mensajeExito }}
+    </div>
+
+    <!-- MODAL BUSQUEDA LISTAS -->
+    <div class="modal-overlay search-overlay" *ngIf="mostrarModalBusqueda" (click)="cerrarModalBusqueda()">
+      <div class="modal-content search-list-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>AÑADIR A {{ listaDestino | uppercase }}</h3>
+          <button class="btn-cerrar" (click)="cerrarModalBusqueda()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="search-box">
+            <input type="text" [(ngModel)]="queryBusqueda" (input)="onSearchChange()" placeholder="Escribe el nombre del juego...">
+            <div class="search-icon-box">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </div>
+          </div>
+          <div class="search-results-list">
+            <div class="result-item" *ngFor="let juego of resultadosBusqueda" (click)="agregarJuegoALista(juego)">
+              <img [src]="juego.background_image" class="result-thumb">
+              <div class="result-info">
+                <p class="result-name">{{ juego.name }}</p>
+                <p class="result-meta">{{ juego.released | date:'yyyy' }} • ⭐ {{ juego.rating }}</p>
+              </div>
+              <div class="btn-add-mini">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              </div>
+            </div>
+            
+            <div class="search-loading" *ngIf="buscando">
+              <div class="spinner-mini"></div>
+              <p>Buscando en la base de datos...</p>
+            </div>
+
+            <div class="search-empty" *ngIf="!buscando && queryBusqueda.length > 1 && resultadosBusqueda.length === 0">
+              No se encontraron resultados para "{{ queryBusqueda }}"
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
   </div>
