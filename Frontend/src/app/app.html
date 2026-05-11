@@ -27,7 +27,7 @@
   <div class="user-menu-ow" *ngIf="estaLogueado">
     
     <!-- Large Profile Picture (Clickable) -->
-    <a routerLink="/perfil" class="avatar-container-ow">
+    <a routerLink="/perfil" class="avatar-container-ow" [class.no-photo]="!fotoUrl">
       <img *ngIf="fotoUrl" [src]="fotoUrl" alt="Foto de perfil" class="avatar-img-ow">
       <div *ngIf="!fotoUrl" class="avatar-initials-ow">{{ getInitials() }}</div>
     </a>
@@ -41,7 +41,7 @@
         <div class="card-banner-overlay"></div>
 
         <div class="card-header-content">
-          <div class="card-avatar-mini">
+          <div class="card-avatar-mini" [class.no-photo]="!fotoUrl">
             <img *ngIf="fotoUrl" [src]="fotoUrl" alt="Mini foto" class="avatar-img-ow">
             <div *ngIf="!fotoUrl" class="avatar-initials-ow sm">{{ getInitials() }}</div>
           </div>

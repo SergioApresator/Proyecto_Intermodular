@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -21,8 +21,11 @@ export class Inicial implements OnInit, OnDestroy {
     private videojuegosServicio: Videojuegos, 
     private resenasServicio: ResenasService,
     private cdr: ChangeDetectorRef, 
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private ngZone: NgZone
   ) { }
+
+  anioActual: number = new Date().getFullYear();
 
   juegosDestacados: any[] = [];
   juegoSpotlight: any = null;
@@ -103,9 +106,9 @@ export class Inicial implements OnInit, OnDestroy {
       next: (resp) => {
         this.juegosTendencia = resp.results;
         if (this.juegosTendencia.length > 0) {
-          this.juegoSpotlight = this.juegosTendencia[0];
-          // Los demás al carrusel
-          this.juegosDestacados = this.juegosTendencia.slice(1, 6);
+          this.juegosDestacados = this.juegosTendencia.slice(0, 5);
+          this.indiceCarrusel = 0;
+          this.juegoSpotlight = this.juegosDestacados[0];
           this.iniciarCarrusel();
         }
         this.cargando = false;
@@ -148,9 +151,16 @@ export class Inicial implements OnInit, OnDestroy {
 
   iniciarCarrusel() {
     if (this.intervaloCarrusel) clearInterval(this.intervaloCarrusel);
-    this.intervaloCarrusel = setInterval(() => {
-      this.siguienteSlide();
-    }, 5000);
+    
+    // Ejecutar fuera de Angular para evitar disparos constantes de CD,
+    // pero entrar de nuevo al cambiar de slide.
+    this.ngZone.runOutsideAngular(() => {
+      this.intervaloCarrusel = setInterval(() => {
+        this.ngZone.run(() => {
+          this.siguienteSlide();
+        });
+      }, 5000);
+    });
   }
 
   ngOnDestroy() {
@@ -159,17 +169,26 @@ export class Inicial implements OnInit, OnDestroy {
     }
   }
 
+  seleccionarSlide(index: number) {
+    this.indiceCarrusel = index;
+    this.juegoSpotlight = this.juegosDestacados[index];
+    this.iniciarCarrusel(); // Reiniciar el contador de 5s
+    this.cdr.detectChanges();
+  }
+
   siguienteSlide() {
     if (this.juegosDestacados.length > 0) {
       this.indiceCarrusel = (this.indiceCarrusel + 1) % this.juegosDestacados.length;
-      this.iniciarCarrusel();
+      this.juegoSpotlight = this.juegosDestacados[this.indiceCarrusel];
+      this.cdr.detectChanges();
     }
   }
 
   anteriorSlide() {
     if (this.juegosDestacados.length > 0) {
       this.indiceCarrusel = (this.indiceCarrusel - 1 + this.juegosDestacados.length) % this.juegosDestacados.length;
-      this.iniciarCarrusel();
+      this.juegoSpotlight = this.juegosDestacados[this.indiceCarrusel];
+      this.cdr.detectChanges();
     }
   }
 

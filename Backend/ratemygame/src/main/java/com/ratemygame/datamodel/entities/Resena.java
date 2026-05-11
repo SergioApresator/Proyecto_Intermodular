@@ -1,6 +1,6 @@
 package com.ratemygame.datamodel.entities;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
@@ -41,7 +41,7 @@ public class Resena {
     private Integer noMeGustas;
 
     @Column(name = "FECHA_RESENA")
-    private LocalDate fechaResena;
+    private LocalDateTime fechaResena;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "ID_USUARIO", 

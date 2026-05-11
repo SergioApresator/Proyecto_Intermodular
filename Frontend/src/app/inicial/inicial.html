@@ -84,7 +84,7 @@
         <div *ngFor="let game of juegosDestacados; let i = index" 
              class="mini-thumb" 
              [class.active]="i === indiceCarrusel"
-             (click)="indiceCarrusel = i; juegoSpotlight = game">
+             (click)="seleccionarSlide(i)">
           <img [src]="game.background_image" alt="">
         </div>
       </div>
@@ -109,7 +109,7 @@
         <!-- MEJORES DEL AÑO -->
         <section class="hub-section">
           <div class="section-header">
-            <h2>LO MEJOR DE 2024</h2>
+            <h2>LO MEJOR DE {{ anioActual }}</h2>
             <a routerLink="/ver-todos/popular" class="link-more">VER TODOS</a>
           </div>
           <div class="game-strip">

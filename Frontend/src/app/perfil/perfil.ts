@@ -380,16 +380,45 @@ export class Perfil implements OnInit {
         this.usuario = data;
         const foto = data.foto_url || data.fotoUrl;
         if (foto) localStorage.setItem('foto_url', foto);
+        // Sincronizar con el formulario de edición
+        if (this.formEdicion) this.formEdicion.foto_url = foto;
+        
         this.previewFoto = null;
         this.archivoSeleccionado = null;
         this.subiendoFoto = false;
         this.mensajeExito = '¡Foto de perfil actualizada!';
+        this.usuariosServicio.notificarCambioPerfil();
         this.cdr.detectChanges();
         setTimeout(() => { this.mensajeExito = ''; this.cdr.detectChanges(); }, 3000);
       },
       error: () => {
         this.errorFoto = 'Error al subir la imagen.';
         this.subiendoFoto = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  resetearFoto() {
+    if (!this.usuario?.id) return;
+    if (!confirm('¿Estás seguro de que deseas eliminar tu foto de perfil?')) return;
+    
+    this.usuariosServicio.resetearFotoPerfil(this.usuario.id).subscribe({
+      next: (data: any) => {
+        this.usuario = data;
+        localStorage.removeItem('foto_url');
+        // Sincronizar con el formulario de edición
+        if (this.formEdicion) this.formEdicion.foto_url = '';
+        
+        this.previewFoto = null;
+        this.archivoSeleccionado = null;
+        this.mensajeExito = 'Foto de perfil eliminada.';
+        this.usuariosServicio.notificarCambioPerfil();
+        this.cdr.detectChanges();
+        setTimeout(() => { this.mensajeExito = ''; this.cdr.detectChanges(); }, 3000);
+      },
+      error: () => {
+        this.errorFoto = 'Error al eliminar la foto.';
         this.cdr.detectChanges();
       }
     });

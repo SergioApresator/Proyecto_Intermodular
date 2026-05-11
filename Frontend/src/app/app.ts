@@ -1,7 +1,8 @@
-import { Component, signal, inject, OnInit, HostListener } from '@angular/core';
+import { Component, signal, inject, OnInit, HostListener, ChangeDetectorRef, NgZone } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Usuarios } from './usuarios';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +14,9 @@ import { FormsModule } from '@angular/forms';
 
 export class App implements OnInit {
   private router = inject(Router);
+  private usuariosServicio = inject(Usuarios);
+  private cdr = inject(ChangeDetectorRef);
+  private ngZone = inject(NgZone);
 
   mostrarBuscador: boolean = false;
   terminoBusqueda: string = '';
@@ -35,6 +39,14 @@ export class App implements OnInit {
       if (event instanceof NavigationEnd) {
         this.actualizarEstadoAuth();
       }
+    });
+
+    // Escuchar actualizaciones de perfil instantáneas
+    this.usuariosServicio.perfilActualizado$.subscribe(() => {
+      this.ngZone.run(() => {
+        this.actualizarEstadoAuth();
+        this.cdr.detectChanges();
+      });
     });
   }
 

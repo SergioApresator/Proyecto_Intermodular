@@ -141,6 +141,12 @@
     justify-content: center;
     position: relative;
     z-index: 100;
+    text-decoration: none;
+}
+
+.avatar-container-ow.no-photo {
+    background: linear-gradient(135deg, #f99e1a 0%, #d97706 100%);
+    border-color: #ffffff;
 }
 
 .avatar-container-ow:hover {
@@ -158,8 +164,9 @@
 .avatar-initials-ow {
     font-size: 1.8rem;
     font-family: 'Bebas Neue', sans-serif;
-    color: #3b82f6;
+    color: #ffffff;
     font-weight: 800;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .avatar-initials-ow.sm {
@@ -242,6 +249,14 @@
     overflow: hidden;
     flex-shrink: 0;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-avatar-mini.no-photo {
+    background: linear-gradient(135deg, #f99e1a 0%, #d97706 100%);
+    border-color: #ffffff;
 }
 
 .card-user-info {

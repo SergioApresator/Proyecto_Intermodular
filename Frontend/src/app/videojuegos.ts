@@ -22,14 +22,15 @@ export class Videojuegos {
   // NUEVO: Obtiene juegos en tendencia (lanzados en los últimos 30 días con más actividad)
   getTrendingLast30Days(): Observable<any> {
     const hoy = new Date();
-    const hace30Dias = new Date();
-    hace30Dias.setDate(hoy.getDate() - 30);
+    const hace90Dias = new Date();
+    hace90Dias.setDate(hoy.getDate() - 90);
     
     const hoyStr = hoy.toISOString().split('T')[0];
-    const hace30DiasStr = hace30Dias.toISOString().split('T')[0];
+    const hace90DiasStr = hace90Dias.toISOString().split('T')[0];
     
-    return this.http.get(`${this.url}/games?key=${this.apiKey}&dates=${hace30DiasStr},${hoyStr}&ordering=-added&page_size=10`);
+    return this.http.get(`${this.url}/games?key=${this.apiKey}&dates=${hace90DiasStr},${hoyStr}&ordering=-added&page_size=10`);
   }
+
 
   // NUEVO: Mejores juegos del año actual
   getBestGamesOfYear(): Observable<any> {

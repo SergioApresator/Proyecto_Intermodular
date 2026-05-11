@@ -5,13 +5,20 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http'; 
 
 //Importacion que permite manejar las respuestas del servidot
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 
 export class Usuarios {
+  // Subject para notificar cambios en el perfil (como la foto) a otros componentes (navbar)
+  private perfilActualizadoSource = new Subject<void>();
+  perfilActualizado$ = this.perfilActualizadoSource.asObservable();
+
+  notificarCambioPerfil() {
+    this.perfilActualizadoSource.next();
+  }
   //Se inyecta HttpClient para comunicar con backend
   //al inyectarse no hay que comfigurarla, se hace solo
   private http = inject(HttpClient);
@@ -46,6 +53,15 @@ export class Usuarios {
     formData.append('file', file);
     // No incluir 'Content-Type' manualmente — el navegador lo pone con el boundary correcto
     return this.http.post(`${this.url}/${id}/foto`, formData, {
+      headers: new HttpHeaders({
+        'Authorization': token ? `Bearer ${token}` : ''
+      })
+    });
+  }
+
+  resetearFotoPerfil(id: number): Observable<any> {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    return this.http.delete(`${this.url}/${id}/foto`, {
       headers: new HttpHeaders({
         'Authorization': token ? `Bearer ${token}` : ''
       })

@@ -12,8 +12,9 @@ import com.ratemygame.datamodel.repositories.UsuarioRepository;
 import com.ratemygame.dtos.ResenaDTO;
 
 import jakarta.transaction.Transactional;
+import java.time.ZoneId;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -54,7 +55,7 @@ public class ResenaService {
         resena.setTieneSpoiler(resenaDTO.getTieneSpoiler() != null ? resenaDTO.getTieneSpoiler() : false);
         resena.setMeGustas(0);
         resena.setNoMeGustas(0);
-        resena.setFechaResena(LocalDate.now());
+        resena.setFechaResena(LocalDateTime.now(ZoneId.of("Europe/Madrid")));
         resena.setId_videojuego(resenaDTO.getId_videojuego());
         resena.setNombreVideojuego(resenaDTO.getNombreVideojuego());
         resena.setFotoVideojuego(resenaDTO.getFotoVideojuego());
