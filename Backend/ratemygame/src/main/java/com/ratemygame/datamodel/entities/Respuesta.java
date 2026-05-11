@@ -11,6 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.ForeignKey;
+import java.time.LocalDateTime;
 import lombok.Data;
 
 @Entity
@@ -48,4 +49,7 @@ public class Respuesta {
 
     @Column(name = "ID_RESPUESTA_PADRE")
     private Long id_respuesta_padre;
+
+    @Column(name = "FECHA_RESPUESTA")
+    private LocalDateTime fechaRespuesta;
 }

@@ -1,277 +1,343 @@
 <div *ngIf="cargando" class="contenedor-cargando">
-  <p>Cargando detalles del juego...</p>
+  <p>CARGANDO BASE DE DATOS...</p>
 </div>
 
 <div *ngIf="!cargando && juego" class="detalle-contenedor">
   
   <!-- HERO BANNER -->
-  <div class="hero-banner" [style.background-image]="'url(' + juego.background_image + ')'">
-    <div class="hero-overlay"></div>
-    <div class="hero-contenido">
-      <div class="hero-header">
-        <div class="fecha-lanzamiento" *ngIf="juego.released">{{ juego.released | date:'longDate' }}</div>
-        <div class="plataformas-tags">
-          <span class="plat-tag" *ngFor="let plat of juego.parent_platforms">{{ plat.platform.name }}</span>
-        </div>
-      </div>
-      <div class="juego-titulo-container">
-        <h1 class="juego-titulo">{{ juego.name }}</h1>
-      </div>
-      
-      <div class="juego-stats">
-        <div class="stat" title="Rating">
-          <span class="stat-icon">⭐</span>
-          <span class="stat-valor">{{ juego.rating }} <span class="stat-max">/ 5</span></span>
-        </div>
-        <div class="stat" title="Metacritic" *ngIf="juego.metacritic">
-          <span class="stat-icon">🎯</span>
-          <span class="stat-valor metacritic">{{ juego.metacritic }}</span>
-        </div>
-        <div class="stat" title="Popularidad (Agregados a bibliotecas)">
-          <span class="stat-icon">🔥</span>
-          <span class="stat-valor">{{ juego.added }}</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="contenido-grid">
-    
-    <!-- COLUMNA IZQUIERDA -->
-    <div class="columna-principal">
-      
-      <!-- CARRUSEL DE MEDIA -->
-      <div class="media-carrusel" *ngIf="mediaItems.length > 0">
-        <div class="media-contenedor">
-          <ng-container *ngIf="mediaItems[indiceMediaActual].tipo === 'imagen'">
-            <img [src]="mediaItems[indiceMediaActual].url" class="media-elemento" alt="Screenshot del juego">
-          </ng-container>
-          <ng-container *ngIf="mediaItems[indiceMediaActual].tipo === 'video'">
-            <video [src]="mediaItems[indiceMediaActual].url" [poster]="mediaItems[indiceMediaActual].preview" class="media-elemento" controls autoplay muted loop></video>
-          </ng-container>
-        </div>
-        
-        <button class="carrusel-btn izquierda" (click)="anteriorMedia()" *ngIf="mediaItems.length > 1">&#8249;</button>
-        <button class="carrusel-btn derecha" (click)="siguienteMedia()" *ngIf="mediaItems.length > 1">&#8250;</button>
-        
-        <div class="carrusel-indicadores" *ngIf="mediaItems.length > 1"
-             (mouseleave)="onScrubEnd()"
-             (mouseup)="onScrubEnd()">
-          <span *ngFor="let item of mediaItems; index as i" 
-                class="indicador" 
-                [class.activo]="i === indiceMediaActual"
-                (mousedown)="onScrubStart($event, i)"
-                (mouseenter)="onScrubMove(i)"
-                (click)="indiceMediaActual = i">
-          </span>
-        </div>
-      </div>
-
-      <!-- ACERCA DE -->
-      <div class="seccion-detalle">
-        <h3>Acerca del juego</h3>
-        <div class="descripcion-html" [innerHTML]="descripcionSegura"></div>
-      </div>
-    </div>
-
-    <!-- COLUMNA DERECHA (METADATA) -->
-    <div class="columna-lateral">
-
-      <div class="meta-bloque acciones-lateral">
-        <button *ngIf="usuarioId" 
-                class="btn-favorito lateral-btn" 
-                [class.activo]="esFavorito" 
-                [disabled]="cambiandoFavorito"
-                (click)="toggleFavorito()">
-          <span class="corazon" [innerHTML]="esFavorito ? '❤️' : '🤍'"></span>
-          <span class="texto-fav">{{ esFavorito ? 'En Favoritos' : 'Añadir a Favoritos' }}</span>
-        </button>
-
-        <!-- BOTÓN VIDEOJUEGOS PENDIENTES -->
-        <button *ngIf="usuarioId" 
-                class="btn-pendiente lateral-btn" 
-                [class.activo]="esPendiente" 
-                [disabled]="cambiandoPendiente"
-                (click)="togglePendiente()">
-          <span class="icono-pendiente">{{ esPendiente ? '🔖' : '📑' }}</span>
-          <span class="texto-pendiente">{{ esPendiente ? 'En Pendientes' : 'Añadir a Pendientes' }}</span>
-        </button>
-
-        <!-- BOTÓN AÑADIR A LISTA -->
-        <button *ngIf="usuarioId" class="btn-listas lateral-btn" (click)="abrirModalListas()">
-          <span class="icono-lista">➕</span>
-          <span class="texto-lista">Añadir a una lista</span>
-        </button>
-
-        <button class="btn-resenar lateral-btn" (click)="abrirModalResena()">
-          <span class="icono-resena">✍️</span>
-          <span class="texto-resena">{{ usuarioId ? 'Escribir Reseña' : 'Logeate para reseñar' }}</span>
-        </button>
-      </div>
-      
-      <div class="meta-bloque" *ngIf="juego.genres?.length > 0">
-        <h4>Géneros</h4>
-        <div class="tags-container">
-          <span class="tag" *ngFor="let gen of juego.genres">{{ gen.name }}</span>
-        </div>
-      </div>
-
-      <div class="meta-bloque" *ngIf="juego.developers?.length > 0">
-        <h4>Desarrolladores</h4>
-        <p>{{ juego.developers[0]?.name }}</p>
-      </div>
-
-      <div class="meta-bloque" *ngIf="juego.publishers?.length > 0">
-        <h4>Distribuidores</h4>
-        <p>{{ juego.publishers[0]?.name }}</p>
-      </div>
-
-      <div class="meta-bloque" *ngIf="juego.tags?.length > 0">
-        <h4>Etiquetas</h4>
-        <div class="tags-container">
-          <span class="tag tag-sm" *ngFor="let tag of tagsJuego">{{ tag.name }}</span>
-        </div>
-      </div>
-      
-      <div class="meta-bloque">
-        <h4>Enlaces externos</h4>
-        <a *ngIf="juego.website" [href]="juego.website" target="_blank" class="enlace-externo">Sitio Web Oficial</a>
-        <a *ngIf="juego.reddit_url" [href]="juego.reddit_url" target="_blank" class="enlace-externo">Reddit</a>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- SECCIÓN DE RESEÑAS -->
-  <div class="seccion-resenas-container">
-    <div class="seccion-cabecera">
-      <h3>Reseñas de la Comunidad</h3>
-      <div class="stats-resenas" *ngIf="resenas.length > 0">
-        {{ resenas.length }} reseña(s)
-      </div>
+  <div class="juego-hero">
+    <div class="hero-bg-wrapper">
+      <img [src]="juego.background_image" class="hero-bg-img" alt="Background">
+      <div class="hero-vignette"></div>
     </div>
     
-    <div *ngIf="resenas.length === 0" class="sin-resenas">
-      <p>Todavía no hay reseñas para este juego. ¡Sé el primero en opinar!</p>
-    </div>
-
-    <div class="lista-resenas" *ngIf="resenas.length > 0">
-      <div class="tarjeta-resena" *ngFor="let resena of resenas">
-        <div class="resena-header">
-          <div class="resena-usuario">
-            <div class="avatar-usuario">
-              <img *ngIf="resena.fotoUsuario" [src]="resena.fotoUsuario" [alt]="resena.nombreUsuario" class="avatar-img-mini">
-              <span *ngIf="!resena.fotoUsuario">{{ resena.nombreUsuario?.charAt(0) || '?' }}</span>
-            </div>
-            <div class="usuario-meta-info">
-              <span class="nombre-usuario-texto">{{ resena.nombreUsuario || 'Usuario' }}</span>
-              <span class="fecha-resena">{{ resena.fechaResena | date:'mediumDate' }}</span>
-            </div>
-          </div>
-          <div class="resena-puntuacion">
-            <span class="estrella" *ngFor="let _ of [].constructor(resena.puntuacion)">⭐</span>
-            <button class="btn-delete-resena-juego" *ngIf="resena.id_usuario === usuarioId" (click)="eliminarResena(resena.id)" title="Eliminar mi reseña">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
+    <div class="hero-main-info">
+      <div class="info-top">
+        <span class="year-badge">{{ juego.released | date:'yyyy' }}</span>
+        <div class="plat-icons">
+          <span *ngFor="let plat of juego.parent_platforms" class="mini-plat">{{ plat.platform.name }}</span>
+        </div>
+      </div>
+      
+      <h1 class="juego-display-title">{{ juego.name }}</h1>
+      
+      <div class="hero-metrics">
+        <div class="metric">
+          <span class="label">PUNTUACIÓN</span>
+          <div class="value-box">
+            <span class="val">{{ juego.rating }}</span>
+            <span class="total">/5</span>
           </div>
         </div>
-        <div class="resena-contenido">
-          <div *ngIf="resena.tieneSpoiler">
-            <div class="alerta-spoiler">
-              ⚠️ Contiene Spoilers
-              <button class="btn-spoiler" (click)="resena.mostrarSpoiler = !resena.mostrarSpoiler">
-                {{ resena.mostrarSpoiler ? 'Ocultar' : 'Ver igualmente' }}
-              </button>
-            </div>
-              <p *ngIf="resena.mostrarSpoiler">{{ resena.mensaje }}</p>
+        <div class="metric" *ngIf="juego.metacritic">
+          <span class="label">METACRITIC</span>
+          <div class="value-box highlight">
+            <span class="val">{{ juego.metacritic }}</span>
           </div>
-            <p *ngIf="!resena.tieneSpoiler">{{ resena.mensaje }}</p>
         </div>
-
-        <div class="acciones-voto">
-          <button class="btn-voto like" 
-                  [class.activo]="resena.votoUsuarioActual === true"
-                  [disabled]="resena.id_usuario === usuarioId"
-                  (click)="votarResena(resena, true)">
-            👍 <span>{{ resena.meGustas || 0 }}</span>
-          </button>
-          <button class="btn-voto dislike"
-                  [class.activo]="resena.votoUsuarioActual === false"
-                  [disabled]="resena.id_usuario === usuarioId"
-                  (click)="votarResena(resena, false)">
-            👎 <span>{{ resena.noMeGustas || 0 }}</span>
-          </button>
+        <div class="metric">
+          <span class="label">POPULARIDAD</span>
+          <div class="value-box">
+            <span class="val">{{ juego.added }}</span>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-</div>
+  <!-- FLOATING ACTION BAR -->
+  <div class="action-bar-container">
+    <div class="action-bar-ow">
+      <button *ngIf="usuarioId" 
+              class="ow-action-btn fav" 
+              [class.active]="esFavorito" 
+              [disabled]="cambiandoFavorito"
+              (click)="toggleFavorito()">
+        <span class="btn-icon">
+          <svg viewBox="0 0 24 24" class="ow-svg-icon" [class.filled]="esFavorito">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+        </span>
+        <span class="btn-text">{{ esFavorito ? 'EN FAVORITOS' : 'FAVORITOS' }}</span>
+      </button>
 
-<!-- MODAL DE RESEÑA -->
-<div class="modal-overlay" *ngIf="mostrarModalResena" (click)="cerrarModalResena()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h3>Escribir Reseña para {{ juego?.name }}</h3>
-      <button class="btn-cerrar" (click)="cerrarModalResena()">&times;</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <label>Puntuación</label>
-        <div class="selector-puntuacion">
-          <button type="button" class="btn-estrella" *ngFor="let val of [1,2,3,4,5]" 
-                  [class.activa]="val <= nuevaResena.puntuacion"
-                  (click)="nuevaResena.puntuacion = val">
-            ⭐
-          </button>
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="mensaje">Tu Opinión</label>
-        <textarea id="mensaje" [(ngModel)]="nuevaResena.mensaje" rows="4" placeholder="¿Qué te pareció el juego?"></textarea>
-      </div>
-      <div class="form-group-checkbox">
-        <input type="checkbox" id="spoiler" [(ngModel)]="nuevaResena.tieneSpoiler">
-        <label for="spoiler">Esta reseña contiene spoilers</label>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-secundario" (click)="cerrarModalResena()">Cancelar</button>
-      <button class="btn-primario" (click)="enviarResena()" [disabled]="enviandoResena || !nuevaResena.mensaje.trim()">
-        {{ enviandoResena ? 'Enviando...' : 'Publicar Reseña' }}
+      <button *ngIf="usuarioId" 
+              class="ow-action-btn pend" 
+              [class.active]="esPendiente" 
+              [disabled]="cambiandoPendiente"
+              (click)="togglePendiente()">
+        <span class="btn-icon">
+          <svg viewBox="0 0 24 24" class="ow-svg-icon" [class.filled]="esPendiente">
+            <path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
+          </svg>
+        </span>
+        <span class="btn-text">{{ esPendiente ? 'PENDIENTES' : 'PARA JUGAR' }}</span>
+      </button>
+
+      <button *ngIf="usuarioId" class="ow-action-btn list" (click)="abrirModalListas()">
+        <span class="btn-icon">
+          <svg viewBox="0 0 24 24" class="ow-svg-icon">
+            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+          </svg>
+        </span>
+        <span class="btn-text">MIS LISTAS</span>
+      </button>
+
+      <button class="ow-action-btn review" (click)="abrirModalResena()">
+        <span class="btn-icon">
+          <svg viewBox="0 0 24 24" class="ow-svg-icon">
+            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+          </svg>
+        </span>
+        <span class="btn-text">{{ usuarioId ? 'RESEÑAR JUEGO' : 'LOGUÉATE PARA OPINAR' }}</span>
       </button>
     </div>
   </div>
-</div>
 
-<!-- MODAL DE LISTAS PERSONALIZADAS -->
-<div class="modal-overlay" *ngIf="mostrarModalListas" (click)="cerrarModalListas()">
-  <div class="modal-content modal-listas" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h3>Guardar en mis listas</h3>
-      <button class="btn-cerrar" (click)="cerrarModalListas()">&times;</button>
-    </div>
-    <div class="modal-body">
-      <div class="listas-existentes" *ngIf="listasUsuario.length > 0">
-        <div class="lista-item" *ngFor="let nombre of listasUsuario">
-          <label class="checkbox-container">
-            <input type="checkbox" [checked]="estaEnLista(nombre)" (change)="toggleJuegoEnLista(nombre)">
-            <span class="checkmark"></span>
-            <span class="nombre-lista">{{ nombre }}</span>
-          </label>
+  <div class="layout-main full-width">
+    <div class="layout-content">
+      
+      <!-- MEDIA SECTION (WIDER) -->
+      <div class="content-card media-section">
+        <div class="card-header-ow">
+          <div class="accent"></div>
+          <h2>GALERÍA MULTIMEDIA</h2>
         </div>
-      </div>
-      <div class="sin-listas" *ngIf="listasUsuario.length === 0">
-        <p>No tienes listas todavía. ¡Crea la primera!</p>
-      </div>
-      <div class="nueva-lista-form">
-        <div class="form-group">
-          <label for="nueva-lista">Nueva Lista</label>
-          <div class="input-con-boton">
-            <input id="nueva-lista" type="text" [(ngModel)]="nuevaListaNombre" placeholder="Nombre de la lista..." (keyup.enter)="crearYAgregarALista()">
-            <button class="btn-crear" [disabled]="!nuevaListaNombre.trim() || procesandoLista" (click)="crearYAgregarALista()">Añadir</button>
+        
+        <div class="media-viewer-ow" *ngIf="mediaItems.length > 0">
+          <div class="main-stage">
+            <ng-container *ngIf="mediaItems[indiceMediaActual].tipo === 'imagen'">
+              <img [src]="mediaItems[indiceMediaActual].url" class="stage-img" alt="Gallery Image">
+            </ng-container>
+            <ng-container *ngIf="mediaItems[indiceMediaActual].tipo === 'video'">
+              <video [src]="mediaItems[indiceMediaActual].url" [poster]="mediaItems[indiceMediaActual].preview" class="stage-video" controls autoplay muted loop></video>
+            </ng-container>
+          </div>
+          
+          <div class="stage-controls">
+            <button class="nav-arrow prev" (click)="anteriorMedia()">&#8249;</button>
+            <button class="nav-arrow next" (click)="siguienteMedia()">&#8250;</button>
+          </div>
+          
+          <div class="thumbnails-strip">
+            <div *ngFor="let item of mediaItems; index as i" 
+                 class="thumb-item" 
+                 [class.active]="i === indiceMediaActual"
+                 (click)="indiceMediaActual = i">
+              <img [src]="item.tipo === 'imagen' ? item.url : item.preview" alt="Thumb">
+            </div>
           </div>
         </div>
+      </div>
+
+      <!-- DESCRIPTION SECTION -->
+      <div class="content-card info-section">
+        <div class="card-header-ow">
+          <div class="accent"></div>
+          <h2>DESCRIPCIÓN OPERATIVA</h2>
+        </div>
+        <div class="ow-text-content" [innerHTML]="descripcionSegura"></div>
+      </div>
+
+      <!-- TECHNICAL DETAILS (MOVED BELOW) -->
+      <div class="content-card tech-details-bottom">
+        <div class="card-header-ow tech">
+          <div class="accent"></div>
+          <h2>DETALLES TÉCNICOS Y METADATOS</h2>
+        </div>
+        <div class="tech-grid">
+          <div class="tech-item" *ngIf="juego.genres?.length">
+            <span class="t-label">GÉNEROS</span>
+            <div class="t-tags">
+              <span *ngFor="let g of juego.genres" class="t-tag">{{ g.name }}</span>
+            </div>
+          </div>
+
+          <div class="tech-item" *ngIf="juego.developers?.length">
+            <span class="t-label">DESARROLLADOR</span>
+            <div class="t-value">{{ juego.developers[0]?.name }}</div>
+          </div>
+
+          <div class="tech-item" *ngIf="juego.publishers?.length">
+            <span class="t-label">DISTRIBUIDOR</span>
+            <div class="t-value">{{ juego.publishers[0]?.name }}</div>
+          </div>
+
+          <div class="tech-item links">
+            <span class="t-label">ENLACES EXTERNOS</span>
+            <div class="links-row">
+              <a *ngIf="juego.website" [href]="juego.website" target="_blank" class="ow-link-btn">SITIO OFICIAL</a>
+              <a *ngIf="juego.reddit_url" [href]="juego.reddit_url" target="_blank" class="ow-link-btn">REDDIT</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAGS FULL WIDTH AT BOTTOM -->
+        <div class="tags-full-width">
+          <span class="t-label">ETIQUETAS DEL SISTEMA</span>
+          <div class="t-tags sm">
+            <span *ngFor="let t of tagsJuego" class="t-tag grey">{{ t.name }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- REVIEWS SECTION -->
+      <div class="content-card reviews-section">
+        <div class="card-header-ow">
+          <div class="accent"></div>
+          <h2>REGISTRO DE COMUNIDAD ({{ resenas.length }})</h2>
+        </div>
+        
+        <div *ngIf="resenas.length === 0" class="empty-reviews-ow">
+          <p>NO SE HAN ENCONTRADO REGISTROS DE USUARIOS PARA ESTE TÍTULO.</p>
+        </div>
+
+        <div class="reviews-feed">
+          <div class="ow-review-card" *ngFor="let resena of resenas">
+            <div class="review-side">
+              <div class="user-id-box">
+                <div class="avatar-mini-ow">
+                  <img *ngIf="resena.fotoUsuario" [src]="resena.fotoUsuario" class="avatar-img">
+                  <span *ngIf="!resena.fotoUsuario">{{ resena.nombreUsuario?.charAt(0) || '?' }}</span>
+                </div>
+                <div class="user-name">{{ resena.nombreUsuario || 'ANÓNIMO' }}</div>
+              </div>
+              <div class="review-score">
+                <div class="stars-ow">
+                  <span *ngFor="let _ of [].constructor(resena.puntuacion)">⭐</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="review-main">
+              <button class="delete-review-x" *ngIf="resena.id_usuario === usuarioId" (click)="eliminarResena(resena.id)" title="Eliminar mi reseña">
+                <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+              </button>
+              <div class="review-date">{{ resena.fechaResena | date:'dd.MM.yyyy HH:mm' }}</div>
+              <div class="review-body">
+                <div *ngIf="resena.tieneSpoiler" class="spoiler-container-ow simplified" [class.revealed]="resena.mostrarSpoiler">
+                  <button class="spoiler-eye-btn-centered" *ngIf="!resena.mostrarSpoiler" (click)="resena.mostrarSpoiler = true" title="Revelar spoiler">
+                    <svg viewBox="0 0 24 24" class="eye-icon"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                  </button>
+                  <div class="spoiler-content-ow" [class.blurred]="!resena.mostrarSpoiler">
+                    {{ resena.mensaje }}
+                  </div>
+                </div>
+                <p *ngIf="!resena.tieneSpoiler">{{ resena.mensaje }}</p>
+              </div>
+              
+              <div class="review-footer">
+                <div class="vote-group">
+                  <button class="vote-btn up" [class.active]="resena.votoUsuarioActual === true || resena.voto_usuario_actual === true" (click)="votarResena(resena, true)">
+                    <svg viewBox="0 0 24 24" class="v-icon"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
+                    <span>{{ resena.me_gustas ?? resena.meGustas ?? 0 }}</span>
+                  </button>
+                  <button class="vote-btn down" [class.active]="resena.votoUsuarioActual === false || resena.voto_usuario_actual === false" (click)="votarResena(resena, false)">
+                    <svg viewBox="0 0 24 24" class="v-icon"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L8.83 23l6.59-6.59c.37-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/></svg>
+                    <span>{{ resena.no_me_gustas ?? resena.noMeGustas ?? 0 }}</span>
+                  </button>
+                </div>
+                <button class="toggle-replies-btn" (click)="toggleRespuestas(resena)">
+                  {{ resena.mostrarRespuestas ? 'OCULTAR RESPUESTAS' : 'MOSTRAR RESPUESTAS (' + (resena.respuestas?.length || 0) + ')' }}
+                </button>
+              </div>
+
+              <!-- REPLIES SECTION -->
+              <div class="replies-container-ow" *ngIf="resena.mostrarRespuestas">
+                <div class="reply-card-ow" *ngFor="let resp of resena.respuestas">
+                  <div class="reply-header">
+                    <div class="avatar-tiny-ow">
+                      <img *ngIf="resp.foto_usuario || resp.fotoUsuario" [src]="resp.foto_usuario || resp.fotoUsuario" class="avatar-img">
+                      <span *ngIf="!resp.foto_usuario && !resp.fotoUsuario">{{ (resp.nombre_usuario || resp.nombreUsuario)?.charAt(0) }}</span>
+                    </div>
+                    <div class="reply-user-info">
+                      <span class="reply-user">{{ resp.nombre_usuario || resp.nombreUsuario }}</span>
+                      <span class="reply-parent" *ngIf="resp.id_respuesta_padre">
+                        en respuesta a <strong>{{ getNombrePadre(resena, resp.id_respuesta_padre) }}</strong>
+                      </span>
+                    </div>
+                    <span class="reply-date">{{ (resp.fecha_respuesta || resp.fechaRespuesta) | date:'dd.MM.yyyy HH:mm' }}</span>
+                  </div>
+                  <div class="reply-body">{{ resp.mensaje || resp.comentario }}</div>
+                  <div class="reply-footer">
+                    <div class="vote-group sm">
+                      <button class="vote-btn-sm up" [class.active]="resp.votoUsuarioActual === true || resp.voto_usuario_actual === true" (click)="votarRespuesta(resena, resp, true)">
+                        <svg viewBox="0 0 24 24" class="v-icon sm"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
+                        <span>{{ resp.me_gustas ?? resp.meGustas ?? 0 }}</span>
+                      </button>
+                      <button class="vote-btn-sm down" [class.active]="resp.votoUsuarioActual === false || resp.voto_usuario_actual === false" (click)="votarRespuesta(resena, resp, false)">
+                        <svg viewBox="0 0 24 24" class="v-icon sm"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L8.83 23l6.59-6.59c.37-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/></svg>
+                        <span>{{ resp.no_me_gustas ?? resp.noMeGustas ?? 0 }}</span>
+                      </button>
+                    </div>
+                    <button class="reply-to-btn" (click)="seleccionarParaResponder(resena, resp)">RESPONDER</button>
+                  </div>
+                </div>
+
+                <!-- ADD REPLY FORM -->
+                <div class="add-reply-form" *ngIf="usuarioId">
+                  <div class="replying-to-info" *ngIf="resena.respuestaPadreSeleccionada">
+                    <span>Respondiendo a <strong>{{ resena.respuestaPadreSeleccionada.nombre_usuario || resena.respuestaPadreSeleccionada.nombreUsuario }}</strong></span>
+                    <button class="cancel-reply-btn" (click)="cancelarRespuesta(resena)">✕</button>
+                  </div>
+                  <textarea [(ngModel)]="resena.nuevaRespuestaTexto" [placeholder]="resena.respuestaPadreSeleccionada ? 'Escribe tu respuesta...' : 'Escribe un comentario...'"></textarea>
+                  <button class="ow-btn confirm sm" (click)="enviarRespuesta(resena)">{{ resena.respuestaPadreSeleccionada ? 'RESPONDER' : 'COMENTAR' }}</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" *ngIf="mostrarModalResena" (click)="cerrarModalResena()">
+  <div class="ow-modal" (click)="$event.stopPropagation()">
+    <div class="modal-ow-header">
+      <div class="header-accent"></div>
+      <h2>PUBLICAR REPORTE: {{ juego?.name }}</h2>
+    </div>
+    <div class="modal-ow-body">
+      <div class="ow-form-row">
+        <label>PUNTUACIÓN DE COMBATE</label>
+        <div class="ow-star-selector">
+          <button *ngFor="let val of [1,2,3,4,5]" (click)="nuevaResena.puntuacion = val" [class.active]="val <= nuevaResena.puntuacion">⭐</button>
+        </div>
+      </div>
+      <div class="ow-form-row">
+        <label>ANÁLISIS TÁCTICO</label>
+        <textarea [(ngModel)]="nuevaResena.mensaje" placeholder="ESCRIBE TU RESEÑA AQUÍ..."></textarea>
+      </div>
+      <div class="ow-form-row checkbox">
+        <input type="checkbox" id="spoiler" [(ngModel)]="nuevaResena.tieneSpoiler">
+        <label for="spoiler">EL REGISTRO CONTIENE DATOS SENSIBLES (SPOILERS)</label>
+      </div>
+    </div>
+    <div class="modal-ow-footer">
+      <button class="ow-btn cancel" (click)="cerrarModalResena()">ABORTAR</button>
+      <button class="ow-btn confirm" (click)="enviarResena()" [disabled]="enviandoResena || !nuevaResena.mensaje.trim()">CONFIRMAR REPORTE</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="mostrarModalListas" (click)="cerrarModalListas()">
+  <div class="ow-modal lists" (click)="$event.stopPropagation()">
+    <div class="modal-ow-header">
+      <div class="header-accent"></div>
+      <h2>MIS LISTAS DE DESPLIEGUE</h2>
+    </div>
+    <div class="modal-ow-body">
+      <div class="ow-list-scroller">
+        <div class="ow-list-item" *ngFor="let nombre of listasUsuario" (click)="toggleJuegoEnLista(nombre)">
+          <div class="ow-checkbox" [class.checked]="estaEnLista(nombre)"></div>
+          <span class="ow-list-name">{{ nombre }}</span>
+        </div>
+      </div>
+      <div class="ow-new-list-row">
+        <input type="text" [(ngModel)]="nuevaListaNombre" placeholder="NOMBRE DE LA NUEVA LISTA..." (keyup.enter)="crearYAgregarALista()">
+        <button (click)="crearYAgregarALista()">CREAR</button>
       </div>
     </div>
   </div>

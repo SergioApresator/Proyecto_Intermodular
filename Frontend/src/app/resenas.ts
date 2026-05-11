@@ -20,8 +20,9 @@ export class ResenasService {
   }
 
   // Obtener reseñas por videojuego
-  getResenasPorJuego(idVideojuego: number): Observable<any> {
-    return this.http.get(`${this.urlResenas}/videojuego/${idVideojuego}`, this.getHeaders());
+  getResenasPorJuego(idVideojuego: number, idUsuario?: number): Observable<any> {
+    const params = idUsuario ? `?idUsuario=${idUsuario}` : '';
+    return this.http.get(`${this.urlResenas}/videojuego/${idVideojuego}${params}`, this.getHeaders());
   }
 
   // Obtener reseñas por usuario

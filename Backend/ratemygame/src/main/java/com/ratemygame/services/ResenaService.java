@@ -37,6 +37,17 @@ public class ResenaService {
                 .collect(Collectors.toList());
     }
 
+    public List<ResenaDTO> getResenasByVideojuegoWithVoto(Long idVideojuego, Long idUsuario) {
+        return resenaRepository.findByIdVideojuego(idVideojuego).stream()
+                .map(resena -> {
+                    ResenaDTO dto = convertToDTO(resena);
+                    Optional<ResenaVoto> voto = resenaVotoRepository.findByResena_IdAndUsuario_Id(resena.getId(), idUsuario);
+                    dto.setVotoUsuarioActual(voto.map(ResenaVoto::getEsMeGusta).orElse(null));
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
+
     public List<ResenaDTO> getResenasByUsuario(Long idUsuario) {
         return resenaRepository.findByUsuario_Id(idUsuario).stream()
                 .map(this::convertToDTO)

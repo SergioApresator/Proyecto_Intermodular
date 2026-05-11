@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -59,6 +59,7 @@ export class JuegoDetalle implements OnInit, OnDestroy {
     private videojuegosServicio: Videojuegos,
     private sanitizer: DomSanitizer,
     private cdr: ChangeDetectorRef,
+    private ngZone: NgZone,
     private usuariosServicio: Usuarios,
     private resenasServicio: ResenasService,
     private respuestasServicio: RespuestasService
@@ -150,17 +151,19 @@ export class JuegoDetalle implements OnInit, OnDestroy {
     const gameId = parseInt(gameIdStr, 10);
     this.usuariosServicio.getListasUsuario(this.usuarioId).subscribe({
       next: (listas: any[]) => {
-        this.juegosEnListas = listas;
-        const fav = listas.find(l => l.nombre === 'Favoritos' && l.id_videojuego === gameId);
-        this.esFavorito = !!fav;
-        this.listaFavoritoId = fav ? fav.id : null;
+        this.ngZone.run(() => {
+          this.juegosEnListas = listas;
+          const fav = listas.find(l => l.nombre === 'Favoritos' && l.id_videojuego === gameId);
+          this.esFavorito = !!fav;
+          this.listaFavoritoId = fav ? fav.id : null;
 
-        const pen = listas.find(l => l.nombre === 'Videojuegos Pendientes' && l.id_videojuego === gameId);
-        this.esPendiente = !!pen;
-        this.listaPendienteId = pen ? pen.id : null;
+          const pen = listas.find(l => l.nombre === 'Videojuegos Pendientes' && l.id_videojuego === gameId);
+          this.esPendiente = !!pen;
+          this.listaPendienteId = pen ? pen.id : null;
 
-        this.listasUsuario = [...new Set(listas.map(l => l.nombre))];
-        this.cdr.detectChanges();
+          this.listasUsuario = [...new Set(listas.map(l => l.nombre))];
+          this.cdr.detectChanges();
+        });
       }
     });
   }
@@ -181,21 +184,51 @@ export class JuegoDetalle implements OnInit, OnDestroy {
   }
 
   toggleJuegoEnLista(nombre: string) {
-    if (!this.usuarioId || !this.juego || this.procesandoLista) return;
-    const itemExistente = this.juegosEnListas.find(l => l.nombre === nombre && l.id_videojuego === this.juego.id);
-    this.procesandoLista = true;
-    if (itemExistente) {
-      this.usuariosServicio.eliminarDeLista(itemExistente.id).subscribe({
-        next: () => { if (this.id) this.checkListas(this.id); this.procesandoLista = false; },
-        error: () => this.procesandoLista = false
-      });
-    } else {
-      const payload = { nombre, id_videojuego: this.juego.id, id_usuario: this.usuarioId };
-      this.usuariosServicio.agregarALista(payload).subscribe({
-        next: () => { if (this.id) this.checkListas(this.id); this.procesandoLista = false; },
-        error: () => this.procesandoLista = false
-      });
-    }
+    this.ngZone.run(() => {
+      if (!this.usuarioId || !this.juego || this.procesandoLista) return;
+      const itemExistente = this.juegosEnListas.find(l => l.nombre === nombre && l.id_videojuego === this.juego.id);
+      this.procesandoLista = true;
+      
+      if (itemExistente) {
+        this.juegosEnListas = this.juegosEnListas.filter(l => l.id !== itemExistente.id);
+      } else {
+        this.juegosEnListas.push({ nombre, id_videojuego: this.juego.id, id: -1 });
+      }
+      this.cdr.detectChanges();
+
+      if (itemExistente) {
+        this.usuariosServicio.eliminarDeLista(itemExistente.id).subscribe({
+          next: () => { 
+            this.ngZone.run(() => {
+              if (this.id) this.checkListas(this.id); 
+              this.procesandoLista = false; 
+              this.cdr.detectChanges();
+            });
+          },
+          error: () => this.ngZone.run(() => { 
+            if (this.id) this.checkListas(this.id);
+            this.procesandoLista = false; 
+            this.cdr.detectChanges(); 
+          })
+        });
+      } else {
+        const payload = { nombre, id_videojuego: this.juego.id, id_usuario: this.usuarioId };
+        this.usuariosServicio.agregarALista(payload).subscribe({
+          next: () => { 
+            this.ngZone.run(() => {
+              if (this.id) this.checkListas(this.id); 
+              this.procesandoLista = false; 
+              this.cdr.detectChanges();
+            });
+          },
+          error: () => this.ngZone.run(() => { 
+            if (this.id) this.checkListas(this.id);
+            this.procesandoLista = false; 
+            this.cdr.detectChanges(); 
+          })
+        });
+      }
+    });
   }
 
   crearYAgregarALista() {
@@ -206,39 +239,75 @@ export class JuegoDetalle implements OnInit, OnDestroy {
   }
 
   toggleFavorito() {
-    if (!this.usuarioId) { this.router.navigate(['/login']); return; }
-    if (!this.juego) return;
-    this.cambiandoFavorito = true;
-    if (this.esFavorito && this.listaFavoritoId) {
-      this.usuariosServicio.eliminarDeLista(this.listaFavoritoId).subscribe({
-        next: () => { this.esFavorito = false; this.listaFavoritoId = null; this.cambiandoFavorito = false; this.cdr.detectChanges(); },
-        error: () => { this.cambiandoFavorito = false; this.cdr.detectChanges(); }
-      });
-    } else {
-      const payload = { nombre: 'Favoritos', id_videojuego: this.juego.id, id_usuario: this.usuarioId };
-      this.usuariosServicio.agregarALista(payload).subscribe({
-        next: (nuevaLista: any) => { this.esFavorito = true; this.listaFavoritoId = nuevaLista.id; this.cambiandoFavorito = false; this.cdr.detectChanges(); },
-        error: () => { this.cambiandoFavorito = false; this.cdr.detectChanges(); }
-      });
-    }
+    this.ngZone.run(() => {
+      if (!this.usuarioId) { this.router.navigate(['/login']); return; }
+      if (!this.juego) return;
+      this.cambiandoFavorito = true;
+      this.cdr.detectChanges();
+
+      if (this.esFavorito && this.listaFavoritoId) {
+        this.usuariosServicio.eliminarDeLista(this.listaFavoritoId).subscribe({
+          next: () => { 
+            this.ngZone.run(() => {
+              this.esFavorito = false; 
+              this.listaFavoritoId = null; 
+              this.cambiandoFavorito = false; 
+              this.cdr.detectChanges(); 
+            });
+          },
+          error: () => this.ngZone.run(() => { this.cambiandoFavorito = false; this.cdr.detectChanges(); })
+        });
+      } else {
+        const payload = { nombre: 'Favoritos', id_videojuego: this.juego.id, id_usuario: this.usuarioId };
+        this.usuariosServicio.agregarALista(payload).subscribe({
+          next: (nuevaLista: any) => { 
+            this.ngZone.run(() => {
+              this.esFavorito = true; 
+              this.listaFavoritoId = nuevaLista.id; 
+              this.cambiandoFavorito = false; 
+              this.cdr.detectChanges(); 
+            });
+          },
+          error: () => this.ngZone.run(() => { this.cambiandoFavorito = false; this.cdr.detectChanges(); })
+        });
+      }
+    });
   }
 
   togglePendiente() {
-    if (!this.usuarioId) { this.router.navigate(['/login']); return; }
-    if (!this.juego) return;
-    this.cambiandoPendiente = true;
-    if (this.esPendiente && this.listaPendienteId) {
-      this.usuariosServicio.eliminarDeLista(this.listaPendienteId).subscribe({
-        next: () => { this.esPendiente = false; this.listaPendienteId = null; this.cambiandoPendiente = false; this.cdr.detectChanges(); },
-        error: () => { this.cambiandoPendiente = false; this.cdr.detectChanges(); }
-      });
-    } else {
-      const payload = { nombre: 'Videojuegos Pendientes', id_videojuego: this.juego.id, id_usuario: this.usuarioId };
-      this.usuariosServicio.agregarALista(payload).subscribe({
-        next: (nuevaLista: any) => { this.esPendiente = true; this.listaPendienteId = nuevaLista.id; this.cambiandoPendiente = false; this.cdr.detectChanges(); },
-        error: () => { this.cambiandoPendiente = false; this.cdr.detectChanges(); }
-      });
-    }
+    this.ngZone.run(() => {
+      if (!this.usuarioId) { this.router.navigate(['/login']); return; }
+      if (!this.juego) return;
+      this.cambiandoPendiente = true;
+      this.cdr.detectChanges();
+
+      if (this.esPendiente && this.listaPendienteId) {
+        this.usuariosServicio.eliminarDeLista(this.listaPendienteId).subscribe({
+          next: () => { 
+            this.ngZone.run(() => {
+              this.esPendiente = false; 
+              this.listaPendienteId = null; 
+              this.cambiandoPendiente = false; 
+              this.cdr.detectChanges(); 
+            });
+          },
+          error: () => this.ngZone.run(() => { this.cambiandoPendiente = false; this.cdr.detectChanges(); })
+        });
+      } else {
+        const payload = { nombre: 'Videojuegos Pendientes', id_videojuego: this.juego.id, id_usuario: this.usuarioId };
+        this.usuariosServicio.agregarALista(payload).subscribe({
+          next: (nuevaLista: any) => { 
+            this.ngZone.run(() => {
+              this.esPendiente = true; 
+              this.listaPendienteId = nuevaLista.id; 
+              this.cambiandoPendiente = false; 
+              this.cdr.detectChanges(); 
+            });
+          },
+          error: () => this.ngZone.run(() => { this.cambiandoPendiente = false; this.cdr.detectChanges(); })
+        });
+      }
+    });
   }
 
   ngOnDestroy() { this.detenerCarruselMedia(); }
@@ -271,7 +340,7 @@ export class JuegoDetalle implements OnInit, OnDestroy {
   anteriorMedia() { if (this.mediaItems.length > 0) { this.indiceMediaActual = (this.indiceMediaActual - 1 + this.mediaItems.length) % this.mediaItems.length; this.iniciarCarruselMedia(); } }
 
   cargarResenas(idVideojuego: number) {
-    this.resenasServicio.getResenasPorJuego(idVideojuego).subscribe({
+    this.resenasServicio.getResenasPorJuego(idVideojuego, this.usuarioId || undefined).subscribe({
       next: (data) => {
         this.resenas = data.map((r: any) => ({
           ...r,
@@ -282,7 +351,12 @@ export class JuegoDetalle implements OnInit, OnDestroy {
         }));
         this.resenas.forEach(resena => {
           this.respuestasServicio.getRespuestasPorResena(resena.id, this.usuarioId || undefined).subscribe({
-            next: (respuestas) => { resena.respuestas = respuestas; this.cdr.detectChanges(); }
+            next: (respuestas) => { 
+              this.ngZone.run(() => {
+                resena.respuestas = respuestas; 
+                this.cdr.detectChanges(); 
+              });
+            }
           });
         });
         this.cdr.detectChanges();
@@ -302,12 +376,14 @@ export class JuegoDetalle implements OnInit, OnDestroy {
     const parentId = resena.respuestaPadreSeleccionada?.id;
     this.respuestasServicio.crearRespuesta(resena.id, this.usuarioId, resena.nuevaRespuestaTexto, parentId).subscribe({
       next: (nuevaRespuesta) => {
-        nuevaRespuesta.votoUsuarioActual = null;
-        resena.respuestas.push(nuevaRespuesta);
-        resena.nuevaRespuestaTexto = '';
-        resena.mostrarRespuestas = true;
-        resena.respuestaPadreSeleccionada = null;
-        this.cdr.detectChanges();
+        this.ngZone.run(() => {
+          nuevaRespuesta.votoUsuarioActual = null;
+          resena.respuestas.push(nuevaRespuesta);
+          resena.nuevaRespuestaTexto = '';
+          resena.mostrarRespuestas = true;
+          resena.respuestaPadreSeleccionada = null;
+          this.cdr.detectChanges();
+        });
       }
     });
   }
@@ -317,10 +393,14 @@ export class JuegoDetalle implements OnInit, OnDestroy {
     if (!this.usuarioId) { this.router.navigate(['/login']); return; }
     this.respuestasServicio.votarRespuesta(respuesta.id, this.usuarioId, esMeGusta).subscribe({
       next: (data) => {
-        respuesta.meGustas = data.meGustas;
-        respuesta.noMeGustas = data.noMeGustas;
-        respuesta.votoUsuarioActual = data.votoUsuarioActual;
-        this.cdr.detectChanges();
+        this.ngZone.run(() => {
+          respuesta.me_gustas = data.me_gustas ?? data.meGustas;
+          respuesta.meGustas = data.meGustas ?? data.me_gustas;
+          respuesta.no_me_gustas = data.no_me_gustas ?? data.noMeGustas;
+          respuesta.noMeGustas = data.noMeGustas ?? data.no_me_gustas;
+          respuesta.votoUsuarioActual = data.votoUsuarioActual;
+          this.cdr.detectChanges();
+        });
       }
     });
   }
@@ -348,12 +428,22 @@ export class JuegoDetalle implements OnInit, OnDestroy {
     if (!this.usuarioId) { this.router.navigate(['/login']); return; }
     this.resenasServicio.votarResena(resena.id, this.usuarioId, esMeGusta).subscribe({
       next: (data) => {
-        resena.meGustas = data.meGustas;
-        resena.noMeGustas = data.noMeGustas;
-        resena.votoUsuarioActual = data.votoUsuarioActual;
-        this.cdr.detectChanges();
+        this.ngZone.run(() => {
+          resena.me_gustas = data.me_gustas ?? data.meGustas;
+          resena.meGustas = data.meGustas ?? data.me_gustas;
+          resena.no_me_gustas = data.no_me_gustas ?? data.noMeGustas;
+          resena.noMeGustas = data.noMeGustas ?? data.no_me_gustas;
+          resena.votoUsuarioActual = data.votoUsuarioActual;
+          this.cdr.detectChanges();
+        });
       }
     });
+  }
+
+  getNombrePadre(resena: any, idPadre: number): string {
+    if (!idPadre) return '';
+    const padre = resena.respuestas.find((r: any) => r.id === idPadre);
+    return padre ? (padre.nombre_usuario || padre.nombreUsuario) : '';
   }
 
   eliminarResena(idResena: number) {
