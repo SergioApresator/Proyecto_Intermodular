@@ -50,17 +50,10 @@ export class Login implements OnInit {
       const identityValue = this.formularioLogin.value.identity!;
       const passInput = this.formularioLogin.value.password!;
 
-      if (identityValue.includes('@')) {
-        this.usuariosServicio.loginEmail(identityValue, passInput).subscribe({
-          next: (usuarioEncontrado) => this.guardarSesionYRedirigir(usuarioEncontrado),
-          error: () => alert('Correo o contraseña incorrectos')
-        });
-      } else {
-        this.usuariosServicio.loginUsername(identityValue, passInput).subscribe({
-          next: (usuarioEncontrado) => this.guardarSesionYRedirigir(usuarioEncontrado),
-          error: () => alert('Usuario o contraseña incorrectos')
-        });
-      }
+      this.usuariosServicio.login(identityValue, passInput).subscribe({
+        next: (usuarioEncontrado) => this.guardarSesionYRedirigir(usuarioEncontrado),
+        error: () => alert('Credenciales incorrectas')
+      });
     }
   }
 

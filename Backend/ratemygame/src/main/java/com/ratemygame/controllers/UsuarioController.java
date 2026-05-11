@@ -31,22 +31,29 @@ public class UsuarioController {
     @Value("${app.upload.dir}")
     private String uploadDir;
     
-    @PostMapping("/login-username")
-    public ResponseEntity<UsuarioDTO> loginUsuarioUsername(@RequestBody Map<String, String> credentials) {
-        String username = credentials.get("username");
+    @PostMapping("/login")
+    public ResponseEntity<UsuarioDTO> login(@RequestBody Map<String, String> credentials) {
+        String identifier = credentials.get("identifier");
+        if (identifier == null) {
+            identifier = credentials.get("username");
+        }
+        if (identifier == null) {
+            identifier = credentials.get("email");
+        }
         String password = credentials.get("password");
-        return usuarioService.loginUsuarioUsername(username, password)
+        return usuarioService.login(identifier, password)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
 
+    @PostMapping("/login-username")
+    public ResponseEntity<UsuarioDTO> loginUsuarioUsername(@RequestBody Map<String, String> credentials) {
+        return login(credentials);
+    }
+
     @PostMapping("/login-email")
     public ResponseEntity<UsuarioDTO> loginUsuarioEmail(@RequestBody Map<String, String> credentials) {
-        String email = credentials.get("email");
-        String password = credentials.get("password");
-        return usuarioService.loginUsuarioEmail(email, password)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
+        return login(credentials);
     }
 
     // Spring Security already validates the JWT before reaching this method.

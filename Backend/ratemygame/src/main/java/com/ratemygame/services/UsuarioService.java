@@ -34,8 +34,8 @@ public class UsuarioService {
         return usuarioRepository.findById(id).map(this::convertToDTO);
     }
     
-    public Optional<UsuarioDTO> loginUsuarioUsername(String username, String password) {
-        Optional<Usuario> optionalUsuario = usuarioRepository.findByUsername(username);
+    public Optional<UsuarioDTO> login(String identifier, String password) {
+        Optional<Usuario> optionalUsuario = usuarioRepository.findByUsernameOrEmail(identifier, identifier);
         if (optionalUsuario.isPresent()) {
             Usuario usuario = optionalUsuario.get();
             if (passwordEncoder.matches(password, usuario.getPassword())) {
@@ -48,18 +48,12 @@ public class UsuarioService {
         return Optional.empty();
     }
 
+    public Optional<UsuarioDTO> loginUsuarioUsername(String username, String password) {
+        return login(username, password);
+    }
+
     public Optional<UsuarioDTO> loginUsuarioEmail(String email, String password) {
-        Optional<Usuario> optionalUsuario = usuarioRepository.findByEmail(email);
-        if (optionalUsuario.isPresent()) {
-            Usuario usuario = optionalUsuario.get();
-            if (passwordEncoder.matches(password, usuario.getPassword())) {
-                String token = jwtService.generateToken(new CustomUserDetails(usuario));
-                UsuarioDTO dto = convertToDTO(usuario);
-                dto.setToken(token);
-                return Optional.of(dto);
-            }
-        }
-        return Optional.empty();
+        return login(email, password);
     }
 
     public UsuarioDTO createUsuario(Usuario usuario) {
