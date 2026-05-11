@@ -44,6 +44,21 @@ export class Perfil implements OnInit {
     return favList ? favList.juegos.length : 0;
   }
 
+  // Navegación por pestañas
+  pestanaActual: string = 'resumen';
+
+  cambiarPestana(id: string) {
+    this.pestanaActual = id;
+    if (id === 'ajustes') {
+      this.iniciarEdicion();
+    }
+    this.cdr.detectChanges();
+  }
+
+  volver() {
+    this.router.navigate(['/']);
+  }
+
   // Edición
   editando: boolean = false;
   guardando: boolean = false;
@@ -144,6 +159,23 @@ export class Perfil implements OnInit {
     });
   }
 
+  eliminarResena(idResena: number) {
+    if (!confirm('¿Estás seguro de que deseas eliminar esta reseña?')) return;
+
+    this.resenasServicio.eliminarResena(idResena).subscribe({
+      next: () => {
+        this.resenas = this.resenas.filter(r => r.id !== idResena);
+        this.mensajeExito = 'Reseña eliminada correctamente.';
+        this.cdr.detectChanges();
+        setTimeout(() => (this.mensajeExito = ''), 3000);
+      },
+      error: () => {
+        this.error = 'No se pudo eliminar la reseña.';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
   cargarTodasLasListas(id: number) {
     this.cargandoListas = true;
     this.usuariosServicio.getListasUsuario(id).subscribe({
@@ -203,8 +235,6 @@ export class Perfil implements OnInit {
     });
   }
 
-  // ─── Foto de perfil ───
-
   abrirSelectorFoto() {
     this.fileInput.nativeElement.click();
   }
@@ -216,14 +246,12 @@ export class Perfil implements OnInit {
     const file = input.files[0];
     this.errorFoto = '';
 
-    // Validar tipo
     if (!file.type.startsWith('image/')) {
       this.errorFoto = 'Solo se permiten imágenes (JPG, PNG, GIF, WebP…)';
       this.cdr.detectChanges();
       return;
     }
 
-    // Validar tamaño (5 MB máximo)
     if (file.size > 5 * 1024 * 1024) {
       this.errorFoto = 'La imagen no puede superar los 5 MB.';
       this.cdr.detectChanges();
@@ -232,7 +260,6 @@ export class Perfil implements OnInit {
 
     this.archivoSeleccionado = file;
 
-    // Generar previsualización local
     const reader = new FileReader();
     reader.onload = (e: any) => {
       this.previewFoto = e.target.result;
@@ -249,7 +276,6 @@ export class Perfil implements OnInit {
     this.usuariosServicio.subirFotoPerfil(this.usuario.id, this.archivoSeleccionado).subscribe({
       next: (data: any) => {
         this.usuario = data;
-        // Actualizar localStorage y navbar
         const foto = data.foto_url || data.fotoUrl;
         if (foto) localStorage.setItem('foto_url', foto);
         this.previewFoto = null;
@@ -280,7 +306,7 @@ export class Perfil implements OnInit {
 
   abrirSelectorBanner() {
     this.bannerInput.nativeElement.click();
-}
+  }
 
   onBannerSeleccionado(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -302,9 +328,8 @@ export class Perfil implements OnInit {
     }
 
     this.archivoBannerSeleccionado = file;
-    //Subimos directamente sin preview ni confirmacion
     this.subirBanner();
-}
+  }
 
   subirBanner() {
     if (!this.archivoBannerSeleccionado || !this.usuario?.id) return;
@@ -314,7 +339,6 @@ export class Perfil implements OnInit {
     this.usuariosServicio.subirBanner(this.usuario.id, this.archivoBannerSeleccionado).subscribe({
         next: (data: any) => {
             this.usuario = data;
-            //Mostramos la imagen directamente sin esperar click
             const banner = data.banner_url || data.bannerUrl;
             if (banner) {
                 this.usuario.banner_url = banner;
@@ -331,7 +355,7 @@ export class Perfil implements OnInit {
             this.cdr.detectChanges();
         }
     });
-}
+  }
 
   cancelarBanner() {
     this.archivoBannerSeleccionado = null;
@@ -340,8 +364,6 @@ export class Perfil implements OnInit {
     this.bannerInput.nativeElement.value = '';
     this.cdr.detectChanges();
   }
-
-  // ─── Edición de perfil ───
 
   iniciarEdicion() {
     this.formEdicion = {
@@ -364,6 +386,13 @@ export class Perfil implements OnInit {
   }
 
   guardarCambios() {
+    if (!this.formEdicion.nombre?.trim() || !this.formEdicion.username?.trim() || !this.formEdicion.email?.trim()) {
+      this.mensajeExito = '';
+      this.error = 'Por favor, rellena los campos obligatorios (Nombre, Usuario y Email).';
+      this.cdr.detectChanges();
+      return;
+    }
+    this.error = '';
     this.guardando = true;
     this.usuariosServicio.actualizarUsuario(this.usuario.id, this.formEdicion).subscribe({
       next: (data: any) => {

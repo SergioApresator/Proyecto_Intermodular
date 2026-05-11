@@ -25,13 +25,39 @@ export class App implements OnInit {
   bannerUrl: string = '';
   mostrarDropdown: boolean = false;
 
+  // Theme state
+  isDarkMode: boolean = false;
+
   ngOnInit() {
+    this.checkTheme();
     this.actualizarEstadoAuth();
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.actualizarEstadoAuth();
       }
     });
+  }
+
+  checkTheme() {
+    if (typeof window !== 'undefined') {
+      const savedTheme = localStorage.getItem('theme');
+      this.isDarkMode = savedTheme === 'dark';
+      this.applyTheme();
+    }
+  }
+
+  toggleTheme() {
+    this.isDarkMode = !this.isDarkMode;
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('theme', this.isDarkMode ? 'dark' : 'light');
+    }
+    this.applyTheme();
+  }
+
+  applyTheme() {
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-theme', this.isDarkMode ? 'dark' : 'light');
+    }
   }
 
   actualizarEstadoAuth() {

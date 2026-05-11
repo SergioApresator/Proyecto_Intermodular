@@ -1,8 +1,8 @@
 :host {
   display: block;
-  background-color: #0f172a;
+  background-color: #f8fafc;
   min-height: 100vh;
-  color: #f1f5f9;
+  color: #1e293b;
 }
 
 .contenedor-cargando {
@@ -10,7 +10,7 @@
   justify-content: center;
   align-items: center;
   height: 80vh;
-  color: #94a3b8;
+  color: #64748b;
   font-size: 1.2rem;
 }
 
@@ -30,7 +30,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to top, #0f172a 0%, rgba(15, 23, 42, 0.8) 40%, transparent 100%);
+  background: linear-gradient(to top, #f8fafc 0%, rgba(15, 23, 42, 0.8) 40%, transparent 100%);
 }
 
 .hero-contenido {
@@ -50,7 +50,7 @@
 }
 
 .fecha-lanzamiento {
-  background-color: #334155;
+  background-color: #e2e8f0;
   padding: 6px 12px;
   border-radius: 6px;
   font-size: 0.85rem;
@@ -64,8 +64,8 @@
 }
 
 .plat-tag {
-  background-color: #ffffff;
-  color: #0f172a;
+  background-color: #1e293b;
+  color: #f8fafc;
   padding: 4px 10px;
   border-radius: 4px;
   font-size: 0.75rem;
@@ -92,9 +92,9 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(30, 41, 59, 0.8);
-  border: 2px solid #334155;
-  color: #f1f5f9;
+  background: rgba(255, 255, 255, 0.8);
+  border: 2px solid #e2e8f0;
+  color: #1e293b;
   padding: 10px 18px;
   border-radius: 8px;
   cursor: pointer;
@@ -104,8 +104,8 @@
 }
 
 .btn-favorito:hover {
-  background: #334155;
-  border-color: #475569;
+  background: #e2e8f0;
+  border-color: #cbd5e1;
 }
 
 .btn-favorito.activo {
@@ -123,9 +123,9 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(30, 41, 59, 0.8);
-  border: 2px solid #334155;
-  color: #f1f5f9;
+  background: rgba(255, 255, 255, 0.8);
+  border: 2px solid #e2e8f0;
+  color: #1e293b;
   padding: 10px 18px;
   border-radius: 8px;
   cursor: pointer;
@@ -135,8 +135,8 @@
 }
 
 .btn-pendiente:hover {
-  background: #334155;
-  border-color: #475569;
+  background: #e2e8f0;
+  border-color: #cbd5e1;
 }
 
 .btn-pendiente.activo {
@@ -210,7 +210,7 @@
 .seccion-resenas-container {
   margin: 40px auto 0 auto;
   padding: 30px 40px 60px 40px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
   max-width: 1200px;
 }
 
@@ -238,8 +238,8 @@
 }
 
 .tarjeta-resena {
-  background: rgba(26, 32, 44, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: 12px;
   padding: 20px;
   transition: transform 0.2s ease;
@@ -247,7 +247,7 @@
 
 .tarjeta-resena:hover {
   transform: translateX(5px);
-  background: rgba(26, 32, 44, 0.8);
+  background: #ffffff;
 }
 
 .resena-header {
@@ -256,7 +256,7 @@
   align-items: center;
   margin-bottom: 15px;
   padding-bottom: 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .resena-usuario {
@@ -275,7 +275,7 @@
   justify-content: center;
   font-weight: bold;
   font-size: 1.1rem;
-  color: white;
+  color: #1e293b;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   overflow: hidden;
 }
@@ -294,7 +294,7 @@
 
 .nombre-usuario-texto {
   font-weight: bold;
-  color: #fff;
+  color: #1e293b;
   font-size: 1rem;
 }
 
@@ -306,7 +306,7 @@
 .resena-contenido {
   font-size: 1rem;
   line-height: 1.6;
-  color: #e2e8f0;
+  color: #334155;
 }
 
 .alerta-spoiler {
@@ -326,7 +326,7 @@
   gap: 10px;
   margin-top: 15px;
   padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .btn-voto {
@@ -334,7 +334,7 @@
   align-items: center;
   gap: 6px;
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   color: #a0aec0;
   padding: 6px 14px;
   border-radius: 6px;
@@ -345,8 +345,8 @@
 }
 
 .btn-voto:hover:not([disabled]) {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  background: rgba(0, 0, 0, 0.1);
+  color: #1e293b;
   transform: translateY(-1px);
 }
 
@@ -384,11 +384,11 @@
 }
 
 .modal-content {
-  background: #1a202c;
+  background: #ffffff;
   width: 90%;
   max-width: 500px;
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
   animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
@@ -400,13 +400,13 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px 24px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .modal-header h3 {
   margin: 0;
   font-size: 1.2rem;
-  color: #fff;
+  color: #1e293b;
 }
 
 .btn-cerrar {
@@ -419,7 +419,7 @@
 }
 
 .btn-cerrar:hover {
-  color: #fff;
+  color: #1e293b;
 }
 
 .modal-body {
@@ -433,7 +433,7 @@
 .form-group label {
   display: block;
   margin-bottom: 8px;
-  color: #e2e8f0;
+  color: #334155;
   font-weight: 500;
 }
 
@@ -443,8 +443,8 @@
 }
 
 .btn-estrella {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   padding: 10px;
   cursor: pointer;
@@ -466,8 +466,8 @@
 textarea {
   width: 100%;
   background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #1e293b;
   padding: 12px;
   border-radius: 8px;
   font-family: inherit;
@@ -485,13 +485,13 @@ textarea:focus {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #e2e8f0;
+  color: #334155;
   cursor: pointer;
 }
 
 .modal-footer {
   padding: 16px 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: flex-end;
   gap: 12px;
@@ -500,7 +500,7 @@ textarea:focus {
 .btn-secundario {
   background: transparent;
   color: #a0aec0;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.15);
   padding: 10px 20px;
   border-radius: 8px;
   cursor: pointer;
@@ -509,13 +509,13 @@ textarea:focus {
 }
 
 .btn-secundario:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: #fff;
+  background: rgba(0, 0, 0, 0.05);
+  color: #1e293b;
 }
 
 .btn-primario {
   background: #4299e1;
-  color: white;
+  color: #ffffff;
   border: none;
   padding: 10px 20px;
   border-radius: 8px;
@@ -559,7 +559,7 @@ textarea:focus {
 
 .stat-max {
   font-size: 0.9rem;
-  color: #94a3b8;
+  color: #64748b;
 }
 
 .metacritic {
@@ -606,9 +606,9 @@ textarea:focus {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(30, 41, 59, 0.8);
-  border: 1px solid #334155;
-  color: #ffffff;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid #e2e8f0;
+  color: #1e293b;
   font-size: 2.5rem;
   padding: 10px 18px;
   cursor: pointer;
@@ -646,7 +646,7 @@ textarea:focus {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #475569;
+  background: #cbd5e1;
   cursor: pointer;
   transition: background 0.2s;
 }
@@ -659,13 +659,13 @@ textarea:focus {
 /* DETALLE SECTION */
 .seccion-detalle h3 {
   font-size: 1.8rem;
-  border-bottom: 2px solid #334155;
+  border-bottom: 2px solid #e2e8f0;
   padding-bottom: 10px;
   margin-bottom: 20px;
 }
 
 .descripcion-html {
-  color: #cbd5e1;
+  color: #475569;
   line-height: 1.7;
   font-size: 1.05rem;
 }
@@ -676,10 +676,10 @@ textarea:focus {
 
 /* COLUMNA LATERAL */
 .columna-lateral {
-  background-color: #1e293b;
+  background-color: #ffffff;
   padding: 30px;
   border-radius: 12px;
-  border: 1px solid #334155;
+  border: 1px solid #e2e8f0;
   height: fit-content;
 }
 
@@ -688,7 +688,7 @@ textarea:focus {
 }
 
 .meta-bloque h4 {
-  color: #94a3b8;
+  color: #64748b;
   text-transform: uppercase;
   font-size: 0.85rem;
   letter-spacing: 1px;
@@ -707,7 +707,7 @@ textarea:focus {
 }
 
 .tag {
-  background-color: #334155;
+  background-color: #e2e8f0;
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 0.9rem;
@@ -716,8 +716,8 @@ textarea:focus {
 .tag-sm {
   font-size: 0.8rem;
   padding: 4px 10px;
-  background-color: #0f172a;
-  border: 1px solid #334155;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
 }
 
 .enlace-externo {
@@ -739,7 +739,7 @@ textarea:focus {
   gap: 15px;
   margin-bottom: 30px;
   padding-bottom: 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .lateral-btn {
@@ -753,9 +753,9 @@ textarea:focus {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(15, 23, 42, 0.6);
-  border: 2px solid #334155;
-  color: #f1f5f9;
+  background: rgba(255, 255, 255, 0.8);
+  border: 2px solid #e2e8f0;
+  color: #1e293b;
   padding: 10px 18px;
   border-radius: 8px;
   cursor: pointer;
@@ -765,8 +765,8 @@ textarea:focus {
 }
 
 .btn-listas:hover {
-  background: #334155;
-  border-color: #475569;
+  background: #e2e8f0;
+  border-color: #cbd5e1;
 }
 
 .icono-lista {
@@ -804,21 +804,21 @@ textarea:focus {
 }
 
 .listas-existentes::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.1);
   border-radius: 10px;
-  border: 2px solid #1a202c;
+  border: 2px solid #ffffff;
   /* Crear un efecto de margen */
 }
 
 .listas-existentes::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.15);
 }
 
 .lista-item {
   background: rgba(255, 255, 255, 0.03);
   border-radius: 8px;
   transition: all 0.2s ease;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .lista-item:hover {
@@ -834,7 +834,7 @@ textarea:focus {
   padding: 10px 12px 10px 48px;
   cursor: pointer;
   font-size: 0.95rem;
-  color: #e2e8f0;
+  color: #334155;
   user-select: none;
   width: 100%;
   min-height: 44px;
@@ -877,7 +877,7 @@ textarea:focus {
   flex-direction: column;
   gap: 8px;
   padding-left: 20px;
-  border-left: 2px solid rgba(255, 255, 255, 0.05);
+  border-left: 2px solid rgba(0, 0, 0, 0.05);
 }
 
 .tarjeta-respuesta {
@@ -897,7 +897,7 @@ textarea:focus {
 .avatar-respuesta {
   width: 28px;
   height: 28px;
-  background: #334155;
+  background: #e2e8f0;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -905,7 +905,7 @@ textarea:focus {
   overflow: hidden;
   font-size: 0.75rem;
   font-weight: bold;
-  color: #cbd5e1;
+  color: #475569;
 }
 
 .avatar-img-micro {
@@ -922,7 +922,7 @@ textarea:focus {
 
 .respuesta-mensaje {
   font-size: 0.9rem;
-  color: #cbd5e1;
+  color: #475569;
   margin: 0;
   line-height: 1.4;
 }
@@ -936,8 +936,8 @@ textarea:focus {
 .form-respuesta input {
   flex: 1;
   background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #1e293b;
   padding: 8px 12px;
   border-radius: 6px;
   font-size: 0.85rem;
@@ -945,7 +945,7 @@ textarea:focus {
 
 .form-respuesta button {
   background: #3182ce;
-  color: white;
+  color: #1e293b;
   border: none;
   padding: 8px 16px;
   border-radius: 6px;
@@ -997,7 +997,7 @@ textarea:focus {
 
 .btn-responder-comentario:hover {
   color: #63b3ed;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .mencion-padre {
@@ -1022,7 +1022,7 @@ textarea:focus {
   padding: 8px 12px;
   border-radius: 8px 8px 0 0;
   font-size: 0.85rem;
-  color: #cbd5e1;
+  color: #475569;
 }
 
 .indicador-respuesta-activa strong {
@@ -1049,7 +1049,7 @@ textarea:focus {
 .form-respuesta-contenedor .form-respuesta {
   margin-top: 0;
   border-radius: 0 0 8px 8px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
   border-top: none;
 }
 
@@ -1068,8 +1068,8 @@ textarea:focus {
 }
 
 .btn-voto-mini:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.05);
-  color: #fff;
+  background: rgba(0, 0, 0, 0.05);
+  color: #1e293b;
 }
 
 .btn-voto-mini.activo {
@@ -1089,8 +1089,8 @@ textarea:focus {
   transform: translateY(-50%);
   height: 22px;
   width: 22px;
-  background-color: #0f172a;
-  border: 2px solid #334155;
+  background-color: #f8fafc;
+  border: 2px solid #e2e8f0;
   border-radius: 6px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -1121,7 +1121,7 @@ textarea:focus {
   top: 2px;
   width: 6px;
   height: 11px;
-  border: solid white;
+  border: solid #1e293b;
   border-width: 0 2.5px 2.5px 0;
   transform: rotate(45deg);
 }
@@ -1137,13 +1137,13 @@ textarea:focus {
   padding: 30px 0;
   background: rgba(255, 255, 255, 0.02);
   border-radius: 12px;
-  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border: 1px dashed rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
 }
 
 .nueva-lista-form {
   padding-top: 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .input-con-boton {
@@ -1154,9 +1154,9 @@ textarea:focus {
 
 .input-con-boton input {
   flex: 1;
-  background: #0f172a;
-  border: 1px solid #334155;
-  color: #f1f5f9;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #1e293b;
   padding: 12px 16px;
   border-radius: 10px;
   font-size: 0.95rem;
@@ -1166,13 +1166,13 @@ textarea:focus {
 .input-con-boton input:focus {
   outline: none;
   border-color: #3b82f6;
-  background: #1e293b;
+  background: #ffffff;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
 .btn-crear {
   background: #3b82f6;
-  color: white;
+  color: #1e293b;
   border: none;
   padding: 0 20px;
   border-radius: 10px;
@@ -1194,7 +1194,7 @@ textarea:focus {
 
 .btn-crear:disabled {
   opacity: 0.5;
-  background: #1e293b;
+  background: #ffffff;
   cursor: not-allowed;
   box-shadow: none;
 }
@@ -1213,4 +1213,22 @@ textarea:focus {
 
 .btn-spoiler:hover {
   background: #7f1d1d;
+}
+.btn-delete-resena-juego {
+    background: #ef4444;
+    color: white;
+    border: none;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: background 0.2s;
+    border-radius: 0;
+}
+
+.btn-delete-resena-juego:hover {
+    background: #f87171;
 }

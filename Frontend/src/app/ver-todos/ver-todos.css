@@ -1,8 +1,8 @@
 :host {
     display: block;
-    background-color: #0f172a;
+    background-color: #f8fafc;
     min-height: 100vh;
-    color: #f1f5f9;
+    color: #1e293b;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -11,7 +11,7 @@
     justify-content: center;
     align-items: center;
     min-height: 80vh;
-    color: #94a3b8;
+    color: #64748b;
     font-size: 1.2rem;
 }
 
@@ -22,10 +22,10 @@
 .titulo {
     font-size: 1.8rem;
     font-weight: bold;
-    color: #ffffff;
+    color: #1e293b;
     margin-bottom: 30px;
     padding-bottom: 10px;
-    border-bottom: 2px solid #334155;
+    border-bottom: 2px solid #e2e8f0;
 }
 
 .cuadricula {
@@ -35,10 +35,10 @@
 }
 
 .tarjeta {
-    background: #1e293b;
+    background: #ffffff;
     border-radius: 12px;
     overflow: hidden;
-    border: 1px solid #334155;
+    border: 1px solid #e2e8f0;
     cursor: pointer;
     transition: transform 0.2s ease, border-color 0.2s ease;
 }
@@ -61,7 +61,7 @@
 .tarjeta-nombre {
     font-size: 0.85rem;
     font-weight: 600;
-    color: #f1f5f9;
+    color: #1e293b;
     margin: 0 0 4px 0;
     white-space: nowrap;
     overflow: hidden;
@@ -70,7 +70,7 @@
 
 .tarjeta-rating {
     font-size: 0.78rem;
-    color: #94a3b8;
+    color: #64748b;
     margin: 0;
 }
 
@@ -84,8 +84,8 @@
 .btn-cargar-mas {
     padding: 12px 40px;
     background: none;
-    border: 1px solid #334155;
-    color: #94a3b8;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
     font-size: 0.9rem;
     cursor: pointer;
     border-radius: 8px;
@@ -104,8 +104,8 @@
 
 .btn-volver {
     background: none;
-    border: 1px solid #334155;
-    color: #94a3b8;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
     padding: 8px 20px;
     font-size: 0.85rem;
     cursor: pointer;
