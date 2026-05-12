@@ -8,6 +8,7 @@ import { JuegoDetalle } from './juego-detalle/juego-detalle';
 import { Perfil } from './perfil/perfil';
 import { authGuard } from './auth.guard';
 import { AcercaDe } from './acerca-de/acerca-de';
+import { Busqueda } from './busqueda/busqueda';
 
 export const routes: Routes = [
     //La ruta raiz redirige directamente a inicial
@@ -17,6 +18,7 @@ export const routes: Routes = [
     { path: 'diario', component: Diario },
     // Rutas públicas
     { path: 'inicial', component: Inicial },
+    { path: 'busqueda', component: Busqueda },
     { path: 'ver-todos/:genero', component: VerTodos },
     { path: 'juego/:id', component: JuegoDetalle },
     

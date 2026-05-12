@@ -3,10 +3,12 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Videojuegos } from '../videojuegos';
 
+import { Footer } from '../footer/footer';
+
 @Component({
   selector: 'app-ver-todos',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, Footer],
   templateUrl: './ver-todos.html',
   styleUrl: './ver-todos.css',
 })
