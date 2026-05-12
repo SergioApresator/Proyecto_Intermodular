@@ -275,13 +275,25 @@
                 </div>
 
                 <!-- ADD REPLY FORM -->
-                <div class="add-reply-form" *ngIf="usuarioId">
-                  <div class="replying-to-info" *ngIf="resena.respuestaPadreSeleccionada">
-                    <span>Respondiendo a <strong>{{ resena.respuestaPadreSeleccionada.nombre_usuario || resena.respuestaPadreSeleccionada.nombreUsuario }}</strong></span>
-                    <button class="cancel-reply-btn" (click)="cancelarRespuesta(resena)">✕</button>
+                <div class="add-reply-form-premium" *ngIf="usuarioId">
+                  <div class="reply-input-wrapper">
+                    <div class="user-avatar-current">
+                      <span>TÚ</span>
+                    </div>
+                    <div class="reply-field-area">
+                      <div class="replying-to-badge" *ngIf="resena.respuestaPadreSeleccionada">
+                        <span>RESPONDIENDO A <strong>{{ resena.respuestaPadreSeleccionada.nombre_usuario || resena.respuestaPadreSeleccionada.nombreUsuario }}</strong></span>
+                        <button class="cancel-reply-ow" (click)="cancelarRespuesta(resena)">✕</button>
+                      </div>
+                      <textarea [(ngModel)]="resena.nuevaRespuestaTexto" 
+                                [placeholder]="resena.respuestaPadreSeleccionada ? 'Escribe tu respuesta...' : 'Escribe un comentario...'"></textarea>
+                      <div class="reply-actions-row">
+                        <button class="ow-btn-modern confirm sm" (click)="enviarRespuesta(resena)">
+                          {{ resena.respuestaPadreSeleccionada ? 'ENVIAR RESPUESTA' : 'PUBLICAR COMENTARIO' }}
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <textarea [(ngModel)]="resena.nuevaRespuestaTexto" [placeholder]="resena.respuestaPadreSeleccionada ? 'Escribe tu respuesta...' : 'Escribe un comentario...'"></textarea>
-                  <button class="ow-btn confirm sm" (click)="enviarRespuesta(resena)">{{ resena.respuestaPadreSeleccionada ? 'RESPONDER' : 'COMENTAR' }}</button>
                 </div>
               </div>
             </div>
@@ -376,16 +388,6 @@
       <div class="grid-scroll-area">
         <div class="bento-lists-grid">
           
-          <!-- NEW LIST TILE -->
-          <div class="bento-tile new-list-tile">
-            <div class="tile-content">
-              <input type="text" [(ngModel)]="nuevaListaNombre" placeholder="NUEVA LISTA..." (keyup.enter)="crearYAgregarALista()">
-              <button class="btn-add-tile" (click)="crearYAgregarALista()">
-                <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-              </button>
-            </div>
-          </div>
-
           <!-- EXISTING LIST TILES -->
           <div *ngFor="let nombre of listasUsuario" 
                class="bento-tile list-tile" 
@@ -395,6 +397,35 @@
             <div class="tile-name">{{ nombre }}</div>
             <div class="tile-indicator">
               <div class="indicator-inner"></div>
+            </div>
+          </div>
+
+          <!-- NEW LIST TILE -->
+          <div class="bento-tile new-list-tile" 
+               [class.expanded]="mostrarFormNuevaLista"
+               (click)="mostrarFormNuevaLista = true; $event.stopPropagation()">
+            
+            <!-- IDLE STATE -->
+            <div class="tile-idle-view" *ngIf="!mostrarFormNuevaLista">
+              <div class="tile-status">NUEVA ENTRADA</div>
+              <div class="tile-name">CREAR LISTA</div>
+              <div class="add-icon-circle">
+                <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+              </div>
+            </div>
+
+            <!-- ACTIVE FORM STATE -->
+            <div class="tile-content-expanded" *ngIf="mostrarFormNuevaLista" (click)="$event.stopPropagation()">
+              <input #inputNueva 
+                     type="text" 
+                     [(ngModel)]="nuevaListaNombre" 
+                     placeholder="NOMBRE..." 
+                     (keyup.enter)="crearYAgregarALista()"
+                     autofocus>
+              <div class="expanded-actions">
+                <button class="btn-cancel-mini" (click)="mostrarFormNuevaLista = false; $event.stopPropagation()">CANCELAR</button>
+                <button class="btn-confirm-mini" (click)="crearYAgregarALista()">CREAR</button>
+              </div>
             </div>
           </div>
 
