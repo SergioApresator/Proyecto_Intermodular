@@ -15,7 +15,7 @@ export const routes: Routes = [
     { path: '', redirectTo: 'inicial', pathMatch: 'full' },
     { path: 'registro', component: Registro },
     { path: 'login', component: Login },
-    { path: 'diario', component: Diario },
+    { path: 'diario', component: Diario, canActivate: [authGuard] },
     // Rutas públicas
     { path: 'inicial', component: Inicial },
     { path: 'busqueda', component: Busqueda },
