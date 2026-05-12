@@ -400,34 +400,542 @@
     justify-content: center;
     z-index: 2000;
     padding: 20px;
+    animation: modalFadeIn 0.3s ease-out;
 }
 
-.ow-modal { background: white; width: 100%; max-width: 600px; border-radius: 4px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); border: 1px solid rgba(255,255,255,0.1); }
-.modal-ow-header { background: #1e293b; padding: 25px; position: relative; }
-.header-accent { position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: #f99e1a; }
-.modal-ow-header h2 { font-family: 'Bebas Neue', sans-serif; color: white; margin: 0; font-size: 2rem; }
-.modal-ow-body { padding: 30px; }
-.ow-form-row { margin-bottom: 20px; }
-.ow-form-row label { display: block; font-weight: 700; color: #64748b; font-size: 0.85rem; margin-bottom: 10px; }
-.ow-star-selector { display: flex; gap: 10px; }
-.ow-star-selector button { font-size: 2rem; border: none; background: #f1f5f9; border-radius: 4px; padding: 10px; cursor: pointer; opacity: 0.3; }
-.ow-star-selector button.active { opacity: 1; background: #fef3c7; }
-textarea { width: 100%; height: 120px; border: 2px solid #e2e8f0; padding: 15px; font-family: inherit; border-radius: 4px; }
-.modal-ow-footer { padding: 20px 30px; background: #f8fafc; display: flex; justify-content: flex-end; gap: 15px; }
-.ow-btn { padding: 12px 30px; border: none; font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; border-radius: 4px; cursor: pointer; }
-.ow-btn.confirm { background: #3b82f6; color: white; }
-.ow-btn.confirm:hover { background: #2563eb; }
+@keyframes modalFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
 
-/* LIST MODAL */
-.ow-list-scroller { max-height: 250px; overflow-y: auto; margin-bottom: 20px; }
-.ow-list-item { display: flex; align-items: center; gap: 15px; padding: 12px; background: #f8fafc; margin-bottom: 8px; border-radius: 4px; cursor: pointer; transition: background 0.2s; }
-.ow-list-item:hover { background: #f1f5f9; }
-.ow-checkbox { width: 20px; height: 20px; border: 2px solid #cbd5e1; border-radius: 2px; }
-.ow-checkbox.checked { background: #f99e1a; border-color: #f99e1a; }
-.ow-list-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: #1e293b; }
-.ow-new-list-row { display: flex; gap: 10px; border-top: 2px solid #f1f5f9; padding-top: 20px; }
-.ow-new-list-row input { flex: 1; padding: 12px; border: 2px solid #e2e8f0; border-radius: 4px; font-family: inherit; }
-.ow-new-list-row button { background: #1e293b; color: white; border: none; padding: 0 20px; font-family: 'Bebas Neue', sans-serif; border-radius: 4px; cursor: pointer; }
+/* PREMIUM MODAL */
+.ow-modal-premium {
+    background: white;
+    width: 100%;
+    max-width: 1000px;
+    height: 600px;
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    border-radius: 0;
+    overflow: hidden;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.1);
+    animation: modalContentIn 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+@keyframes modalContentIn {
+    from { 
+        opacity: 0;
+        transform: scale(0.95) translateY(20px);
+    }
+    to { 
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.modal-visual {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.visual-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgba(30, 41, 59, 0.9) 0%, rgba(30, 41, 59, 0.4) 100%);
+}
+
+.visual-content {
+    position: relative;
+    z-index: 2;
+}
+
+.visual-tag {
+    display: inline-block;
+    background: #3b82f6;
+    color: white;
+    padding: 4px 12px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+}
+
+.visual-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.5rem;
+    color: white;
+    line-height: 0.9;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.visual-footer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    background: #22c55e;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #22c55e;
+    animation: blink 1s infinite;
+}
+
+.status-text {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 1px;
+}
+
+.modal-form {
+    padding: 50px;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-header {
+    margin-bottom: 35px;
+}
+
+.form-header h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.2rem;
+    margin: 0 0 5px 0;
+    color: #1e293b;
+    letter-spacing: 1px;
+}
+
+.form-header p {
+    color: #64748b;
+    font-weight: 600;
+    margin: 0;
+}
+
+.ow-form-row-modern {
+    margin-bottom: 30px;
+}
+
+.ow-form-row-modern label {
+    display: block;
+    font-weight: 800;
+    color: #3b82f6;
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+}
+
+/* TACTICAL STARS */
+.star-rating-tactical {
+    display: flex;
+    gap: 15px;
+}
+
+.star-rating-tactical button {
+    background: #f1f5f9;
+    border: none;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    color: #cbd5e1;
+}
+
+.star-rating-tactical button svg {
+    width: 28px;
+    height: 28px;
+    fill: currentColor;
+}
+
+.star-rating-tactical button.active {
+    background: #fffbeb;
+    color: #f99e1a;
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(249, 158, 26, 0.2);
+}
+
+.star-rating-tactical button:hover {
+    transform: translateY(-3px);
+    background: #e2e8f0;
+}
+
+/* TACTICAL TEXTAREA */
+.textarea-wrapper {
+    position: relative;
+}
+
+.textarea-wrapper textarea {
+    width: 100%;
+    height: 140px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 20px;
+    font-family: inherit;
+    font-size: 1.1rem;
+    color: #1e293b;
+    outline: none;
+    resize: none;
+    transition: all 0.2s;
+}
+
+.textarea-border {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: #3b82f6;
+    transition: width 0.3s ease;
+}
+
+.textarea-wrapper textarea:focus + .textarea-border {
+    width: 100%;
+}
+
+.textarea-wrapper textarea:focus {
+    background: white;
+}
+
+/* TACTICAL TOGGLE */
+.checkbox-tactical .toggle-switch {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.toggle-switch input {
+    display: none;
+}
+
+.slider {
+    width: 44px;
+    height: 24px;
+    background: #cbd5e1;
+    position: relative;
+    margin-right: 15px;
+    transition: 0.3s;
+}
+
+.slider::before {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background: white;
+    top: 4px;
+    left: 4px;
+    transition: 0.3s;
+}
+
+.toggle-switch input:checked + .slider {
+    background: #ef4444;
+}
+
+.toggle-switch input:checked + .slider::before {
+    transform: translateX(20px);
+}
+
+.toggle-label {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+/* ACTIONS */
+.form-actions-ow {
+    margin-top: auto;
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
+}
+
+.ow-btn-modern {
+    padding: 14px 35px;
+    border: none;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.ow-btn-modern.cancel {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.ow-btn-modern.confirm {
+    background: #3b82f6;
+    color: white;
+    box-shadow: 4px 4px 0 #1e293b;
+}
+
+.ow-btn-modern.confirm:hover:not(:disabled) {
+    background: #2563eb;
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #1e293b;
+}
+
+.ow-btn-modern:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ULTRA LIST MODAL */
+.ow-modal-lists-ultra {
+    background: white;
+    width: 100%;
+    max-width: 1000px;
+    height: 650px;
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    border-radius: 0;
+    overflow: hidden;
+    box-shadow: 0 50px 150px rgba(0, 0, 0, 0.5);
+    position: relative;
+    animation: modalContentIn 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.lists-visual {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    padding: 50px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.lists-visual-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(30, 41, 59, 0.2) 0%, rgba(30, 41, 59, 0.9) 100%);
+}
+
+.lists-visual-content {
+    position: relative;
+    z-index: 2;
+}
+
+.ultra-tag {
+    display: inline-block;
+    background: #f99e1a;
+    color: white;
+    padding: 4px 12px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+
+.ultra-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    color: white;
+    line-height: 1;
+    margin-bottom: 10px;
+}
+
+.ultra-game-name {
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.7);
+    font-weight: 600;
+    margin: 0;
+}
+
+.lists-grid-container {
+    background: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    padding: 40px;
+}
+
+.grid-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 40px;
+}
+
+.header-main h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    margin: 0;
+    color: #1e293b;
+    letter-spacing: 1px;
+}
+
+.header-main span {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #3b82f6;
+    letter-spacing: 2px;
+}
+
+.close-ultra-btn {
+    background: #e2e8f0;
+    border: none;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: #64748b;
+    transition: all 0.2s;
+}
+
+.close-ultra-btn:hover {
+    background: #ef4444;
+    color: white;
+}
+
+.grid-scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.bento-lists-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    grid-auto-rows: 150px;
+    gap: 20px;
+    padding-top: 10px;
+}
+
+/* BENTO TILES */
+.bento-tile {
+    background: white;
+    border: 1px solid #e2e8f0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.bento-tile:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(59, 130, 246, 0.1);
+    border-color: #3b82f6;
+}
+
+.tile-status {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    color: #94a3b8;
+}
+
+.tile-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    line-height: 1.1;
+    color: #1e293b;
+}
+
+.tile-indicator {
+    width: 20px;
+    height: 4px;
+    background: #f1f5f9;
+    border-radius: 2px;
+}
+
+.indicator-inner {
+    width: 0%;
+    height: 100%;
+    background: #3b82f6;
+    transition: width 0.3s ease;
+}
+
+/* ACTIVE STATE */
+.bento-tile.active {
+    background: #1e293b;
+    border-color: #1e293b;
+}
+
+.bento-tile.active .tile-name,
+.bento-tile.active .tile-status {
+    color: white;
+}
+
+.bento-tile.active .tile-status {
+    color: #f99e1a;
+}
+
+.bento-tile.active .indicator-inner {
+    width: 100%;
+}
+
+/* NEW LIST TILE */
+.new-list-tile {
+    grid-column: span 1;
+    background: #f1f5f9;
+    border-style: dashed;
+    border-width: 2px;
+    justify-content: center;
+}
+
+.tile-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.new-list-tile input {
+    background: transparent;
+    border: none;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    color: #1e293b;
+    outline: none;
+    width: 100%;
+}
+
+.new-list-tile input::placeholder {
+    color: #94a3b8;
+}
+
+.btn-add-tile {
+    align-self: flex-end;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-add-tile:hover {
+    background: #1e293b;
+    transform: scale(1.1);
+}
+
+.btn-add-tile svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
 
 /* LOADING */
 .contenedor-cargando { height: 100vh; display: flex; align-items: center; justify-content: center; background: white; }
