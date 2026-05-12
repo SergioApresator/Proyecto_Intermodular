@@ -205,19 +205,23 @@
           <div class="ajustes-grid">
             <div class="field">
               <label>NOMBRE *</label>
-              <input [(ngModel)]="formEdicion.nombre" placeholder="Nombre (Obligatorio)">
+              <input [(ngModel)]="formEdicion.nombre" placeholder="Nombre (Obligatorio)" [class.input-error]="fieldErrors['nombre']">
+              <span class="error-msg-mini" *ngIf="fieldErrors['nombre']">{{ fieldErrors['nombre'] }}</span>
             </div>
             <div class="field">
               <label>APELLIDOS</label>
-              <input [(ngModel)]="formEdicion.apellidos" placeholder="Apellidos">
+              <input [(ngModel)]="formEdicion.apellidos" placeholder="Apellidos" [class.input-error]="fieldErrors['apellidos']">
+              <span class="error-msg-mini" *ngIf="fieldErrors['apellidos']">{{ fieldErrors['apellidos'] }}</span>
             </div>
             <div class="field">
               <label>NOMBRE DE USUARIO *</label>
-              <input [(ngModel)]="formEdicion.username" placeholder="Username (Obligatorio)">
+              <input [(ngModel)]="formEdicion.username" placeholder="Username (Obligatorio)" [class.input-error]="fieldErrors['username']">
+              <span class="error-msg-mini" *ngIf="fieldErrors['username']">{{ fieldErrors['username'] }}</span>
             </div>
             <div class="field">
               <label>EMAIL *</label>
-              <input [(ngModel)]="formEdicion.email" placeholder="Email (Obligatorio)">
+              <input [(ngModel)]="formEdicion.email" placeholder="Email (Obligatorio)" [class.input-error]="fieldErrors['email']">
+              <span class="error-msg-mini" *ngIf="fieldErrors['email']">{{ fieldErrors['email'] }}</span>
             </div>
             <div class="field full">
               <label>BIOGRAFÍA</label>
