@@ -465,7 +465,6 @@
     overflow: hidden;
     box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
     position: relative;
-    border: 1px solid rgba(255,255,255,0.1);
     animation: modalContentIn 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
@@ -789,7 +788,7 @@
 
 .ultra-title {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 2.5rem;
+    font-size: 3.5rem;
     color: white;
     line-height: 1;
     margin-bottom: 10px;
