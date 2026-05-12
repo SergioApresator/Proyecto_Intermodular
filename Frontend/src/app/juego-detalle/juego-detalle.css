@@ -200,6 +200,37 @@
 .ow-action-btn.review { background: #3b82f6; color: white; }
 .ow-action-btn.review:hover { background: #2563eb; }
 
+/* Guest Mode Styles */
+.ow-action-btn.guest-mode {
+    opacity: 0.8;
+}
+
+.ow-action-btn.guest-mode .ow-svg-icon {
+    filter: grayscale(1);
+    opacity: 0.4;
+}
+
+.ow-action-btn.guest-mode .btn-text {
+    color: #94a3b8;
+}
+
+.ow-action-btn.guest-mode:hover {
+    background: #f1f5f9;
+}
+
+.ow-action-btn.guest-mode.review {
+    background: #64748b;
+}
+
+.ow-action-btn.guest-mode.review .ow-svg-icon {
+    filter: none;
+    opacity: 1;
+}
+
+.ow-action-btn.guest-mode.review .btn-text {
+    color: white;
+}
+
 /* ─── MAIN LAYOUT ─── */
 .layout-main.full-width {
     max-width: 1200px;
