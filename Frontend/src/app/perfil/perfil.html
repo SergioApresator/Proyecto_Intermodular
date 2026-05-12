@@ -1,217 +1,286 @@
-<div class="perfil-page">
-  <!-- Input de archivo oculto -->
+<div class="perfil-viewport">
+  <!-- Inputs ocultos -->
   <input #fileInput type="file" accept="image/*" style="display:none" (change)="onArchivoSeleccionado($event)">
   <input #bannerInput type="file" accept="image/*" style="display:none" (change)="onBannerSeleccionado($event)">
 
-  <!-- CARGANDO -->
+  <!-- CARGANDO / ERROR GLOBAL -->
   <div class="estado-centrado" *ngIf="cargando">
     <div class="spinner"></div>
     <p>Cargando perfil...</p>
   </div>
-
-  <!-- ERROR -->
-  <div class="estado-centrado" *ngIf="!cargando && error">
+  <div class="estado-centrado" *ngIf="!cargando && error && !usuario">
     <p class="texto-error">{{ error }}</p>
   </div>
 
-  <!-- CONTENIDO -->
-  <div class="perfil-contenedor" *ngIf="!cargando && usuario">
+  <!-- CONTENIDO PRINCIPAL -->
+  <div class="perfil-layout" *ngIf="!cargando && usuario">
+    
+    <!-- BARRA SUPERIOR -->
+    <header class="perfil-nav">
+      <div class="nav-left">
+        <button class="btn-volver" (click)="volver()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          VOLVER
+        </button>
+      </div>
+      <nav class="nav-tabs">
+        <button class="nav-tab" [class.active]="pestanaActual === 'resumen'" (click)="cambiarPestana('resumen')">RESUMEN</button>
+        <button class="nav-tab" [class.active]="pestanaActual === 'listas'" (click)="cambiarPestana('listas')">LISTAS</button>
+        <button class="nav-tab" [class.active]="pestanaActual === 'resenas'" (click)="cambiarPestana('resenas')">RESEÑAS</button>
+        <button class="nav-tab" [class.active]="pestanaActual === 'ajustes'" (click)="cambiarPestana('ajustes')">AJUSTES</button>
+      </nav>
+      <div class="nav-right">
+      </div>
+    </header>
 
-    <!-- Mensaje de éxito -->
-    <div class="toast-exito" *ngIf="mensajeExito">
-      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    <!-- PLAYER CARD BAR -->
+    <div class="player-card-bar">
+      <div class="player-card-bg" [style.background-image]="previewBanner ? 'url(' + previewBanner + ')' : (usuario.banner_url ? 'url(' + usuario.banner_url + ')' : '')">
+        <div class="player-card-content">
+          <div class="avatar-box">
+            <div class="avatar-grande" [class.no-photo]="!usuario.foto_url">
+              <img *ngIf="usuario.foto_url" [src]="usuario.foto_url" [alt]="usuario.username">
+              <span *ngIf="!usuario.foto_url">{{ getInitials() }}</span>
+            </div>
+          </div>
+          <div class="player-info">
+            <h1 class="player-name">{{ usuario.username }}</h1>
+          </div>
+        </div>
+        <button class="btn-overlay-banner" (click)="abrirSelectorBanner()">CAMBIAR BANNER</button>
+      </div>
+    </div>
+
+    <!-- CONTENIDO DE LA PESTAÑA -->
+    <main class="tab-content-area">
+      
+      <!-- TAB: RESUMEN -->
+      <div class="tab-pane resumen-pane" *ngIf="pestanaActual === 'resumen'">
+        <div class="resumen-grid">
+          <div class="resumen-col info-col">
+            <h2 class="pane-title">SOBRE MÍ</h2>
+            <div class="bio-container">
+              <p class="bio-text" *ngIf="usuario.biografia">{{ usuario.biografia }}</p>
+              <p class="bio-empty" *ngIf="!usuario.biografia">Sin biografía definida.</p>
+            </div>
+            
+            <h2 class="pane-title" style="margin-top: 30px;">DETALLES</h2>
+            <div class="details-list">
+              <div class="detail-row">
+                <span class="label">NOMBRE COMPLETO</span>
+                <span class="value">{{ usuario.nombre || '—' }} {{ usuario.apellidos || '' }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">CORREO ELECTRÓNICO</span>
+                <span class="value">{{ usuario.email }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="resumen-col stats-col">
+            <h2 class="pane-title">ESTADÍSTICAS</h2>
+            <div class="big-stats">
+              <div class="big-stat">
+                <span class="stat-value">{{ resenas.length }}</span>
+                <span class="stat-label">RESEÑAS</span>
+              </div>
+              <div class="big-stat">
+                <span class="stat-value">{{ favoritosCount }}</span>
+                <span class="stat-label">FAVORITOS</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: LISTAS -->
+      <div class="tab-pane listas-pane" *ngIf="pestanaActual === 'listas'">
+        <div *ngIf="cargandoListas" class="loading-pane">
+          <div class="spinner-mini"></div>
+          <p>Cargando listas...</p>
+        </div>
+        <div class="listas-container" *ngIf="!cargandoListas">
+          <div class="lista-group" *ngFor="let lista of listas">
+            <div class="lista-header-row">
+              <h2 class="pane-title">{{ lista.nombre | uppercase }} <span class="count">{{ lista.juegos.length }}</span></h2>
+              <button class="btn-edit-list" [class.editing]="listaEnEdicion === lista.nombre" (click)="toggleEditarLista(lista.nombre)">
+                {{ listaEnEdicion === lista.nombre ? 'LISTO' : 'EDITAR' }}
+              </button>
+            </div>
+            <div class="horizontal-scroll-grid">
+              <div class="juego-card" *ngFor="let juego of lista.juegos">
+                <div class="juego-thumb" [routerLink]="listaEnEdicion ? null : ['/juego', juego.id]">
+                  <img [src]="juego.background_image">
+                  <div class="rating-tag" *ngIf="!listaEnEdicion">⭐ {{ juego.rating }}</div>
+                  <button class="btn-remove-from-list" *ngIf="listaEnEdicion === lista.nombre" (click)="eliminarDeLista(juego.entryId, lista.nombre)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                  </button>
+                </div>
+                <p class="juego-title">{{ juego.name }}</p>
+              </div>
+
+              <div class="juego-card add-card">
+                <div class="add-thumb" (click)="abrirModalBusqueda(lista.nombre)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </div>
+                <p class="juego-title" (click)="abrirModalBusqueda(lista.nombre)">AÑADIR JUEGO</p>
+              </div>
+            </div>
+          </div>
+          <div class="empty-state" *ngIf="listas.length === 0">
+             <p>Aún no has añadido juegos a ninguna lista.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: RESEÑAS -->
+      <div class="tab-pane resenas-pane" *ngIf="pestanaActual === 'resenas'">
+        <div *ngIf="cargandoResenas" class="loading-pane">
+          <div class="spinner-mini"></div>
+        </div>
+        <div class="resenas-list" *ngIf="!cargandoResenas">
+          <div class="resena-item" *ngFor="let resena of resenas">
+            <div class="resena-game-box" [routerLink]="['/juego', resena.id_videojuego]">
+              <img [src]="resena.imagenJuego">
+            </div>
+            <div class="resena-body">
+              <div class="resena-header">
+                <span class="game-name">{{ resena.nombreJuego }}</span>
+                <div class="header-right">
+                  <span class="date">{{ resena.fechaResena | date:'shortDate' }}</span>
+                  <button class="btn-delete-review" (click)="eliminarResena(resena.id)" title="Eliminar reseña">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                  </button>
+                </div>
+              </div>
+              <div class="stars">
+                <span class="star" *ngFor="let s of getStars(resena.puntuacion)">★</span>
+              </div>
+              <p class="message">{{ resena.mensaje }}</p>
+            </div>
+          </div>
+          <div class="empty-state" *ngIf="resenas.length === 0">
+             <p>Aún no has escrito ninguna reseña.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: AJUSTES -->
+      <div class="tab-pane ajustes-pane" *ngIf="pestanaActual === 'ajustes'">
+        <div class="ajustes-container">
+          <h2 class="pane-title">CONFIGURACIÓN DE CUENTA</h2>
+          
+          <div class="error-banner" *ngIf="error">
+             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+             {{ error }}
+          </div>
+
+          <!-- SECCION FOTO EN AJUSTES -->
+          <div class="seccion-ajustes-foto">
+            <h3 class="sub-title">FOTO DE PERFIL</h3>
+            <div class="avatar-preview-box">
+              <div class="preview-circle" [class.no-photo]="!previewFoto && !usuario.foto_url">
+                <img *ngIf="previewFoto || usuario.foto_url" [src]="previewFoto || usuario.foto_url" alt="Preview">
+                <span *ngIf="!previewFoto && !usuario.foto_url">{{ getInitials() }}</span>
+              </div>
+              <div class="preview-actions">
+                <button type="button" class="btn-action-ow upload" (click)="abrirSelectorFoto()" [disabled]="subiendoFoto">
+                  {{ (previewFoto || usuario.foto_url) ? 'CAMBIAR FOTO' : 'SUBIR FOTO' }}
+                </button>
+                <button type="button" class="btn-action-ow delete" *ngIf="usuario.foto_url && !previewFoto" (click)="resetearFoto()">
+                  ELIMINAR FOTO
+                </button>
+                <button type="button" class="btn-action-ow save" *ngIf="previewFoto" (click)="subirFoto()" [disabled]="subiendoFoto">
+                  CONFIRMAR NUEVA FOTO
+                </button>
+                <button type="button" class="btn-action-ow cancel" *ngIf="previewFoto" (click)="cancelarFoto()">
+                  CANCELAR
+                </button>
+              </div>
+            </div>
+            <p class="help-text">Se recomienda una imagen cuadrada de al menos 400x400px.</p>
+          </div>
+
+          <hr class="ajustes-divider">
+
+          <div class="ajustes-grid">
+            <div class="field">
+              <label>NOMBRE *</label>
+              <input [(ngModel)]="formEdicion.nombre" placeholder="Nombre (Obligatorio)" [class.input-error]="fieldErrors['nombre']">
+              <span class="error-msg-mini" *ngIf="fieldErrors['nombre']">{{ fieldErrors['nombre'] }}</span>
+            </div>
+            <div class="field">
+              <label>APELLIDOS</label>
+              <input [(ngModel)]="formEdicion.apellidos" placeholder="Apellidos" [class.input-error]="fieldErrors['apellidos']">
+              <span class="error-msg-mini" *ngIf="fieldErrors['apellidos']">{{ fieldErrors['apellidos'] }}</span>
+            </div>
+            <div class="field">
+              <label>NOMBRE DE USUARIO *</label>
+              <input [(ngModel)]="formEdicion.username" placeholder="Username (Obligatorio)" [class.input-error]="fieldErrors['username']">
+              <span class="error-msg-mini" *ngIf="fieldErrors['username']">{{ fieldErrors['username'] }}</span>
+            </div>
+            <div class="field">
+              <label>EMAIL *</label>
+              <input [(ngModel)]="formEdicion.email" placeholder="Email (Obligatorio)" [class.input-error]="fieldErrors['email']">
+              <span class="error-msg-mini" *ngIf="fieldErrors['email']">{{ fieldErrors['email'] }}</span>
+            </div>
+            <div class="field full">
+              <label>BIOGRAFÍA</label>
+              <textarea [(ngModel)]="formEdicion.biografia" rows="4" placeholder="Cuéntanos algo sobre ti..."></textarea>
+            </div>
+          </div>
+          <div class="ajustes-actions">
+            <button class="btn-primary" (click)="guardarCambios()" [disabled]="guardando">GUARDAR CAMBIOS</button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Toasts -->
+    <div class="toast-overlay" *ngIf="mensajeExito">
       {{ mensajeExito }}
     </div>
 
-    <!-- CABECERA / BANNER -->
-    <div class="perfil-banner">
-      
-      <div class="banner-bg" [style.background-image]="previewBanner ? 'url(' + previewBanner + ')' : (usuario.banner_url ? 'url(' + usuario.banner_url + ')' : '')">
-    <button class="btn-cambiar-banner" (click)="abrirSelectorBanner()" title="Cambiar banner">
-        Cambiar banner
-    </button>
-
-
-      <!-- Panel de confirmacion del banner -->
-      <div class="banner-preview-panel" *ngIf="previewBanner">
-        <button class="btn-subir-foto" (click)="subirBanner()" [disabled]="subiendoBanner">
-            <span *ngIf="!subiendoBanner">✓ Guardar</span>
-            <span *ngIf="subiendoBanner">...</span>
-        </button>
-        <button class="btn-cancelar-foto" (click)="cancelarBanner()">✕</button>
-      </div>
-    </div>
-
-      <div class="perfil-identidad">
-        <!-- Avatar con botón de subida -->
-        <div class="avatar-container">
-          <div class="avatar-grande">
-            <img *ngIf="previewFoto" [src]="previewFoto" alt="Vista previa" class="avatar-imagen">
-            <img *ngIf="!previewFoto && usuario.foto_url" [src]="usuario.foto_url" [alt]="usuario.username" class="avatar-imagen">
-            <div *ngIf="!previewFoto && !usuario.foto_url" class="avatar-iniciales-grande">{{ getInitials() }}</div>
-          </div>
-          <button class="btn-cambiar-foto" (click)="abrirSelectorFoto()" title="Cambiar foto de perfil" id="btn-cambiar-foto">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+    <!-- MODAL BUSQUEDA LISTAS -->
+    <div class="modal-overlay search-overlay" *ngIf="mostrarModalBusqueda" (click)="cerrarModalBusqueda()">
+      <div class="modal-content search-list-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>AÑADIR A {{ listaDestino | uppercase }}</h3>
+          <button class="btn-cerrar" (click)="cerrarModalBusqueda()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
           </button>
+        </div>
+        <div class="modal-body">
+          <div class="search-box">
+            <input type="text" [(ngModel)]="queryBusqueda" (input)="onSearchChange()" placeholder="Escribe el nombre del juego...">
+            <div class="search-icon-box">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </div>
+          </div>
+          <div class="search-results-list">
+            <div class="result-item" *ngFor="let juego of resultadosBusqueda" (click)="agregarJuegoALista(juego)">
+              <img [src]="juego.background_image" class="result-thumb">
+              <div class="result-info">
+                <p class="result-name">{{ juego.name }}</p>
+                <p class="result-meta">{{ juego.released | date:'yyyy' }} • ⭐ {{ juego.rating }}</p>
+              </div>
+              <div class="btn-add-mini">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              </div>
+            </div>
+            
+            <div class="search-loading" *ngIf="buscando">
+              <div class="spinner-mini"></div>
+              <p>Buscando en la base de datos...</p>
+            </div>
 
-          <!-- Panel de confirmación de foto -->
-          <div class="foto-preview-panel" *ngIf="previewFoto">
-            <div class="preview-acciones">
-              <button class="btn-subir-foto" (click)="subirFoto()" [disabled]="subiendoFoto" id="btn-subir-foto">
-                <span *ngIf="!subiendoFoto">✓ Guardar</span>
-                <span *ngIf="subiendoFoto">...</span>
-              </button>
-              <button class="btn-cancelar-foto" (click)="cancelarFoto()" id="btn-cancelar-foto">✕</button>
+            <div class="search-empty" *ngIf="!buscando && queryBusqueda.length > 1 && resultadosBusqueda.length === 0">
+              No se encontraron resultados para "{{ queryBusqueda }}"
             </div>
           </div>
         </div>
-
-        <div class="perfil-info-header">
-          <h1 class="perfil-username">{{ usuario.username }}</h1>
-          <div class="perfil-stats-header">
-            <span class="stat-badge">⭐ {{ favoritosCount }} Favoritos</span>
-            <span class="stat-badge">📝 {{ resenas.length }} Reseñas</span>
-          </div>
-        </div>
-
-        <button class="btn-editar" (click)="iniciarEdicion()" *ngIf="!editando" id="btn-editar-perfil">
-          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-          Editar perfil
-        </button>
       </div>
     </div>
 
-    <!-- CUERPO GRID -->
-    <div class="perfil-grid">
-      
-      <!-- SIDEBAR -->
-      <aside class="perfil-sidebar">
-        <!-- Biografía -->
-        <div class="seccion-card">
-          <h2 class="seccion-titulo">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-            Sobre mí
-          </h2>
-          <p class="bio-texto" *ngIf="usuario.biografia">{{ usuario.biografia }}</p>
-          <div class="bio-vacia" *ngIf="!usuario.biografia">
-            <p>Todavía no tienes biografía.</p>
-            <button class="link-editar" (click)="iniciarEdicion()">Escribir una</button>
-          </div>
-        </div>
-
-        <!-- Información -->
-        <div class="seccion-card">
-          <h2 class="seccion-titulo">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-            Detalles
-          </h2>
-          <div class="info-vertical">
-            <div class="info-item">
-              <span class="info-label">Nombre</span>
-              <span class="info-valor">{{ usuario.nombre || '—' }} {{ usuario.apellidos || '' }}</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">Email</span>
-              <span class="info-valor">{{ usuario.email }}</span>
-            </div>
-          </div>
-        </div>
-      </aside>
-
-      <!-- CONTENIDO PRINCIPAL -->
-      <main class="perfil-main">
-        
-        <!-- MODO EDICIÓN -->
-        <div class="seccion-card edicion-card" *ngIf="editando">
-          <h2 class="seccion-titulo">Editar Perfil</h2>
-          <div class="form-grid">
-            <div class="form-grupo"><label class="form-label">Nombre</label><input class="form-input" [(ngModel)]="formEdicion.nombre"></div>
-            <div class="form-grupo"><label class="form-label">Apellidos</label><input class="form-input" [(ngModel)]="formEdicion.apellidos"></div>
-            <div class="form-grupo"><label class="form-label">Username</label><input class="form-input" [(ngModel)]="formEdicion.username"></div>
-            <div class="form-grupo"><label class="form-label">Email</label><input class="form-input" [(ngModel)]="formEdicion.email"></div>
-            <div class="form-grupo full-width"><label class="form-label">Biografía</label><textarea class="form-textarea" [(ngModel)]="formEdicion.biografia" rows="4"></textarea></div>
-          </div>
-          <div class="form-acciones">
-            <button class="btn-cancelar" (click)="cancelarEdicion()">Cancelar</button>
-            <button class="btn-guardar" (click)="guardarCambios()" [disabled]="guardando">Guardar cambios</button>
-          </div>
-        </div>
-
-        <!-- MODO LECTURA: FAVORITOS Y RESEÑAS -->
-        <ng-container *ngIf="!editando">
-          
-          <!-- SECCIÓN LISTAS (Favoritos y Personalizadas) -->
-          <div *ngIf="cargandoListas" class="vacio-placeholder">
-            <div class="spinner-mini"></div>
-            <p>Cargando tus listas...</p>
-          </div>
-
-          <div *ngIf="!cargandoListas && listas.length === 0" class="seccion-card">
-            <h2 class="seccion-titulo">Mis Listas</h2>
-            <div class="vacio-placeholder">
-              <p>No tienes listas de juegos todavía.</p>
-            </div>
-          </div>
-
-          <div class="lista-seccion" *ngFor="let lista of listas">
-            <div class="seccion-card">
-              <h2 class="seccion-titulo">
-                <svg *ngIf="lista.nombre === 'Favoritos'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.72-8.72 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                <svg *ngIf="lista.nombre === 'Videojuegos Pendientes'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-                <svg *ngIf="lista.nombre !== 'Favoritos' && lista.nombre !== 'Videojuegos Pendientes'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                {{ lista.nombre }}
-                <span class="count-badge">{{ lista.juegos.length }}</span>
-              </h2>
-
-              <div class="favoritos-grid">
-                <div class="favorito-item" *ngFor="let juego of lista.juegos" [routerLink]="['/juego', juego.id]">
-                  <div class="favorito-imagen">
-                    <img [src]="juego.background_image" [alt]="juego.name">
-                    <div class="favorito-overlay"><span>⭐ {{ juego.rating }}</span></div>
-                  </div>
-                  <p class="favorito-nombre">{{ juego.name }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- RESEÑAS -->
-          <div class="seccion-card">
-            <h2 class="seccion-titulo">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-              Mis Reseñas
-              <span class="count-badge" *ngIf="!cargandoResenas && resenas.length > 0">{{ resenas.length }}</span>
-            </h2>
-
-            <div class="lista-resenas-perfil" *ngIf="!cargandoResenas && resenas.length > 0">
-              <div class="tarjeta-resena-perfil" *ngFor="let resena of resenas">
-                <a [routerLink]="['/juego', resena.id_videojuego]" class="resena-juego-link">
-                  <div class="resena-juego-imagen">
-                    <img *ngIf="resena.imagenJuego" [src]="resena.imagenJuego" [alt]="resena.nombreJuego">
-                  </div>
-                </a>
-                <div class="resena-contenido-perfil">
-                  <div class="resena-cabecera-perfil">
-                    <a [routerLink]="['/juego', resena.id_videojuego]" class="resena-nombre-juego">{{ resena.nombreJuego }}</a>
-                    <span class="resena-fecha">{{ resena.fechaResena | date:'mediumDate' }}</span>
-                  </div>
-                  <div class="resena-estrellas">
-                    <span class="estrella llena" *ngFor="let s of getStars(resena.puntuacion)">★</span>
-                    <span class="estrella vacia" *ngFor="let s of getEmptyStars(resena.puntuacion)">★</span>
-                  </div>
-                  <p class="resena-mensaje">{{ resena.mensaje }}</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="vacio-placeholder" *ngIf="!cargandoResenas && resenas.length === 0">
-              <p>Aún no has escrito ninguna reseña.</p>
-            </div>
-          </div>
-
-        </ng-container>
-      </main>
-
-    </div>
   </div>
 </div>

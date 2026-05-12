@@ -1,5 +1,6 @@
 package com.ratemygame.dtos;
 
+import java.time.LocalDateTime;
 import lombok.Data;
 
 @Data
@@ -15,4 +16,5 @@ public class RespuestaDTO {
     private Boolean votoUsuarioActual;
     private Long id_respuesta_padre;
     private String nombreUsuarioPadre;
+    private LocalDateTime fechaRespuesta;
 }

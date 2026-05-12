@@ -19,13 +19,23 @@ public class ResenaController {
     private ResenaService resenaService;
 
     @GetMapping("/videojuego/{idVideojuego}")
-    public ResponseEntity<List<ResenaDTO>> getResenasByVideojuego(@PathVariable Long idVideojuego) {
+    public ResponseEntity<List<ResenaDTO>> getResenasByVideojuego(
+            @PathVariable Long idVideojuego,
+            @RequestParam(required = false) Long idUsuario) {
+        if (idUsuario != null) {
+            return ResponseEntity.ok(resenaService.getResenasByVideojuegoWithVoto(idVideojuego, idUsuario));
+        }
         return ResponseEntity.ok(resenaService.getResenasByVideojuego(idVideojuego));
     }
 
     @GetMapping("/usuario/{idUsuario}")
     public ResponseEntity<List<ResenaDTO>> getResenasByUsuario(@PathVariable Long idUsuario) {
         return ResponseEntity.ok(resenaService.getResenasByUsuario(idUsuario));
+    }
+
+    @GetMapping("/recientes")
+    public ResponseEntity<List<ResenaDTO>> getRecentReviews() {
+        return ResponseEntity.ok(resenaService.getRecentReviews());
     }
 
     @PostMapping

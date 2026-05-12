@@ -2,6 +2,8 @@ package com.ratemygame.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import com.ratemygame.datamodel.entities.Respuesta;
 import com.ratemygame.datamodel.entities.RespuestaVoto;
@@ -67,6 +69,7 @@ public class RespuestaService {
         respuesta.setUsuario(usuarioOpt.get());
         respuesta.setResena(resenaOpt.get());
         respuesta.setId_respuesta_padre(respuestaDTO.getId_respuesta_padre());
+        respuesta.setFechaRespuesta(LocalDateTime.now(ZoneId.of("Europe/Madrid")));
 
         Respuesta savedRespuesta = respuestaRepository.save(respuesta);
         return Optional.of(convertToDTO(savedRespuesta));
@@ -161,6 +164,7 @@ public class RespuestaService {
                 }
             });
         }
+        dto.setFechaRespuesta(respuesta.getFechaRespuesta());
         return dto;
     }
 

@@ -33,9 +33,9 @@ public class UsuarioService {
     public Optional<UsuarioDTO> getUsuarioById(Long id) {
         return usuarioRepository.findById(id).map(this::convertToDTO);
     }
-
-    public Optional<UsuarioDTO> loginUsuario(String email, String password) {
-        Optional<Usuario> optionalUsuario = usuarioRepository.findByEmail(email);
+    
+    public Optional<UsuarioDTO> login(String identifier, String password) {
+        Optional<Usuario> optionalUsuario = usuarioRepository.findByUsernameOrEmail(identifier, identifier);
         if (optionalUsuario.isPresent()) {
             Usuario usuario = optionalUsuario.get();
             if (passwordEncoder.matches(password, usuario.getPassword())) {
@@ -46,6 +46,14 @@ public class UsuarioService {
             }
         }
         return Optional.empty();
+    }
+
+    public Optional<UsuarioDTO> loginUsuarioUsername(String username, String password) {
+        return login(username, password);
+    }
+
+    public Optional<UsuarioDTO> loginUsuarioEmail(String email, String password) {
+        return login(email, password);
     }
 
     public UsuarioDTO createUsuario(Usuario usuario) {
