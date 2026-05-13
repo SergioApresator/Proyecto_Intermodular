@@ -1149,3 +1149,10 @@
     transition: filter 0.6s ease, opacity 0.6s ease; 
 }
 .spoiler-content-ow.blurred { filter: blur(15px); pointer-events: none; user-select: none; opacity: 0.5; }
+
+.empty-reviews-ow {
+    text-align: center;
+    padding: 30px;
+    color: #64748b;
+    font-size: 1rem;
+}
