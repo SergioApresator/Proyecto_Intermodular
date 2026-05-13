@@ -328,8 +328,9 @@
 .genre-mosaic {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
     gap: 25px;
-    height: 180px;
+    height: 380px;
 }
 
 .genre-tile {
@@ -363,6 +364,15 @@
 .genre-tile:hover .tile-overlay {
     background: rgba(59, 130, 246, 0.7);
 }
+
+.genre-tile.action { background-color: rgba(59, 130, 246, 0.7); }
+.genre-tile.rpg { background-color: rgba(59, 130, 246, 0.7); }
+.genre-tile.horror { background-color: rgba(59, 130, 246, 0.7); }
+.genre-tile.strategy { background-color: rgba(59, 130, 246, 0.7); }
+.genre-tile.shooter { background-color: rgba(59, 130, 246, 0.7); }
+.genre-tile.adventure { background-color: rgba(59, 130, 246, 0.7); }
+.genre-tile.sports { background-color: rgba(59, 130, 246, 0.7); }
+.genre-tile.indie { background-color: rgba(59, 130, 246, 0.7); }
 
 /* UPCOMING GRID */
 .upcoming-grid {
