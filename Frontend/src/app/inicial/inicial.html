@@ -6,14 +6,15 @@
 </div>
 
 <div *ngIf="!cargando" class="main-wrapper">
-  
+
   <!-- HERO SPOTLIGHT -->
-  <section class="hero-spotlight" *ngIf="juegoSpotlight" [style.backgroundImage]="'url(' + juegoSpotlight.background_image + ')'">
+  <section class="hero-spotlight" *ngIf="juegoSpotlight"
+    [style.backgroundImage]="'url(' + juegoSpotlight.background_image + ')'">
     <div class="hero-overlay"></div>
     <div class="hero-content container">
       <div class="badge-trending ow-skew"><span>TENDENCIA AHORA</span></div>
       <h1 class="hero-title ow-skew"><span>{{ juegoSpotlight.name }}</span></h1>
-      
+
       <div class="hero-meta">
         <div class="meta-item">
           <span class="label">RATING</span>
@@ -35,10 +36,8 @@
 
     <!-- MINI CARRUSEL INTEGRADO -->
     <div class="hero-carousel-nav">
-      <div *ngFor="let game of juegosDestacados; let i = index" 
-           class="mini-thumb" 
-           [class.active]="i === indiceCarrusel"
-           (click)="seleccionarSlide(i)">
+      <div *ngFor="let game of juegosDestacados; let i = index" class="mini-thumb" [class.active]="i === indiceCarrusel"
+        (click)="seleccionarSlide(i)">
         <img [src]="game.background_image" alt="">
       </div>
     </div>
@@ -57,9 +56,9 @@
 
   <!-- MAIN GRID + SIDEBAR -->
   <div class="content-hub container">
-    
+
     <main class="main-feed">
-      
+
       <!-- MEJORES DEL AÑO -->
       <section class="hub-section">
         <div class="section-header">
@@ -106,16 +105,16 @@
           <div class="genre-tile adventure" [routerLink]="['/ver-todos/adventure']">
             <div class="tile-overlay"></div>
             <span>AVENTURA</span>
-            </div>
-          <div class="genre-tile sports" [routerLink]="['/ver-todos/sports']">
-          <div class="tile-overlay"></div>
-            <span>DEPORTES</span>
-            </div>
-          <div class="genre-tile indie" [routerLink]="['/ver-todos/indie']">
-          <div class="tile-overlay"></div>
-            <span>INDIE</span>
-            </div>
           </div>
+          <div class="genre-tile sports" [routerLink]="['/ver-todos/sports']">
+            <div class="tile-overlay"></div>
+            <span>DEPORTES</span>
+          </div>
+          <div class="genre-tile indie" [routerLink]="['/ver-todos/indie']">
+            <div class="tile-overlay"></div>
+            <span>INDIE</span>
+          </div>
+        </div>
       </section>
 
       <!-- PRÓXIMOS -->
@@ -124,7 +123,8 @@
           <h2>PRÓXIMAMENTE</h2>
         </div>
         <div class="upcoming-grid">
-          <div *ngFor="let game of proximosLanzamientos.slice(0,4)" class="upcoming-card" [routerLink]="['/juego', game.id]">
+          <div *ngFor="let game of proximosLanzamientos.slice(0,4)" class="upcoming-card"
+            [routerLink]="['/juego', game.id]">
             <div class="card-date">{{ game.released | date:'MMM d' }}</div>
             <img [src]="game.background_image" alt="">
             <div class="card-body">
@@ -157,11 +157,19 @@
             </span>
             <div class="activity-rating">
               <span class="rating-box">{{ resena.puntuacion }}</span>
-              <p class="review-snippet">{{ resena.mensaje }}</p>
+              <div>
+                <div *ngIf="resena.tieneSpoiler" class="activity-spoiler">
+                  Contiene spoilers
+                  <button class="btn-spoiler-activity" (click)="resena.mostrarSpoiler = !resena.mostrarSpoiler">
+                    {{ resena.mostrarSpoiler ? 'Ocultar' : 'Ver igualmente' }}
+                  </button>
+                </div>
+                <p class="review-snippet" *ngIf="!resena.tieneSpoiler || resena.mostrarSpoiler">{{ resena.mensaje }}</p>
+              </div>
             </div>
           </div>
         </div>
-        
+
         <div *ngIf="resenasRecientes.length === 0" class="empty-activity">
           <p>No hay actividad reciente. ¡Sé el primero en reseñar!</p>
         </div>

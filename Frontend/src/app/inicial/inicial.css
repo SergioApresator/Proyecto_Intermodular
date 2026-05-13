@@ -706,6 +706,32 @@
     border-color: #3b82f6;
 }
 
+.activity-spoiler {
+    background: #7f1d1d;
+    color: #fca5a5;
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+    display: inline-block;
+}
+
+.btn-spoiler-activity {
+    margin-left: 8px;
+    background: none;
+    border: 1px solid #fca5a5;
+    color: #fca5a5;
+    font-size: 0.72rem;
+    padding: 2px 6px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.btn-spoiler-activity:hover {
+    background: #450a0a;
+}
+
 /* RESPONSIVE */
 @media (max-width: 1300px) {
     .content-hub {
