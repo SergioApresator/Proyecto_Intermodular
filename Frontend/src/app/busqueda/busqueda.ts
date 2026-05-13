@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Videojuegos } from '../videojuegos';
@@ -29,7 +29,10 @@ export class Busqueda implements OnInit {
   filtros: any = {
     genero: '',
     plataforma: '',
-    orden: '-added'
+    orden: 'relevance',
+    tags: '',
+    metacritic: '',
+    anio: ''
   };
 
   generosDisponibles = [
@@ -40,7 +43,9 @@ export class Busqueda implements OnInit {
     { id: '5', nombre: 'RPG' },
     { id: '10', nombre: 'Estrategia' },
     { id: '2', nombre: 'Shooter' },
-    { id: '40', nombre: 'Carreras' },
+    { id: '1', nombre: 'Carreras' },
+    { id: '15', nombre: 'Deportes' },
+    { id: '14', nombre: 'Simulación' },
     { id: '7', nombre: 'Puzzle' },
   ];
 
@@ -54,6 +59,25 @@ export class Busqueda implements OnInit {
     { id: '8', nombre: 'Android' },
   ];
 
+  tagsDisponibles = [
+    { id: '', nombre: 'Todas las etiquetas' },
+    { id: '31', nombre: 'Singleplayer' },
+    { id: '7', nombre: 'Multiplayer' },
+    { id: '18', nombre: 'Co-op' },
+    { id: '36', nombre: 'Open World' },
+    { id: '149', nombre: 'Third Person' },
+    { id: '118', nombre: 'Story Rich' },
+    { id: '411', nombre: 'Cooperative' },
+  ];
+
+  metacriticDisponibles = [
+    { id: '', nombre: 'Cualquier nota' },
+    { id: '90,100', nombre: '90-100 (Imprescindibles)' },
+    { id: '80,89', nombre: '80-89 (Muy buenos)' },
+    { id: '70,79', nombre: '70-79 (Buenos)' },
+    { id: '50,69', nombre: '50-69 (Regulares)' },
+  ];
+
   ordenDisponibles = [
     { id: 'relevance', nombre: 'Relevancia' },
     { id: '-added', nombre: 'Más recientes' },
@@ -63,11 +87,82 @@ export class Busqueda implements OnInit {
     { id: 'name', nombre: 'Nombre (A-Z)' },
   ];
 
+  dropdownsAbiertos: any = {
+    genero: false,
+    plataforma: false,
+    anio: false,
+    tags: false,
+    metacritic: false,
+    orden: false
+  };
+
+  errorAnio: boolean = false;
+
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
-      this.termino = params['q'] || '';
-      this.reiniciarBusqueda();
+      const queryTerm = params['q'];
+      
+      // Si hay parámetros en la URL, es una búsqueda nueva o desde navbar
+      if (queryTerm !== undefined) {
+        this.termino = queryTerm || '';
+        this.limpiarFiltros(); // Esto reseteará el estado del servicio también
+      } 
+      // Si no hay parámetros en la URL, intentamos restaurar el último estado guardado
+      else if (this.videojuegosServicio.ultimoEstadoBusqueda.juegos.length > 0) {
+        this.restaurarEstado();
+      }
+      // Si no hay nada, búsqueda limpia
+      else {
+        this.reiniciarBusqueda();
+      }
     });
+  }
+
+  restaurarEstado() {
+    const estado = this.videojuegosServicio.ultimoEstadoBusqueda;
+    this.termino = estado.termino;
+    this.filtros = { ...estado.filtros };
+    this.juegos = [...estado.juegos];
+    this.paginaActual = estado.paginaActual;
+    this.hayMas = estado.hayMas;
+    this.cargando = false;
+    this.cdr.detectChanges();
+  }
+
+  guardarEstado() {
+    this.videojuegosServicio.ultimoEstadoBusqueda = {
+      termino: this.termino,
+      filtros: { ...this.filtros },
+      juegos: [...this.juegos],
+      paginaActual: this.paginaActual,
+      hayMas: this.hayMas
+    };
+  }
+
+  toggleDropdown(nombre: string, event: Event) {
+    event.stopPropagation();
+    // Cerrar los demás
+    for (let key in this.dropdownsAbiertos) {
+      if (key !== nombre) this.dropdownsAbiertos[key] = false;
+    }
+    this.dropdownsAbiertos[nombre] = !this.dropdownsAbiertos[nombre];
+  }
+
+  @HostListener('document:click')
+  cerrarDropdowns() {
+    for (let key in this.dropdownsAbiertos) {
+      this.dropdownsAbiertos[key] = false;
+    }
+  }
+
+  seleccionarFiltro(campo: string, valor: any) {
+    this.filtros[campo] = valor;
+    this.reiniciarBusqueda();
+  }
+
+  getNombreFiltro(campo: string, lista: any[]): string {
+    const item = lista.find(i => i.id === this.filtros[campo]);
+    return item ? item.nombre : 'Seleccionar';
   }
 
   reiniciarBusqueda() {
@@ -79,10 +174,6 @@ export class Busqueda implements OnInit {
   }
 
   ejecutarBusqueda() {
-    if (!this.termino.trim()) {
-      this.cargando = false;
-      return;
-    }
 
     this.videojuegosServicio.buscarJuegosPaginados(this.termino, this.paginaActual, this.filtros).subscribe({
       next: (respuesta: any) => {
@@ -90,6 +181,7 @@ export class Busqueda implements OnInit {
         this.hayMas = respuesta.next !== null;
         this.cargando = false;
         this.cargandoMas = false;
+        this.guardarEstado();
         this.cdr.detectChanges();
       },
       error: (err: any) => {
@@ -101,8 +193,43 @@ export class Busqueda implements OnInit {
     });
   }
 
+  validarAnio(): boolean {
+    const dates = this.filtros.anio.trim();
+    if (!dates) {
+      this.errorAnio = false;
+      return true;
+    }
+
+    const regexSingle = /^\d{4}$/;
+    const regexRange = /^\d{4}-\d{4}$/;
+
+    if (regexSingle.test(dates) || regexRange.test(dates)) {
+      this.errorAnio = false;
+      return true;
+    } else {
+      this.errorAnio = true;
+      return false;
+    }
+  }
+
   aplicarFiltros() {
+    if (this.validarAnio()) {
+      this.reiniciarBusqueda();
+    }
+  }
+
+  limpiarFiltros() {
+    this.filtros = {
+      genero: '',
+      plataforma: '',
+      orden: 'relevance',
+      tags: '',
+      metacritic: '',
+      anio: ''
+    };
+    this.errorAnio = false;
     this.reiniciarBusqueda();
+    this.guardarEstado(); // Guardar el estado limpio
   }
 
   cargarMas() {
