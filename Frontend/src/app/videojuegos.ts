@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -11,6 +11,9 @@ export class Videojuegos {
   private http = inject(HttpClient);
   private apiKey = '1d0e05ba2ab1447fa3f51ec4123b8b2a';
   private url = 'https://api.rawg.io/api';
+  
+  // Cache para evitar peticiones redundantes
+  private cache = new Map<string, any>();
 
   ///// PAGINA INICIAL - LISTAS HORIZONTALES /////
 
@@ -81,7 +84,19 @@ export class Videojuegos {
 
   //Busca juegos por nombre y filtros opcionales
   buscarJuegos(termino: string, filtros: any = {}): Observable<any> {
-    let urlBusqueda = `${this.url}/games?key=${this.apiKey}&search=${termino}&page_size=20`;
+    return this.buscarJuegosPaginados(termino, 1, filtros);
+  }
+
+  // NUEVO: Busca juegos con paginación
+  buscarJuegosPaginados(termino: string, pagina: number, filtros: any = {}): Observable<any> {
+    const cacheKey = `search-${termino}-${pagina}-${JSON.stringify(filtros)}`;
+    
+    if (this.cache.has(cacheKey)) {
+      return of(this.cache.get(cacheKey));
+    }
+
+    // search_precise=true desactiva el fuzzy matching, haciendo la búsqueda más rápida en el servidor de RAWG
+    let urlBusqueda = `${this.url}/games?key=${this.apiKey}&search=${termino}&page_size=20&page=${pagina}&search_precise=true`;
 
     if (filtros.orden && filtros.orden !== 'relevance') {
       urlBusqueda += `&ordering=${filtros.orden}`;
@@ -96,23 +111,43 @@ export class Videojuegos {
       urlBusqueda += `&parent_platforms=${filtros.plataforma}`;
     }
 
-    return this.http.get(urlBusqueda);
+    return this.http.get(urlBusqueda).pipe(
+      tap(res => this.cache.set(cacheKey, res))
+    );
   }
 
   ///// DETALLES DEL JUEGO /////
 
   //Obtiene detalles completos de un juego
   getJuegoDetalles(id: string): Observable<any> {
-    return this.http.get(`${this.url}/games/${id}?key=${this.apiKey}&language=es`);
+    const cacheKey = `detail-${id}`;
+    if (this.cache.has(cacheKey)) {
+      return of(this.cache.get(cacheKey));
+    }
+    return this.http.get(`${this.url}/games/${id}?key=${this.apiKey}&language=es`).pipe(
+      tap(res => this.cache.set(cacheKey, res))
+    );
   }
 
   //Obtiene capturas de pantalla de un juego
   getJuegoScreenshots(id: string): Observable<any> {
-    return this.http.get(`${this.url}/games/${id}/screenshots?key=${this.apiKey}`);
+    const cacheKey = `screenshots-${id}`;
+    if (this.cache.has(cacheKey)) {
+      return of(this.cache.get(cacheKey));
+    }
+    return this.http.get(`${this.url}/games/${id}/screenshots?key=${this.apiKey}`).pipe(
+      tap(res => this.cache.set(cacheKey, res))
+    );
   }
 
   //Obtiene trailers/videos de un juego
   getJuegoTrailers(id: string): Observable<any> {
-    return this.http.get(`${this.url}/games/${id}/movies?key=${this.apiKey}`);
+    const cacheKey = `trailers-${id}`;
+    if (this.cache.has(cacheKey)) {
+      return of(this.cache.get(cacheKey));
+    }
+    return this.http.get(`${this.url}/games/${id}/movies?key=${this.apiKey}`).pipe(
+      tap(res => this.cache.set(cacheKey, res))
+    );
   }
 }

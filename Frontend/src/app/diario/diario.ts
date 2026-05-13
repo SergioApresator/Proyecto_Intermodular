@@ -28,8 +28,6 @@ export class Diario implements OnInit {
       this.usuarioId = parseInt(uid, 10);
       this.cargarResenas();
       this.cargarRespuestas();
-    } else {
-      this.cargando = false;
     }
   }
 
