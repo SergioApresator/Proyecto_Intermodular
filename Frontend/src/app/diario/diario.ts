@@ -16,11 +16,14 @@ export class Diario implements OnInit {
 
   constructor(private resenasServicio: ResenasService, private videojuegosServicio: Videojuegos, private cdr: ChangeDetectorRef) {}
 
-  respuestas: any[] = [];
+  respuestasAgrupadas: any[] = [];
   mostrandoResenas: boolean = true;
-  resenas: any[] = [];
+  resenasAgrupadas: any[] = [];
+  resenas: any[] = []; // Para el conteo total
+  respuestas: any[] = []; // Para el conteo total
   cargando: boolean = true;
   usuarioId: number | null = null;
+
 
   ngOnInit() {
     const uid = localStorage.getItem('usuarioId');
@@ -36,11 +39,11 @@ export class Diario implements OnInit {
 
     this.resenasServicio.getResenasPorUsuario(this.usuarioId).subscribe({
       next: (respuesta: any) => {
-        this.resenas = respuesta.sort((a: any, b: any) => {
-          return b.id - a.id;
-        });
+        this.resenas = respuesta;
+        this.resenasAgrupadas = this.agruparPorFecha(respuesta, 'fechaResena');
+        
         //En cada reseña carga esto
-        this.resenas.forEach((resena: any) => {
+        respuesta.forEach((resena: any) => {
           this.videojuegosServicio.getJuegoDetalles(resena.id_videojuego.toString()).subscribe({
             next: (juego: any) => {
               resena.nombreJuego = juego.name;
@@ -67,11 +70,11 @@ export class Diario implements OnInit {
 
     this.resenasServicio.getRespuestasPorUsuario(this.usuarioId).subscribe({
       next: (respuesta: any) => {
-        this.respuestas = respuesta.sort((a: any, b: any) => {
-          return b.id - a.id;
-        });
+        this.respuestas = respuesta;
+        this.respuestasAgrupadas = this.agruparPorFecha(respuesta, 'fecha_respuesta'); // O fechaRespuesta
+        
         //Por cada respuesta cargamos el mensaje de la resena a la que pertenece
-        this.respuestas.forEach((resp: any) => {
+        respuesta.forEach((resp: any) => {
           this.resenasServicio.getResenaPorId(resp.id_resena).subscribe({
             next: (resena: any) => {
               resp.mensajeResena = resena.mensaje;
@@ -89,6 +92,33 @@ export class Diario implements OnInit {
       }
     });
   }
+
+  agruparPorFecha(items: any[], campoFecha: string): any[] {
+    const grupos: { [key: string]: any[] } = {};
+
+    items.forEach(item => {
+      // Intentar obtener la fecha de cualquiera de los dos posibles nombres de campo
+      const fechaValor = item[campoFecha] || item['fechaRespuesta'] || item['fechaResena'];
+      if (!fechaValor) return;
+
+      const date = new Date(fechaValor);
+      const key = date.toISOString().split('T')[0]; // YYYY-MM-DD
+
+      if (!grupos[key]) {
+        grupos[key] = [];
+      }
+      grupos[key].push(item);
+    });
+
+    // Convertir el objeto a array y ordenar por fecha descendente
+    return Object.keys(grupos)
+      .sort((a, b) => b.localeCompare(a))
+      .map(fecha => ({
+        fecha: fecha,
+        items: grupos[fecha].sort((a, b) => b.id - a.id) // Ordenar items dentro del grupo por ID desc
+      }));
+  }
+
 
   mostrarResenas() {
     this.mostrandoResenas = true;

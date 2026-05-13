@@ -117,8 +117,15 @@
 .diario-feed {
     display: flex;
     flex-direction: column;
-    gap: 60px;
+    gap: 100px; /* Mayor espacio entre días */
 }
+
+.day-group {
+    display: flex;
+    flex-direction: column;
+    gap: 30px; /* Menor espacio entre entradas del mismo día */
+}
+
 
 .log-entry {
     display: grid;
@@ -133,15 +140,16 @@
     position: absolute;
     top: 0;
     left: 80px;
-    bottom: -60px;
+    bottom: -30px; /* Ajustado al gap de .day-group */
     width: 2px;
     background: repeating-linear-gradient(to bottom, #cbd5e1 0, #cbd5e1 10px, transparent 10px, transparent 20px);
     z-index: -1;
 }
 
-.log-entry:last-child::before {
+.day-group:last-child .log-entry:last-child::before {
     display: none;
 }
+
 
 .entry-date {
     text-align: right;

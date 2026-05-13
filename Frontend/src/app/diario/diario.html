@@ -46,46 +46,48 @@
       </div>
 
       <!-- Lista de resenas -->
-      <div *ngFor="let resena of resenas" class="log-entry">
-        
-        <div class="entry-date">
-          <div class="date-badge">{{ resena.fechaResena | date:'dd MMM yyyy' }}</div>
+      <div *ngFor="let grupo of resenasAgrupadas" class="day-group">
+        <div *ngFor="let resena of grupo.items; let i = index" class="log-entry">
+          
+          <div class="entry-date">
+            <div class="date-badge" *ngIf="i === 0">{{ grupo.fecha | date:'dd MMM yyyy' }}</div>
+          </div>
+
+          <article class="entry-content">
+            <div class="entry-media">
+              <img *ngIf="resena.imagenJuego" [src]="resena.imagenJuego" [alt]="resena.nombreJuego">
+              <div class="rating-overlay">★ {{ resena.puntuacion }}</div>
+            </div>
+
+            <div class="entry-details">
+              <h3 class="game-title">{{ resena.nombreJuego }}</h3>
+              
+              <!-- Spoiler Logic -->
+              <div *ngIf="resena.tieneSpoiler">
+                <div class="spoiler-alert">
+                  <span>REGISTRO CON SPOILERS</span>
+                  <button class="btn-reveal" (click)="resena.mostrarSpoiler = !resena.mostrarSpoiler">
+                    {{ resena.mostrarSpoiler ? 'OCULTAR' : 'REVELAR' }}
+                  </button>
+                </div>
+                <p class="entry-text" *ngIf="resena.mostrarSpoiler">{{ resena.mensaje }}</p>
+              </div>
+
+              <p class="entry-text" *ngIf="!resena.tieneSpoiler">{{ resena.mensaje }}</p>
+
+              <div class="entry-footer">
+                <div class="footer-item up">
+                  <span>{{ resena.meGustas }} POSITIVOS</span>
+                </div>
+                <div class="footer-item down">
+                  <span>{{ resena.noMeGustas }} NEGATIVOS</span>
+                </div>
+              </div>
+            </div>
+          </article>
         </div>
-
-        <article class="entry-content">
-          <div class="entry-media">
-            <img *ngIf="resena.imagenJuego" [src]="resena.imagenJuego" [alt]="resena.nombreJuego">
-            <div class="rating-overlay">★ {{ resena.puntuacion }}</div>
-          </div>
-
-          <div class="entry-details">
-            <h3 class="game-title">{{ resena.nombreJuego }}</h3>
-            
-            <!-- Spoiler Logic -->
-            <div *ngIf="resena.tieneSpoiler">
-              <div class="spoiler-alert">
-                <span>REGISTRO CON SPOILERS</span>
-                <button class="btn-reveal" (click)="resena.mostrarSpoiler = !resena.mostrarSpoiler">
-                  {{ resena.mostrarSpoiler ? 'OCULTAR' : 'REVELAR' }}
-                </button>
-              </div>
-              <p class="entry-text" *ngIf="resena.mostrarSpoiler">{{ resena.mensaje }}</p>
-            </div>
-
-            <p class="entry-text" *ngIf="!resena.tieneSpoiler">{{ resena.mensaje }}</p>
-
-            <div class="entry-footer">
-              <div class="footer-item up">
-                <span>{{ resena.meGustas }} POSITIVOS</span>
-              </div>
-              <div class="footer-item down">
-                <span>{{ resena.noMeGustas }} NEGATIVOS</span>
-              </div>
-            </div>
-          </div>
-        </article>
-
       </div>
+
     </div>
 
     <!-- RESPUESTAS -->
@@ -98,32 +100,34 @@
       </div>
 
       <!-- Lista de respuestas -->
-      <div *ngFor="let respuesta of respuestas" class="log-entry">
-        
-        <div class="entry-date">
-          <div class="date-badge">RESPUESTA</div>
-        </div>
+      <div *ngFor="let grupo of respuestasAgrupadas" class="day-group">
+        <div *ngFor="let respuesta of grupo.items; let i = index" class="log-entry">
+          
+          <div class="entry-date">
+            <div class="date-badge" *ngIf="i === 0">{{ grupo.fecha | date:'dd MMM yyyy' }}</div>
+          </div>
 
-        <article class="entry-content">
-          <div class="entry-details">
-            <h3 class="game-title" style="font-size: 1.5rem;" *ngIf="respuesta.mensajeResena">
-              RE: "{{ respuesta.mensajeResena }}"
-            </h3>
-            
-            <p class="entry-text">{{ respuesta.mensaje }}</p>
+          <article class="entry-content">
+            <div class="entry-details">
+              <h3 class="game-title" style="font-size: 1.5rem;" *ngIf="respuesta.mensajeResena">
+                RE: "{{ respuesta.mensajeResena }}"
+              </h3>
+              
+              <p class="entry-text">{{ respuesta.mensaje }}</p>
 
-            <div class="entry-footer">
-              <div class="footer-item up">
-                <span>{{ respuesta.meGustas }} POSITIVOS</span>
-              </div>
-              <div class="footer-item down">
-                <span>{{ respuesta.noMeGustas }} NEGATIVOS</span>
+              <div class="entry-footer">
+                <div class="footer-item up">
+                  <span>{{ respuesta.meGustas }} POSITIVOS</span>
+                </div>
+                <div class="footer-item down">
+                  <span>{{ respuesta.noMeGustas }} NEGATIVOS</span>
+                </div>
               </div>
             </div>
-          </div>
-        </article>
-
+          </article>
+        </div>
       </div>
+
     </div>
 
   </div>
