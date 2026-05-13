@@ -8,6 +8,7 @@ import { JuegoDetalle } from './juego-detalle/juego-detalle';
 import { Perfil } from './perfil/perfil';
 import { authGuard } from './auth.guard';
 import { AcercaDe } from './acerca-de/acerca-de';
+import { Admin } from './admin/admin';
 
 export const routes: Routes = [
     //La ruta raiz redirige directamente a inicial
@@ -15,6 +16,7 @@ export const routes: Routes = [
     { path: 'registro', component: Registro },
     { path: 'login', component: Login },
     { path: 'diario', component: Diario },
+    { path: 'admin', component: Admin },
     // Rutas públicas
     { path: 'inicial', component: Inicial },
     { path: 'ver-todos/:genero', component: VerTodos },

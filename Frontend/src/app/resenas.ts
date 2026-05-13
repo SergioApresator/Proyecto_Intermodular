@@ -44,6 +44,10 @@ export class ResenasService {
     return this.http.get(`${this.urlResenas}/recientes`, this.getHeaders());
   }
 
+  getResenasARevisar(): Observable<any> {
+    return this.http.get(`${this.urlResenas}/aRevisar`, this.getHeaders());
+  }
+
   // Eliminar una reseña
   eliminarResena(id: number): Observable<any> {
     return this.http.delete(`${this.urlResenas}/${id}`, this.getHeaders());
@@ -57,5 +61,10 @@ export class ResenasService {
   // Votar una reseña (me gusta / no me gusta)
   votarResena(idResena: number, idUsuario: number, esMeGusta: boolean): Observable<any> {
     return this.http.post(`${this.urlResenas}/${idResena}/votar`, { idUsuario, esMeGusta }, this.getHeaders());
+  }
+
+  // Actualizar una reseña
+  updateResena(idResena: number, resena: any): Observable<any> {
+    return this.http.put(`${this.urlResenas}/updateResena/${idResena}`, resena, this.getHeaders());
   }
 }

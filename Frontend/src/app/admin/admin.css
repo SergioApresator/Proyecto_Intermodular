@@ -1,0 +1,268 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;600;700&display=swap');
+
+/* ===== BASE ADMIN ===== */
+:host {
+    display: flex;
+    background-color: #f8fafc;
+    color: #1e293b;
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    width: 100%;
+}
+
+.admin-container {
+    width: 100%;
+}
+
+.admin-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    width: 100%;
+    min-height: 100vh;
+}
+
+/* ===== SIDEBAR NAV ===== */
+.admin-sidebar {
+    background: #1e293b;
+    color: #ffffff;
+    padding: 40px 0;
+    display: flex;
+    flex-direction: column;
+    border-right: 5px solid #3b82f6;
+}
+
+.admin-brand {
+    padding: 0 30px 40px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    letter-spacing: 2px;
+    color: #3b82f6;
+}
+
+.admin-nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.admin-nav-item {
+    padding: 15px 30px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.admin-nav-item:hover {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+}
+
+.admin-nav-item.active {
+    background: #3b82f6;
+    color: #ffffff;
+    clip-path: polygon(0% 0%, 95% 0%, 100% 50%, 95% 100%, 0% 100%);
+}
+
+/* ===== MAIN CONTENT AREA ===== */
+.admin-main {
+    padding: 40px 5%;
+    overflow-y: auto;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.admin-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.5rem;
+    margin: 0;
+    color: #1e293b;
+    line-height: 1;
+}
+
+.admin-subtitle {
+    font-size: 1.2rem;
+    color: #64748b;
+    margin-top: 5px;
+    font-weight: 600;
+}
+
+/* ===== REVIEWS SECTION ===== */
+.reviews-section {
+    background: #ffffff;
+    padding: 30px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 6px 6px 0 #3b82f6;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+    border-bottom: 2px dashed #e2e8f0;
+    padding-bottom: 15px;
+}
+
+.section-title h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    color: #1e293b;
+    margin: 0;
+    letter-spacing: 1px;
+}
+
+.badge {
+    background: #f99e1a;
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    box-shadow: 2px 2px 0 #1e293b;
+}
+
+/* ===== REVIEWS GRID ===== */
+.reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
+}
+
+.review-card {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.2s;
+    box-shadow: 4px 4px 0 #cbd5e1;
+}
+
+.review-card:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 7px 7px 0 #3b82f6;
+    border-color: #3b82f6;
+}
+
+.card-header {
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    color: #475569;
+}
+
+.user-info strong {
+    color: #1e293b;
+    font-size: 1.2rem;
+}
+
+.game-tag {
+    display: inline-block;
+    background: #1e293b;
+    color: #fff;
+    padding: 2px 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-left: 5px;
+    border-radius: 3px;
+    text-transform: uppercase;
+}
+
+.card-body {
+    flex-grow: 1;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+    color: #1e293b;
+    font-weight: 600;
+    font-style: italic;
+    background: #ffffff;
+    padding: 15px;
+    border-left: 4px solid #f99e1a;
+}
+
+.card-footer {
+    display: flex;
+    gap: 10px;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    flex: 1;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.btn-safe {
+    background: #10b981;
+    color: #ffffff;
+    box-shadow: 3px 3px 0 #047857;
+}
+
+.btn-safe:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0 #047857;
+}
+
+.btn-danger {
+    background: #ef4444;
+    color: #ffffff;
+    box-shadow: 3px 3px 0 #b91c1c;
+}
+
+.btn-danger:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0 #b91c1c;
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    background: #f1f5f9;
+    border: 2px dashed #cbd5e1;
+    color: #64748b;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 15px;
+}
+
+.empty-state h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    color: #1e293b;
+    margin: 0 0 10px 0;
+}
+
+.empty-state p {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+    .admin-layout {
+        grid-template-columns: 1fr;
+    }
+    .admin-sidebar {
+        display: none;
+    }
+}

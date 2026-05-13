@@ -58,4 +58,7 @@ public class Resena {
 
     @Column(name = "FOTO_VIDEOJUEGO")
     private String fotoVideojuego;
+
+    @Column(name = "REVISADA")
+    private Boolean revisada;
 }
