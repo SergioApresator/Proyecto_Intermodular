@@ -31,6 +31,7 @@ export class Perfil implements OnInit {
   usuario: any = null;
   cargando: boolean = true;
   error: string = '';
+  fieldErrors: { [key: string]: string } = {}; // Errores por campo
 
   // Reseñas
   resenas: any[] = [];
@@ -82,6 +83,11 @@ export class Perfil implements OnInit {
   previewBanner: string | null = null;
   subiendoBanner: boolean = false;
   errorBanner: string = '';
+
+  // Patrones de validación estrictos
+  private readonly EMAIL_PATTERN = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+  private readonly USERNAME_PATTERN = /^[a-zA-Z0-9_]+$/;
+  private readonly NAME_PATTERN = /^[a-zA-ZÀ-ÿ\s]{2,40}$/;
 
   ngOnInit() {
     const id = typeof window !== 'undefined' ? localStorage.getItem('usuarioId') : null;
@@ -488,27 +494,84 @@ export class Perfil implements OnInit {
     };
     this.editando = true;
     this.mensajeExito = '';
+    this.error = '';
+    this.fieldErrors = {};
     this.cdr.detectChanges();
   }
 
   guardarCambios() {
-    if (!this.formEdicion.nombre?.trim() || !this.formEdicion.username?.trim() || !this.formEdicion.email?.trim()) {
-      this.error = 'Por favor, rellena los campos obligatorios.';
+    this.fieldErrors = {};
+    this.error = '';
+
+    // 1. Limpieza de datos (Trimming)
+    const nombre = this.formEdicion.nombre?.trim();
+    const apellidos = this.formEdicion.apellidos?.trim();
+    const username = this.formEdicion.username?.trim();
+    const email = this.formEdicion.email?.trim()?.toLowerCase();
+
+    // 2. Validaciones estrictas con asignación de errores por campo
+    let hasErrors = false;
+
+    if (!nombre) {
+      this.fieldErrors['nombre'] = 'Este campo es obligatorio.';
+      hasErrors = true;
+    } else if (!this.NAME_PATTERN.test(nombre)) {
+      this.fieldErrors['nombre'] = 'El nombre contiene caracteres no válidos.';
+      hasErrors = true;
+    }
+
+    if (apellidos && !this.NAME_PATTERN.test(apellidos)) {
+      this.fieldErrors['apellidos'] = 'Los apellidos contienen caracteres no válidos.';
+      hasErrors = true;
+    }
+
+    if (!username) {
+      this.fieldErrors['username'] = 'Este campo es obligatorio.';
+      hasErrors = true;
+    } else if (!this.USERNAME_PATTERN.test(username)) {
+      this.fieldErrors['username'] = 'Solo letras, números y guiones bajos.';
+      hasErrors = true;
+    }
+
+    if (!email) {
+      this.fieldErrors['email'] = 'Este campo es obligatorio.';
+      hasErrors = true;
+    } else if (!this.EMAIL_PATTERN.test(email)) {
+      this.fieldErrors['email'] = 'Formato de correo no válido (ej: .com, .es).';
+      hasErrors = true;
+    }
+
+    if (hasErrors) {
+      this.error = 'Por favor, corrige los errores en el formulario.';
       this.cdr.detectChanges();
       return;
     }
-    this.error = '';
+
     this.guardando = true;
-    this.usuariosServicio.actualizarUsuario(this.usuario.id, this.formEdicion).subscribe({
+
+    // Preparamos payload limpio
+    const payload = {
+      ...this.formEdicion,
+      nombre,
+      apellidos,
+      username,
+      email
+    };
+
+    this.usuariosServicio.actualizarUsuario(this.usuario.id, payload).subscribe({
       next: (data: any) => {
         this.usuario = data;
         this.guardando = false;
         this.editando = false;
-        this.mensajeExito = '¡Perfil actualizado!';
+        this.mensajeExito = '¡Perfil actualizado con éxito!';
         this.cdr.detectChanges();
         setTimeout(() => { this.mensajeExito = ''; this.cdr.detectChanges(); }, 3000);
       },
-      error: () => { this.guardando = false; this.error = 'Error al guardar.'; this.cdr.detectChanges(); }
+      error: (err: any) => { 
+        this.guardando = false; 
+        this.error = 'Error al guardar los cambios. Es posible que el nombre de usuario o email ya estén en uso.'; 
+        this.cdr.detectChanges(); 
+      }
     });
   }
 

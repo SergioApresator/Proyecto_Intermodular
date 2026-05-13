@@ -48,6 +48,7 @@ export class JuegoDetalle implements OnInit, OnDestroy {
   mostrarModalListas: boolean = false;
   nuevaListaNombre: string = "";
   procesandoLista: boolean = false;
+  mostrarFormNuevaLista: boolean = false;
 
   get tagsJuego(): any[] {
     return this.juego?.tags ? this.juego.tags.slice(0, 15) : [];
@@ -177,6 +178,7 @@ export class JuegoDetalle implements OnInit, OnDestroy {
   cerrarModalListas() {
     this.mostrarModalListas = false;
     this.nuevaListaNombre = "";
+    this.mostrarFormNuevaLista = false;
   }
 
   estaEnLista(nombre: string): boolean {
@@ -236,6 +238,7 @@ export class JuegoDetalle implements OnInit, OnDestroy {
     if (!nombre || this.procesandoLista) return;
     this.toggleJuegoEnLista(nombre);
     this.nuevaListaNombre = "";
+    this.mostrarFormNuevaLista = false;
   }
 
   toggleFavorito() {

@@ -1,43 +1,113 @@
-<form [formGroup]="formularioRegistro" (ngSubmit)="submit()"> 
-<h1>Registrarse</h1>
-    <p>Nombre: 
-        <input type="text" formControlName="nombre"> 
-        @if(this.formularioRegistro.get('nombre')?.errors?.['required']) { 
-            <span>(Obligatorio, no dejar vacío)</span> 
-        } 
-    </p> 
-     <p>Apellidos: 
-        <input type="text" formControlName="apellidos"> 
-        @if(this.formularioRegistro.get('apellidos')?.errors?.['required']) { 
-            <span>(Obligatorio, no dejar vacío)</span> 
-        } 
-    </p>
-    <p>Nombre de Usuario: 
-        <input type="text" formControlName="username"> 
-        @if(this.formularioRegistro.get('username')?.errors?.['required']) { 
-            <span>(Obligatorio, no dejar vacío)</span> 
-        } 
-        @if(this.formularioRegistro.get('username')?.errors?.['maxlength']) { 
-            <span>(Debe tener como máximo 20 caracteres)</span> 
-        }
-    </p>
-    <p>Correo Electrónico: 
-        <input type="text" formControlName="email">
-        @if(this.formularioRegistro.get('email')?.errors?.['required']) { 
-            <span>(Obligatorio, no dejar vacío)</span> 
-        } 
-        @if(this.formularioRegistro.get('email')?.errors?.['email']) { 
-            <span>(Debe seguir el formato de email)</span> 
-        } 
-    </p> 
-    <p>Contraseña: 
-        <input type="text" formControlName="password">
-        @if(this.formularioRegistro.get('password')?.errors?.['required']) { 
-            <span>(Obligatorio, no dejar vacío)</span> 
-        } 
-        @if(this.formularioRegistro.get('password')?.errors?.['minlength']) { 
-            <span>(Debe tener como mínimo 8 caracteres)</span> 
-        } 
-    </p> 
-    <button type="submit" [disabled]="formularioRegistro.invalid">Confirmar</button> 
-</form> 
+<div class="auth-page-container">
+    
+    <!-- LEFT: VISUAL BRANDING -->
+    <div class="auth-visual-side">
+        <div class="noise-overlay"></div>
+        <div class="visual-content">
+            <div class="brand-tag">NETWORK // JOIN</div>
+            <h1 class="brand-title">RATE<span>MY</span>GAME</h1>
+            <p class="brand-subtitle">CREA TU PERFIL DE JUGADOR</p>
+            <div class="tech-line"></div>
+        </div>
+    </div>
+
+    <!-- RIGHT: REGISTRATION FORM -->
+    <div class="auth-form-side">
+        <div class="form-container">
+            <header class="form-header">
+                <h2>REGISTRARSE</h2>
+                <p>Únete a la comunidad y empieza a compartir tus experiencias.</p>
+            </header>
+
+            <form [formGroup]="formularioRegistro" (ngSubmit)="submit()" class="tactical-form">
+                
+                <div class="form-grid-2">
+                    <div class="input-group">
+                        <label>NOMBRE</label>
+                        <div class="input-wrapper">
+                            <input type="text" formControlName="nombre" placeholder="Tu nombre">
+                            <div class="input-accent"></div>
+                        </div>
+                        @if(this.formularioRegistro.get('nombre')?.errors?.['required'] && this.formularioRegistro.get('nombre')?.touched) { 
+                            <span class="error-msg">Requerido</span> 
+                        } 
+                    </div>
+
+                    <div class="input-group">
+                        <label>APELLIDOS</label>
+                        <div class="input-wrapper">
+                            <input type="text" formControlName="apellidos" placeholder="Tus apellidos">
+                            <div class="input-accent"></div>
+                        </div>
+                        @if(this.formularioRegistro.get('apellidos')?.errors?.['required'] && this.formularioRegistro.get('apellidos')?.touched) { 
+                            <span class="error-msg">Requerido</span> 
+                        } 
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>NOMBRE DE USUARIO</label>
+                    <div class="input-wrapper">
+                        <input type="text" formControlName="username" placeholder="Elige un alias">
+                        <div class="input-accent"></div>
+                    </div>
+                    @if(this.formularioRegistro.get('username')?.touched) {
+                        @if(this.formularioRegistro.get('username')?.errors?.['required']) { <span class="error-msg">Este campo es obligatorio</span> }
+                        @if(this.formularioRegistro.get('username')?.errors?.['pattern']) { <span class="error-msg">Solo letras, números y guiones bajos (_)</span> }
+                        @if(this.formularioRegistro.get('username')?.errors?.['maxlength']) { <span class="error-msg">Máximo 20 caracteres</span> }
+                    }
+                </div>
+
+                <div class="input-group">
+                    <label>CORREO ELECTRÓNICO</label>
+                    <div class="input-wrapper">
+                        <input type="text" formControlName="email" placeholder="ejemplo@correo.com">
+                        <div class="input-accent"></div>
+                    </div>
+                    @if(this.formularioRegistro.get('email')?.touched) {
+                        @if(this.formularioRegistro.get('email')?.errors?.['required']) { <span class="error-msg">El correo es obligatorio</span> }
+                        @if(this.formularioRegistro.get('email')?.errors?.['pattern']) { <span class="error-msg">Introduce un email válido (ej: .com, .es)</span> }
+                    }
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="input-group">
+                        <label>CONTRASEÑA</label>
+                        <div class="input-wrapper">
+                            <input type="password" formControlName="password" placeholder="Mínimo 8 caracteres">
+                            <div class="input-accent"></div>
+                        </div>
+                        @if(this.formularioRegistro.get('password')?.touched) {
+                            @if(this.formularioRegistro.get('password')?.errors?.['required']) { <span class="error-msg">Requerido</span> }
+                            @if(this.formularioRegistro.get('password')?.errors?.['minlength']) { <span class="error-msg">Mínimo 8 caracteres</span> }
+                            @if(this.formularioRegistro.get('password')?.errors?.['pattern']) { <span class="error-msg">Debe incluir al menos un número</span> }
+                        }
+                    </div>
+
+                    <div class="input-group">
+                        <label>CONFIRMAR CONTRASEÑA</label>
+                        <div class="input-wrapper">
+                            <input type="password" formControlName="confirmPassword" placeholder="Repite la contraseña">
+                            <div class="input-accent"></div>
+                        </div>
+                        @if(this.formularioRegistro.get('confirmPassword')?.touched) {
+                            @if(this.formularioRegistro.get('confirmPassword')?.errors?.['required']) { <span class="error-msg">Requerido</span> }
+                            @if(this.formularioRegistro.get('confirmPassword')?.errors?.['passwordMismatch']) { <span class="error-msg">Las contraseñas no coinciden</span> }
+                        }
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-auth-primary" [disabled]="formularioRegistro.invalid">
+                        CREAR CUENTA
+                    </button>
+                    <p class="auth-switch">
+                        ¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a>
+                    </p>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+</div>

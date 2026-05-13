@@ -23,13 +23,7 @@
       </div>
     </div>
   </header>
-
-  <!-- Si no se ha iniciado sesion -->
-  <div *ngIf="!usuarioId" class="sin-resenas">
-    <p>Debes iniciar sesión para acceder al sistema de diario.</p>
-    <button class="btn-accion" routerLink="/login">AUTENTICARSE</button>
-  </div>
-
+  
   <div *ngIf="usuarioId">
 
     <!-- Botones para cambiar entre resenas y respuestas -->
