@@ -202,9 +202,17 @@
                 {{ resena.nombreVideojuego || 'un juego' }}
               </span>
               <div class="activity-rating">
-                <span class="rating-box">{{ resena.puntuacion }}</span>
-                <p class="review-snippet">{{ resena.mensaje }}</p>
-              </div>
+              <span class="rating-box">{{ resena.puntuacion }}</span>
+            <div>
+            <div *ngIf="resena.tieneSpoiler" class="activity-spoiler">
+              Contiene spoilers
+              <button class="btn-spoiler-activity" (click)="resena.mostrarSpoiler = !resena.mostrarSpoiler">
+                {{ resena.mostrarSpoiler ? 'Ocultar' : 'Ver igualmente' }}
+              </button>
+            </div>
+          <p class="review-snippet" *ngIf="!resena.tieneSpoiler || resena.mostrarSpoiler">{{ resena.mensaje }}</p>
+            </div>
+          </div>
             </div>
           </div>
           
