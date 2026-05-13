@@ -9,6 +9,7 @@
 .search-page-wrapper {
     position: relative;
     padding-bottom: 80px;
+    overflow-x: hidden;
 }
 
 .noise-overlay {
@@ -56,11 +57,72 @@
     margin-top: 20px;
 }
 
+/* SEARCH INPUT AREA */
+.search-input-section {
+    padding: 60px 5% 40px;
+    display: flex;
+    justify-content: center;
+    background: white;
+}
+
+.search-input-box-ow {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    transform: skewX(-12deg);
+    transition: all 0.3s;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.search-input-box-ow:focus-within {
+    transform: skewX(-12deg) translateY(-2px);
+    box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15);
+    border-color: #3b82f6;
+}
+
+.main-search-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 25px 80px 25px 40px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    color: #1e293b;
+    outline: none;
+    transform: skewX(12deg);
+    letter-spacing: 2px;
+}
+
+.main-search-input::placeholder {
+    color: #cbd5e1;
+}
+
+.search-icon-ow {
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%) skewX(12deg);
+    color: #3b82f6;
+    width: 32px;
+    height: 32px;
+}
+
+.search-accent-lines {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 10px;
+    background: #3b82f6;
+}
+
 /* FILTERS BAR */
 .filters-bar-wrapper {
     background: #ffffff;
     border-bottom: 1px solid #e2e8f0;
-    padding: 20px 5%;
+    padding: 15px 5% 20px;
     position: sticky;
     top: 74px; /* Navbar height */
     z-index: 100;
@@ -68,8 +130,9 @@
 
 .filters-container {
     display: flex;
-    gap: 30px;
+    gap: 40px;
     flex-wrap: wrap;
+    justify-content: center;
     max-width: 1400px;
     margin: 0 auto;
 }
@@ -85,24 +148,197 @@
     font-weight: 700;
     color: #3b82f6;
     letter-spacing: 1px;
+    padding-left: 10px;
 }
 
-.filter-group select {
-    padding: 10px 20px;
-    border: 2px solid #f1f5f9;
-    background: #f8fafc;
+.filter-select-ow, .filter-input-ow {
+    position: relative;
+    transform: skewX(-12deg);
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #3b82f6;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    min-width: 180px;
+}
+
+.filter-select-ow {
+    cursor: pointer;
+}
+
+.filter-select-ow:hover, .filter-input-ow:hover {
+    border-color: #3b82f6;
+    transform: skewX(-12deg) translateY(-2px);
+    box-shadow: 0 5px 15px rgba(59, 130, 246, 0.1);
+}
+
+.filter-input-ow:focus-within {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+
+.filter-input-ow.error {
+    border-color: #ef4444;
+    border-left-color: #ef4444;
+}
+
+.error-text-ow {
+    color: #ef4444;
+    font-size: 0.75rem;
     font-family: 'Rajdhani', sans-serif;
-    font-weight: 600;
-    font-size: 1rem;
+    font-weight: 700;
+    margin-top: 5px;
+    padding-left: 10px;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.year-input-ow {
+    width: 100%;
+    padding: 12px 15px;
+    border: none;
+    background: transparent;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
     color: #1e293b;
     outline: none;
-    cursor: pointer;
-    transition: border-color 0.2s;
-    min-width: 200px;
+    transform: skewX(12deg);
+    min-width: 150px;
 }
 
-.filter-group select:focus {
+.year-input-ow::placeholder {
+    color: #cbd5e1;
+    font-weight: 500;
+    font-size: 0.85rem;
+}
+
+.filter-select-ow.active {
     border-color: #3b82f6;
+    background: #f8fafc;
+    z-index: 1001;
+}
+
+.selected-value {
+    padding: 12px 40px 12px 15px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #1e293b;
+    transform: skewX(12deg);
+    white-space: nowrap;
+}
+
+.dropdown-icon-ow {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%) skewX(12deg);
+    width: 12px;
+    height: 12px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: contain;
+    transition: transform 0.3s;
+}
+
+.filter-select-ow.active .dropdown-icon-ow {
+    transform: translateY(-50%) skewX(12deg) rotate(180deg);
+}
+
+.options-list-ow {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: -1px;
+    right: -1px;
+    background: #ffffff;
+    border: 1px solid #3b82f6;
+    list-style: none;
+    padding: 5px 0;
+    margin: 0;
+    z-index: 1000;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.options-list-ow li {
+    padding: 10px 20px;
+    color: #475569;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    transform: skewX(12deg);
+}
+
+.options-list-ow li:hover {
+    background: #eff6ff;
+    color: #3b82f6;
+    padding-left: 25px;
+}
+
+.options-list-ow li.selected {
+    color: #3b82f6;
+    background: #f8fafc;
+}
+
+.options-list-ow li.selected:hover {
+    background: #eff6ff;
+}
+
+/* Custom Scrollbar for Dropdown */
+.options-list-ow::-webkit-scrollbar {
+    width: 6px;
+}
+.options-list-ow::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+.options-list-ow::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+}
+
+.options-list-ow::-webkit-scrollbar-thumb:hover {
+    background: #3b82f6;
+}
+
+.filter-group.actions {
+    display: flex;
+    align-items: flex-end;
+}
+
+.btn-reset-ow {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transform: skewX(-12deg);
+}
+
+.btn-reset-ow:hover {
+    background: #e2e8f0;
+    color: #ef4444;
+    transform: skewX(-12deg) translateY(-2px);
+    border-color: #ef4444;
+}
+
+.btn-reset-ow svg {
+    transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transform: skewX(12deg);
+}
+
+.btn-reset-ow:hover svg {
+    transform: skewX(12deg) rotate(-45deg);
 }
 
 /* RESULTS AREA */

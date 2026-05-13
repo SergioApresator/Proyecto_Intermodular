@@ -7,7 +7,8 @@
   <!-- HERO BANNER -->
   <div class="juego-hero">
     <div class="hero-bg-wrapper">
-      <img [src]="juego.background_image" class="hero-bg-img" alt="Background">
+      <img *ngIf="juego.background_image && !juego['imgError']" [src]="juego.background_image" class="hero-bg-img" alt="Background" (error)="juego['imgError'] = true">
+      <div *ngIf="!juego.background_image || juego['imgError']" class="game-image-placeholder dark-vignette"></div>
       <div class="hero-vignette"></div>
     </div>
     
@@ -111,7 +112,12 @@
         <div class="media-viewer-ow" *ngIf="mediaItems.length > 0">
           <div class="main-stage">
             <ng-container *ngIf="mediaItems[indiceMediaActual].tipo === 'imagen'">
-              <img [src]="mediaItems[indiceMediaActual].url" class="stage-img" alt="Gallery Image">
+              <img *ngIf="mediaItems[indiceMediaActual].url && !mediaItems[indiceMediaActual]['imgError']" 
+                   [src]="mediaItems[indiceMediaActual].url" 
+                   class="stage-img" 
+                   alt="Gallery Image"
+                   (error)="mediaItems[indiceMediaActual]['imgError'] = true">
+              <div *ngIf="!mediaItems[indiceMediaActual].url || mediaItems[indiceMediaActual]['imgError']" class="game-image-placeholder"></div>
             </ng-container>
             <ng-container *ngIf="mediaItems[indiceMediaActual].tipo === 'video'">
               <video [src]="mediaItems[indiceMediaActual].url" [poster]="mediaItems[indiceMediaActual].preview" class="stage-video" controls autoplay muted loop></video>
@@ -313,7 +319,7 @@
   <div class="ow-modal-premium" (click)="$event.stopPropagation()">
     
     <!-- LEFT SIDE: VISUAL -->
-    <div class="modal-visual" [style.backgroundImage]="'url(' + juego?.background_image + ')'">
+    <div class="modal-visual" [style.backgroundImage]="juego.background_image ? 'url(' + juego.background_image + ')' : 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'">
       <div class="visual-overlay"></div>
       <div class="visual-content">
         <span class="visual-tag">NUEVA RESEÑA</span>
@@ -370,7 +376,7 @@
   <div class="ow-modal-lists-ultra" (click)="$event.stopPropagation()">
     
     <!-- LEFT: THEMATIC VISUAL -->
-    <div class="lists-visual" [style.backgroundImage]="'url(' + juego?.background_image + ')'">
+    <div class="lists-visual" [style.backgroundImage]="juego.background_image ? 'url(' + juego.background_image + ')' : 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'">
       <div class="lists-visual-overlay"></div>
       <div class="lists-visual-content">
         <span class="ultra-tag">GESTOR DE COLECCIONES</span>

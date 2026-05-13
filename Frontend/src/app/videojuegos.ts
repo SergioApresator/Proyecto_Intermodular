@@ -15,6 +15,22 @@ export class Videojuegos {
   // Cache para evitar peticiones redundantes
   private cache = new Map<string, any>();
 
+  // Almacenar el último estado para persistencia entre navegaciones
+  public ultimoEstadoBusqueda: any = {
+    termino: '',
+    filtros: {
+      genero: '',
+      plataforma: '',
+      orden: 'relevance',
+      tags: '',
+      metacritic: '',
+      anio: ''
+    },
+    juegos: [],
+    paginaActual: 1,
+    hayMas: true
+  };
+
   ///// PAGINA INICIAL - LISTAS HORIZONTALES /////
 
   //Obtiene juegos destacados para el carrusel (Top Rated All Time)
@@ -96,11 +112,16 @@ export class Videojuegos {
     }
 
     // search_precise=true desactiva el fuzzy matching, haciendo la búsqueda más rápida en el servidor de RAWG
-    let urlBusqueda = `${this.url}/games?key=${this.apiKey}&search=${termino}&page_size=20&page=${pagina}&search_precise=true`;
+    let urlBusqueda = `${this.url}/games?key=${this.apiKey}&page_size=20&page=${pagina}`;
+
+    if (termino && termino.trim()) {
+      urlBusqueda += `&search=${termino}&search_precise=true`;
+    }
 
     if (filtros.orden && filtros.orden !== 'relevance') {
       urlBusqueda += `&ordering=${filtros.orden}`;
-    } else if (!filtros.orden) {
+    } else if (!filtros.orden || (filtros.orden === 'relevance' && !termino)) {
+      // Si no hay término, la relevancia no existe, usamos -added por defecto
       urlBusqueda += `&ordering=-added`;
     }
 
@@ -109,6 +130,25 @@ export class Videojuegos {
     }
     if (filtros.plataforma) {
       urlBusqueda += `&parent_platforms=${filtros.plataforma}`;
+    }
+    if (filtros.tags) {
+      urlBusqueda += `&tags=${filtros.tags}`;
+    }
+    if (filtros.metacritic) {
+      urlBusqueda += `&metacritic=${filtros.metacritic}`;
+    }
+    if (filtros.anio) {
+      let dates = filtros.anio.trim();
+      // Si el usuario pone solo un año (ej: 2024)
+      if (/^\d{4}$/.test(dates)) {
+        dates = `${dates}-01-01,${dates}-12-31`;
+      } 
+      // Si el usuario pone un rango (ej: 2010-2020)
+      else if (/^\d{4}-\d{4}$/.test(dates)) {
+        const parts = dates.split('-');
+        dates = `${parts[0]}-01-01,${parts[1]}-12-31`;
+      }
+      urlBusqueda += `&dates=${dates}`;
     }
 
     return this.http.get(urlBusqueda).pipe(
