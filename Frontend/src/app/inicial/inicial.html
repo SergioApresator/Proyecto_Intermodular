@@ -7,200 +7,152 @@
 
 <div *ngIf="!cargando" class="main-wrapper">
   
-  <!-- RESULTADOS BUSQUEDA (Capa superior si hay busqueda) -->
-  <div *ngIf="busquedaRealizada" class="resultados-layout container-fluid">
-    <div class="seccion-cabecera">
-      <h3 class="seccion-titulo">Resultados para "{{ terminoBusqueda }}"</h3>
-      <button class="btn-cerrar-busqueda" (click)="limpiarBusqueda()">×</button>
-    </div>
+  <!-- HERO SPOTLIGHT -->
+  <section class="hero-spotlight" *ngIf="juegoSpotlight" [style.backgroundImage]="'url(' + juegoSpotlight.background_image + ')'">
+    <div class="hero-overlay"></div>
+    <div class="hero-content container">
+      <div class="badge-trending ow-skew"><span>TENDENCIA AHORA</span></div>
+      <h1 class="hero-title ow-skew"><span>{{ juegoSpotlight.name }}</span></h1>
+      
+      <div class="hero-meta">
+        <div class="meta-item">
+          <span class="label">RATING</span>
+          <span class="value">{{ juegoSpotlight.rating }} / 5</span>
+        </div>
+        <div class="meta-item">
+          <span class="label">LANZAMIENTO</span>
+          <span class="value">{{ juegoSpotlight.released | date:'dd MMM yyyy' }}</span>
+        </div>
+      </div>
 
-    <!-- FILTROS REESTILIZADOS -->
-    <div class="filtros-hub">
-      <div class="grupo-filtros">
-        <label>Género</label>
-        <select [(ngModel)]="filtros.genero" (change)="buscar()">
-          <option *ngFor="let gen of generosDisponibles" [value]="gen.id">{{ gen.nombre }}</option>
-        </select>
-      </div>
-      <div class="grupo-filtros">
-        <label>Plataforma</label>
-        <select [(ngModel)]="filtros.plataforma" (change)="buscar()">
-          <option *ngFor="let plat of plataformasDisponibles" [value]="plat.id">{{ plat.nombre }}</option>
-        </select>
-      </div>
-      <div class="grupo-filtros">
-        <label>Ordenar</label>
-        <select [(ngModel)]="filtros.orden" (change)="buscar()">
-          <option *ngFor="let ord of ordenDisponibles" [value]="ord.id">{{ ord.nombre }}</option>
-        </select>
+      <div class="hero-actions">
+        <button class="btn-primary-ow" [routerLink]="['/juego', juegoSpotlight.id]">
+          <span class="btn-text">VER DETALLES</span>
+          <span class="btn-icon">➜</span>
+        </button>
       </div>
     </div>
 
-    <div class="grid-resultados">
-      <div *ngFor="let juego of resultadosBusqueda" class="tarjeta-game" [routerLink]="['/juego', juego.id]">
-        <div class="tarjeta-img-wrapper">
-          <img [src]="juego.background_image || 'assets/placeholder.jpg'" [alt]="juego.name">
-          <div class="tarjeta-rating-badge">{{ juego.rating }}</div>
-        </div>
-        <div class="tarjeta-content">
-          <h4>{{ juego.name }}</h4>
-          <p>{{ juego.released | date:'yyyy' }}</p>
-        </div>
+    <!-- MINI CARRUSEL INTEGRADO -->
+    <div class="hero-carousel-nav">
+      <div *ngFor="let game of juegosDestacados; let i = index" 
+           class="mini-thumb" 
+           [class.active]="i === indiceCarrusel"
+           (click)="seleccionarSlide(i)">
+        <img [src]="game.background_image" alt="">
       </div>
     </div>
+  </section>
+
+  <!-- STATS BAR -->
+  <div class="stats-ticker">
+    <div class="ticker-item"><span class="ticker-val">10K+</span> JUEGOS</div>
+    <div class="ticker-divider">/</div>
+    <div class="ticker-item"><span class="ticker-val">50K+</span> RESEÑAS</div>
+    <div class="ticker-divider">/</div>
+    <div class="ticker-item"><span class="ticker-val">5K+</span> GAMERS</div>
+    <div class="ticker-divider">/</div>
+    <div class="ticker-item"><span class="ticker-val">LIVE</span> ACTIVITY</div>
   </div>
 
-  <!-- CONTENIDO PRINCIPAL -->
-  <div *ngIf="!busquedaRealizada">
+  <!-- MAIN GRID + SIDEBAR -->
+  <div class="content-hub container">
     
-    <!-- HERO SPOTLIGHT -->
-    <section class="hero-spotlight" *ngIf="juegoSpotlight" [style.backgroundImage]="'url(' + juegoSpotlight.background_image + ')'">
-      <div class="hero-overlay"></div>
-      <div class="hero-content container">
-        <div class="badge-trending ow-skew"><span>TENDENCIA AHORA</span></div>
-        <h1 class="hero-title ow-skew"><span>{{ juegoSpotlight.name }}</span></h1>
-        
-        <div class="hero-meta">
-          <div class="meta-item">
-            <span class="label">RATING</span>
-            <span class="value">{{ juegoSpotlight.rating }} / 5</span>
-          </div>
-          <div class="meta-item">
-            <span class="label">LANZAMIENTO</span>
-            <span class="value">{{ juegoSpotlight.released | date:'dd MMM yyyy' }}</span>
-          </div>
-        </div>
-
-        <div class="hero-actions">
-          <button class="btn-primary-ow" [routerLink]="['/juego', juegoSpotlight.id]">
-            <span class="btn-text">VER DETALLES</span>
-            <span class="btn-icon">➜</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- MINI CARRUSEL INTEGRADO -->
-      <div class="hero-carousel-nav">
-        <div *ngFor="let game of juegosDestacados; let i = index" 
-             class="mini-thumb" 
-             [class.active]="i === indiceCarrusel"
-             (click)="seleccionarSlide(i)">
-          <img [src]="game.background_image" alt="">
-        </div>
-      </div>
-    </section>
-
-    <!-- STATS BAR -->
-    <div class="stats-ticker">
-      <div class="ticker-item"><span class="ticker-val">10K+</span> JUEGOS</div>
-      <div class="ticker-divider">/</div>
-      <div class="ticker-item"><span class="ticker-val">50K+</span> RESEÑAS</div>
-      <div class="ticker-divider">/</div>
-      <div class="ticker-item"><span class="ticker-val">5K+</span> GAMERS</div>
-      <div class="ticker-divider">/</div>
-      <div class="ticker-item"><span class="ticker-val">LIVE</span> ACTIVITY</div>
-    </div>
-
-    <!-- MAIN GRID + SIDEBAR -->
-    <div class="content-hub container">
+    <main class="main-feed">
       
-      <main class="main-feed">
+      <!-- MEJORES DEL AÑO -->
+      <section class="hub-section">
+        <div class="section-header">
+          <h2>LO MEJOR DE {{ anioActual }}</h2>
+          <a routerLink="/ver-todos/popular" class="link-more">VER TODOS</a>
+        </div>
+        <div class="game-strip">
+          <div *ngFor="let game of mejoresDelAnio" class="strip-card" [routerLink]="['/juego', game.id]">
+            <img [src]="game.background_image" alt="">
+            <div class="strip-info">
+              <h5>{{ game.name }}</h5>
+              <span class="strip-rating">★ {{ game.rating }}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GENRE MOSAIC -->
+      <section class="hub-section">
+        <div class="section-header">
+          <h2>EXPLORAR POR GÉNERO</h2>
+        </div>
+        <div class="genre-mosaic">
+          <div class="genre-tile action" [routerLink]="['/ver-todos/action']">
+            <div class="tile-overlay"></div>
+            <span>ACCIÓN</span>
+          </div>
+          <div class="genre-tile rpg" [routerLink]="['/ver-todos/role-playing-games-rpg']">
+            <div class="tile-overlay"></div>
+            <span>RPG</span>
+          </div>
+          <div class="genre-tile horror" [routerLink]="['/ver-todos/horror']">
+            <div class="tile-overlay"></div>
+            <span>TERROR</span>
+          </div>
+          <div class="genre-tile strategy" [routerLink]="['/ver-todos/strategy']">
+            <div class="tile-overlay"></div>
+            <span>ESTRATEGIA</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- PRÓXIMOS -->
+      <section class="hub-section">
+        <div class="section-header">
+          <h2>PRÓXIMAMENTE</h2>
+        </div>
+        <div class="upcoming-grid">
+          <div *ngFor="let game of proximosLanzamientos.slice(0,4)" class="upcoming-card" [routerLink]="['/juego', game.id]">
+            <div class="card-date">{{ game.released | date:'MMM d' }}</div>
+            <img [src]="game.background_image" alt="">
+            <div class="card-body">
+              <h4>{{ game.name }}</h4>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <aside class="sidebar-activity">
+      <div class="sidebar-header">
+        <h3>ACTIVIDAD RECIENTE</h3>
+        <div class="live-pulse"></div>
+      </div>
+
+      <div class="activity-feed">
+        <div *ngFor="let resena of resenasRecientes" class="activity-item">
+          <div class="activity-user">
+            <img [src]="resena.fotoUsuario || 'assets/default-avatar.png'" class="user-avatar" alt="">
+            <div class="user-info">
+              <span class="user-name">{{ resena.nombreUsuario }}</span>
+              <span class="activity-time">{{ resena.fechaResena | date:'shortTime' }}</span>
+            </div>
+          </div>
+          <div class="activity-content">
+            ha calificado <span class="game-link" [routerLink]="['/juego', resena.id_videojuego]">
+              {{ resena.nombreVideojuego || 'un juego' }}
+            </span>
+            <div class="activity-rating">
+              <span class="rating-box">{{ resena.puntuacion }}</span>
+              <p class="review-snippet">{{ resena.mensaje }}</p>
+            </div>
+          </div>
+        </div>
         
-        <!-- MEJORES DEL AÑO -->
-        <section class="hub-section">
-          <div class="section-header">
-            <h2>LO MEJOR DE {{ anioActual }}</h2>
-            <a routerLink="/ver-todos/popular" class="link-more">VER TODOS</a>
-          </div>
-          <div class="game-strip">
-            <div *ngFor="let game of mejoresDelAnio" class="strip-card" [routerLink]="['/juego', game.id]">
-              <img [src]="game.background_image" alt="">
-              <div class="strip-info">
-                <h5>{{ game.name }}</h5>
-                <span class="strip-rating">★ {{ game.rating }}</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- GENRE MOSAIC -->
-        <section class="hub-section">
-          <div class="section-header">
-            <h2>EXPLORAR POR GÉNERO</h2>
-          </div>
-          <div class="genre-mosaic">
-            <div class="genre-tile action" [routerLink]="['/ver-todos/action']">
-              <div class="tile-overlay"></div>
-              <span>ACCIÓN</span>
-            </div>
-            <div class="genre-tile rpg" [routerLink]="['/ver-todos/role-playing-games-rpg']">
-              <div class="tile-overlay"></div>
-              <span>RPG</span>
-            </div>
-            <div class="genre-tile horror" [routerLink]="['/ver-todos/horror']">
-              <div class="tile-overlay"></div>
-              <span>TERROR</span>
-            </div>
-            <div class="genre-tile strategy" [routerLink]="['/ver-todos/strategy']">
-              <div class="tile-overlay"></div>
-              <span>ESTRATEGIA</span>
-            </div>
-          </div>
-        </section>
-
-        <!-- PRÓXIMOS -->
-        <section class="hub-section">
-          <div class="section-header">
-            <h2>PRÓXIMAMENTE</h2>
-          </div>
-          <div class="upcoming-grid">
-            <div *ngFor="let game of proximosLanzamientos.slice(0,4)" class="upcoming-card" [routerLink]="['/juego', game.id]">
-              <div class="card-date">{{ game.released | date:'MMM d' }}</div>
-              <img [src]="game.background_image" alt="">
-              <div class="card-body">
-                <h4>{{ game.name }}</h4>
-              </div>
-            </div>
-          </div>
-        </section>
-
-      </main>
-
-      <aside class="sidebar-activity">
-        <div class="sidebar-header">
-          <h3>ACTIVIDAD RECIENTE</h3>
-          <div class="live-pulse"></div>
+        <div *ngIf="resenasRecientes.length === 0" class="empty-activity">
+          <p>No hay actividad reciente. ¡Sé el primero en reseñar!</p>
         </div>
+      </div>
+    </aside>
 
-        <div class="activity-feed">
-          <div *ngFor="let resena of resenasRecientes" class="activity-item">
-            <div class="activity-user">
-              <img [src]="resena.fotoUsuario || 'assets/default-avatar.png'" class="user-avatar" alt="">
-              <div class="user-info">
-                <span class="user-name">{{ resena.nombreUsuario }}</span>
-                <span class="activity-time">{{ resena.fechaResena | date:'shortTime' }}</span>
-              </div>
-            </div>
-            <div class="activity-content">
-              ha calificado <span class="game-link" [routerLink]="['/juego', resena.id_videojuego]">
-                {{ resena.nombreVideojuego || 'un juego' }}
-              </span>
-              <div class="activity-rating">
-                <span class="rating-box">{{ resena.puntuacion }}</span>
-                <p class="review-snippet">{{ resena.mensaje }}</p>
-              </div>
-            </div>
-          </div>
-          
-          <div *ngIf="resenasRecientes.length === 0" class="empty-activity">
-            <p>No hay actividad reciente. ¡Sé el primero en reseñar!</p>
-          </div>
-        </div>
-      </aside>
-
-    </div> <!-- content-hub -->
-
-  </div> <!-- !busquedaRealizada -->
+  </div> <!-- content-hub -->
 
 </div> <!-- main-wrapper -->
 
