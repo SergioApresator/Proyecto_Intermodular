@@ -1,12 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Usuarios } from '../usuarios';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
@@ -33,8 +33,8 @@ export class Login implements OnInit {
       if (!value) return;
 
       if (value.includes('@')) {
-        // Si contiene un arroba, se le pone el validador de email
-        control?.setValidators([Validators.required, Validators.email]);
+        // Si contiene un arroba, se le pone el validador de email estricto
+        control?.setValidators([Validators.required, Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/)]);
       } else {
         // Cambia a el validador de Nombre de Usuario (solo requerido)
         control?.setValidators([Validators.required]);
@@ -47,13 +47,15 @@ export class Login implements OnInit {
 
   submit() {
     if (this.formularioLogin.valid) {
-      const identityValue = this.formularioLogin.value.identity!;
+      const identityValue = this.formularioLogin.value.identity?.trim()!;
       const passInput = this.formularioLogin.value.password!;
 
       this.usuariosServicio.login(identityValue, passInput).subscribe({
         next: (usuarioEncontrado) => this.guardarSesionYRedirigir(usuarioEncontrado),
-        error: () => alert('Credenciales incorrectas')
+        error: () => alert('Credenciales incorrectas. Verifica tu usuario/email y contraseña.')
       });
+    } else {
+      this.formularioLogin.markAllAsTouched();
     }
   }
 

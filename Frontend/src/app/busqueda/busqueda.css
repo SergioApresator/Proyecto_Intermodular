@@ -56,6 +56,55 @@
     margin-top: 20px;
 }
 
+/* FILTERS BAR */
+.filters-bar-wrapper {
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 20px 5%;
+    position: sticky;
+    top: 74px; /* Navbar height */
+    z-index: 100;
+}
+
+.filters-container {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.filter-group label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #3b82f6;
+    letter-spacing: 1px;
+}
+
+.filter-group select {
+    padding: 10px 20px;
+    border: 2px solid #f1f5f9;
+    background: #f8fafc;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #1e293b;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    min-width: 200px;
+}
+
+.filter-group select:focus {
+    border-color: #3b82f6;
+}
+
 /* RESULTS AREA */
 .results-container {
     max-width: 1400px;
@@ -113,7 +162,7 @@
     transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
-.card-rating-badge, .card-date-badge {
+.card-rating-badge {
     position: absolute;
     top: 15px;
     right: 15px;
@@ -125,10 +174,6 @@
     letter-spacing: 1px;
     z-index: 2;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-}
-
-.card-date-badge {
-    background: #f99e1a;
 }
 
 .card-info {
@@ -176,7 +221,6 @@
     gap: 20px;
 }
 
-/* Match btn-primary-ow from inicial */
 .btn-primary-ow {
     background: #f99e1a;
     border: none;
@@ -284,5 +328,9 @@
     }
     .results-grid {
         grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+    .filters-bar-wrapper {
+        top: 0; /* Sticky to top on mobile if navbar hidden */
+        position: relative;
     }
 }

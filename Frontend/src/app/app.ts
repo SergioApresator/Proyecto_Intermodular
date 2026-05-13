@@ -1,4 +1,4 @@
-import { Component, signal, inject, OnInit, HostListener, ChangeDetectorRef, NgZone } from '@angular/core';
+import { Component, inject, OnInit, HostListener, ChangeDetectorRef, NgZone } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -29,11 +29,7 @@ export class App implements OnInit {
   bannerUrl: string = '';
   mostrarDropdown: boolean = false;
 
-  // Theme state
-  isDarkMode: boolean = false;
-
   ngOnInit() {
-    this.checkTheme();
     this.actualizarEstadoAuth();
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
@@ -48,28 +44,6 @@ export class App implements OnInit {
         this.cdr.detectChanges();
       });
     });
-  }
-
-  checkTheme() {
-    if (typeof window !== 'undefined') {
-      const savedTheme = localStorage.getItem('theme');
-      this.isDarkMode = savedTheme === 'dark';
-      this.applyTheme();
-    }
-  }
-
-  toggleTheme() {
-    this.isDarkMode = !this.isDarkMode;
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('theme', this.isDarkMode ? 'dark' : 'light');
-    }
-    this.applyTheme();
-  }
-
-  applyTheme() {
-    if (typeof document !== 'undefined') {
-      document.documentElement.setAttribute('data-theme', this.isDarkMode ? 'dark' : 'light');
-    }
   }
 
   actualizarEstadoAuth() {
@@ -119,7 +93,7 @@ export class App implements OnInit {
 
   buscarGlobal() {
     if (this.terminoBusqueda.trim().length > 0) {
-      this.router.navigate(['/inicial'], { queryParams: { q: this.terminoBusqueda } });
+      this.router.navigate(['/busqueda'], { queryParams: { q: this.terminoBusqueda } });
       this.mostrarBuscador = false;
       this.terminoBusqueda = '';
     }
