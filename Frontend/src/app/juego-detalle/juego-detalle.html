@@ -48,9 +48,9 @@
   <!-- FLOATING ACTION BAR -->
   <div class="action-bar-container">
     <div class="action-bar-ow">
-      <button *ngIf="usuarioId" 
-              class="ow-action-btn fav" 
+      <button class="ow-action-btn fav" 
               [class.active]="esFavorito" 
+              [class.guest-mode]="!usuarioId"
               [disabled]="cambiandoFavorito"
               (click)="toggleFavorito()">
         <span class="btn-icon">
@@ -58,12 +58,12 @@
             <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
           </svg>
         </span>
-        <span class="btn-text">{{ esFavorito ? 'EN FAVORITOS' : 'FAVORITOS' }}</span>
+        <span class="btn-text">{{ !usuarioId ? 'LOGUÉATE' : (esFavorito ? 'EN FAVORITOS' : 'FAVORITOS') }}</span>
       </button>
 
-      <button *ngIf="usuarioId" 
-              class="ow-action-btn pend" 
+      <button class="ow-action-btn pend" 
               [class.active]="esPendiente" 
+              [class.guest-mode]="!usuarioId"
               [disabled]="cambiandoPendiente"
               (click)="togglePendiente()">
         <span class="btn-icon">
@@ -71,25 +71,29 @@
             <path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
           </svg>
         </span>
-        <span class="btn-text">{{ esPendiente ? 'PENDIENTES' : 'PARA JUGAR' }}</span>
+        <span class="btn-text">{{ !usuarioId ? 'PARA JUGAR' : (esPendiente ? 'PENDIENTES' : 'PARA JUGAR') }}</span>
       </button>
 
-      <button *ngIf="usuarioId" class="ow-action-btn list" (click)="abrirModalListas()">
+      <button class="ow-action-btn list" 
+              [class.guest-mode]="!usuarioId"
+              (click)="abrirModalListas()">
         <span class="btn-icon">
           <svg viewBox="0 0 24 24" class="ow-svg-icon">
             <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
           </svg>
         </span>
-        <span class="btn-text">MIS LISTAS</span>
+        <span class="btn-text">{{ !usuarioId ? 'MIS LISTAS' : 'MIS LISTAS' }}</span>
       </button>
 
-      <button class="ow-action-btn review" (click)="abrirModalResena()">
+      <button class="ow-action-btn review" 
+              [class.guest-mode]="!usuarioId"
+              (click)="abrirModalResena()">
         <span class="btn-icon">
           <svg viewBox="0 0 24 24" class="ow-svg-icon">
             <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
           </svg>
         </span>
-        <span class="btn-text">{{ usuarioId ? 'RESEÑAR JUEGO' : 'LOGUÉATE PARA OPINAR' }}</span>
+        <span class="btn-text">{{ usuarioId ? 'RESEÑAR JUEGO' : 'LOGIN PARA OPINAR' }}</span>
       </button>
     </div>
   </div>
@@ -275,13 +279,25 @@
                 </div>
 
                 <!-- ADD REPLY FORM -->
-                <div class="add-reply-form" *ngIf="usuarioId">
-                  <div class="replying-to-info" *ngIf="resena.respuestaPadreSeleccionada">
-                    <span>Respondiendo a <strong>{{ resena.respuestaPadreSeleccionada.nombre_usuario || resena.respuestaPadreSeleccionada.nombreUsuario }}</strong></span>
-                    <button class="cancel-reply-btn" (click)="cancelarRespuesta(resena)">✕</button>
+                <div class="add-reply-form-premium" *ngIf="usuarioId">
+                  <div class="reply-input-wrapper">
+                    <div class="user-avatar-current">
+                      <span>TÚ</span>
+                    </div>
+                    <div class="reply-field-area">
+                      <div class="replying-to-badge" *ngIf="resena.respuestaPadreSeleccionada">
+                        <span>RESPONDIENDO A <strong>{{ resena.respuestaPadreSeleccionada.nombre_usuario || resena.respuestaPadreSeleccionada.nombreUsuario }}</strong></span>
+                        <button class="cancel-reply-ow" (click)="cancelarRespuesta(resena)">✕</button>
+                      </div>
+                      <textarea [(ngModel)]="resena.nuevaRespuestaTexto" 
+                                [placeholder]="resena.respuestaPadreSeleccionada ? 'Escribe tu respuesta...' : 'Escribe un comentario...'"></textarea>
+                      <div class="reply-actions-row">
+                        <button class="ow-btn-modern confirm sm" (click)="enviarRespuesta(resena)">
+                          {{ resena.respuestaPadreSeleccionada ? 'ENVIAR RESPUESTA' : 'PUBLICAR COMENTARIO' }}
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <textarea [(ngModel)]="resena.nuevaRespuestaTexto" [placeholder]="resena.respuestaPadreSeleccionada ? 'Escribe tu respuesta...' : 'Escribe un comentario...'"></textarea>
-                  <button class="ow-btn confirm sm" (click)="enviarRespuesta(resena)">{{ resena.respuestaPadreSeleccionada ? 'RESPONDER' : 'COMENTAR' }}</button>
                 </div>
               </div>
             </div>
@@ -294,51 +310,131 @@
 
 <!-- MODALS -->
 <div class="modal-overlay" *ngIf="mostrarModalResena" (click)="cerrarModalResena()">
-  <div class="ow-modal" (click)="$event.stopPropagation()">
-    <div class="modal-ow-header">
-      <div class="header-accent"></div>
-      <h2>PUBLICAR REPORTE: {{ juego?.name }}</h2>
+  <div class="ow-modal-premium" (click)="$event.stopPropagation()">
+    
+    <!-- LEFT SIDE: VISUAL -->
+    <div class="modal-visual" [style.backgroundImage]="'url(' + juego?.background_image + ')'">
+      <div class="visual-overlay"></div>
+      <div class="visual-content">
+        <span class="visual-tag">NUEVA RESEÑA</span>
+        <h2 class="visual-title">{{ juego?.name }}</h2>
+      </div>
     </div>
-    <div class="modal-ow-body">
-      <div class="ow-form-row">
-        <label>PUNTUACIÓN DE COMBATE</label>
-        <div class="ow-star-selector">
-          <button *ngFor="let val of [1,2,3,4,5]" (click)="nuevaResena.puntuacion = val" [class.active]="val <= nuevaResena.puntuacion">⭐</button>
+
+    <!-- RIGHT SIDE: FORM -->
+    <div class="modal-form">
+      <div class="form-header">
+        <h3>ESCRIBIR RESEÑA</h3>
+        <p>Comparte lo que piensas sobre este juego con la comunidad.</p>
+      </div>
+
+      <div class="ow-form-row-modern">
+        <label>PUNTUACIÓN</label>
+        <div class="star-rating-tactical">
+          <button *ngFor="let val of [1,2,3,4,5]" 
+                  (click)="nuevaResena.puntuacion = val" 
+                  [class.active]="val <= nuevaResena.puntuacion">
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+          </button>
         </div>
       </div>
-      <div class="ow-form-row">
-        <label>ANÁLISIS TÁCTICO</label>
-        <textarea [(ngModel)]="nuevaResena.mensaje" placeholder="ESCRIBE TU RESEÑA AQUÍ..."></textarea>
+
+      <div class="ow-form-row-modern">
+        <label>TU MENSAJE</label>
+        <div class="textarea-wrapper">
+          <textarea [(ngModel)]="nuevaResena.mensaje" placeholder="Escribe tu reseña aquí..."></textarea>
+          <div class="textarea-border"></div>
+        </div>
       </div>
-      <div class="ow-form-row checkbox">
-        <input type="checkbox" id="spoiler" [(ngModel)]="nuevaResena.tieneSpoiler">
-        <label for="spoiler">EL REGISTRO CONTIENE DATOS SENSIBLES (SPOILERS)</label>
+
+      <div class="ow-form-row-modern checkbox-tactical">
+        <label class="toggle-switch">
+          <input type="checkbox" [(ngModel)]="nuevaResena.tieneSpoiler">
+          <span class="slider"></span>
+          <span class="toggle-label">ESTA RESEÑA TIENE SPOILERS</span>
+        </label>
+      </div>
+
+      <div class="form-actions-ow">
+        <button class="ow-btn-modern cancel" (click)="cerrarModalResena()">CANCELAR</button>
+        <button class="ow-btn-modern confirm" (click)="enviarResena()" [disabled]="enviandoResena || !nuevaResena.mensaje.trim()">
+          {{ enviandoResena ? 'ENVIANDO...' : 'PUBLICAR RESEÑA' }}
+        </button>
       </div>
     </div>
-    <div class="modal-ow-footer">
-      <button class="ow-btn cancel" (click)="cerrarModalResena()">ABORTAR</button>
-      <button class="ow-btn confirm" (click)="enviarResena()" [disabled]="enviandoResena || !nuevaResena.mensaje.trim()">CONFIRMAR REPORTE</button>
-    </div>
+
   </div>
 </div>
 
 <div class="modal-overlay" *ngIf="mostrarModalListas" (click)="cerrarModalListas()">
-  <div class="ow-modal lists" (click)="$event.stopPropagation()">
-    <div class="modal-ow-header">
-      <div class="header-accent"></div>
-      <h2>MIS LISTAS DE DESPLIEGUE</h2>
+  <div class="ow-modal-lists-ultra" (click)="$event.stopPropagation()">
+    
+    <!-- LEFT: THEMATIC VISUAL -->
+    <div class="lists-visual" [style.backgroundImage]="'url(' + juego?.background_image + ')'">
+      <div class="lists-visual-overlay"></div>
+      <div class="lists-visual-content">
+        <span class="ultra-tag">GESTOR DE COLECCIONES</span>
+        <h2 class="ultra-title">{{ juego?.name }}</h2>
+      </div>
     </div>
-    <div class="modal-ow-body">
-      <div class="ow-list-scroller">
-        <div class="ow-list-item" *ngFor="let nombre of listasUsuario" (click)="toggleJuegoEnLista(nombre)">
-          <div class="ow-checkbox" [class.checked]="estaEnLista(nombre)"></div>
-          <span class="ow-list-name">{{ nombre }}</span>
+
+    <!-- RIGHT: BENTO GRID OF SLOTS -->
+    <div class="lists-grid-container">
+      <header class="grid-header">
+        <div class="header-main">
+          <h3>LISTAS PERSONALES</h3>
+          <span>{{ listasUsuario.length }} LISTAS DISPONIBLES</span>
+        </div>
+        <button class="close-ultra-btn" (click)="cerrarModalListas()">✕</button>
+      </header>
+
+      <div class="grid-scroll-area">
+        <div class="bento-lists-grid">
+          
+          <!-- EXISTING LIST TILES -->
+          <div *ngFor="let nombre of listasUsuario" 
+               class="bento-tile list-tile" 
+               [class.active]="estaEnLista(nombre)"
+               (click)="toggleJuegoEnLista(nombre)">
+            <div class="tile-status">{{ estaEnLista(nombre) ? 'REGISTRADO' : 'DISPONIBLE' }}</div>
+            <div class="tile-name">{{ nombre }}</div>
+            <div class="tile-indicator">
+              <div class="indicator-inner"></div>
+            </div>
+          </div>
+
+          <!-- NEW LIST TILE -->
+          <div class="bento-tile new-list-tile" 
+               [class.expanded]="mostrarFormNuevaLista"
+               (click)="mostrarFormNuevaLista = true; $event.stopPropagation()">
+            
+            <!-- IDLE STATE -->
+            <div class="tile-idle-view" *ngIf="!mostrarFormNuevaLista">
+              <div class="tile-status">NUEVA ENTRADA</div>
+              <div class="tile-name">CREAR LISTA</div>
+              <div class="add-icon-circle">
+                <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+              </div>
+            </div>
+
+            <!-- ACTIVE FORM STATE -->
+            <div class="tile-content-expanded" *ngIf="mostrarFormNuevaLista" (click)="$event.stopPropagation()">
+              <input #inputNueva 
+                     type="text" 
+                     [(ngModel)]="nuevaListaNombre" 
+                     placeholder="NOMBRE..." 
+                     (keyup.enter)="crearYAgregarALista()"
+                     autofocus>
+              <div class="expanded-actions">
+                <button class="btn-cancel-mini" (click)="mostrarFormNuevaLista = false; $event.stopPropagation()">CANCELAR</button>
+                <button class="btn-confirm-mini" (click)="crearYAgregarALista()">CREAR</button>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
-      <div class="ow-new-list-row">
-        <input type="text" [(ngModel)]="nuevaListaNombre" placeholder="NOMBRE DE LA NUEVA LISTA..." (keyup.enter)="crearYAgregarALista()">
-        <button (click)="crearYAgregarALista()">CREAR</button>
-      </div>
     </div>
+
   </div>
 </div>
