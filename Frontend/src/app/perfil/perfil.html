@@ -155,7 +155,9 @@
               <div class="stars">
                 <span class="star" *ngFor="let s of getStars(resena.puntuacion)">★</span>
               </div>
-              <p class="message">{{ resena.mensaje }}</p>
+              <p class="message">{{ resena.mensaje.length > 500 ? (resena.mensaje | slice:0:500) + '...' : resena.mensaje }}</p>
+
+
             </div>
           </div>
           <div class="empty-state" *ngIf="resenas.length === 0">
@@ -284,3 +286,16 @@
 
   </div>
 </div>
+
+
+
+<!-- Modal de Confirmación Genérico -->
+<app-confirm-modal 
+  [visible]="modalConfirmacionVisible"
+  [title]="modalConfirmacionConfig.titulo"
+  [message]="modalConfirmacionConfig.mensaje"
+  [type]="modalConfirmacionConfig.tipo"
+  (onConfirm)="ejecutarConfirmacion()"
+  (onCancel)="cancelarConfirmacion()">
+</app-confirm-modal>
+

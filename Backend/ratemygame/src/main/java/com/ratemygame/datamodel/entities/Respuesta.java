@@ -49,7 +49,8 @@ public class Respuesta {
     private Usuario usuario;
 
     @Column(name = "ID_RESPUESTA_PADRE")
-    private Long id_respuesta_padre;
+    private Long idRespuestaPadre;
+
 
     @Column(name = "FECHA_RESPUESTA")
     private LocalDateTime fechaRespuesta;

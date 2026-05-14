@@ -233,7 +233,7 @@
                 </div>
 
                 <div class="review-text-content" *ngIf="!resena.tieneSpoiler || resena.mostrarSpoiler">
-                  <p>
+                  <p [class.expanded]="resena.expandido">
                     {{ (resena.mensaje.length > 400 && !resena.expandido) ? (resena.mensaje | slice:0:400) + '...' : resena.mensaje }}
                     <span *ngIf="resena.mensaje.length > 400" (click)="resena.expandido = !resena.expandido" class="ver-mas-inline">
                       {{ resena.expandido ? 'Ver menos' : 'Ver más' }}
@@ -284,7 +284,9 @@
                       </span>
                     </div>
                     <span class="reply-date">{{ (resp.fecha_respuesta || resp.fechaRespuesta) | date:'dd.MM.yyyy HH:mm' }}</span>
+                    <button class="delete-reply-x" *ngIf="(resp.id_usuario || resp.idUsuario) === usuarioId" (click)="eliminarRespuesta(resena, resp.id); $event.stopPropagation()" title="Eliminar mi respuesta">✕</button>
                   </div>
+
                   <div class="reply-body">{{ resp.mensaje || resp.comentario }}</div>
                   <div class="reply-footer">
                     <div class="vote-group sm">
@@ -466,3 +468,16 @@
 
   </div>
 </div>
+
+<app-footer></app-footer>
+
+<!-- Modal de Confirmación Genérico -->
+<app-confirm-modal 
+  [visible]="modalConfirmacionVisible"
+  [title]="modalConfirmacionConfig.titulo"
+  [message]="modalConfirmacionConfig.mensaje"
+  [type]="modalConfirmacionConfig.tipo"
+  (onConfirm)="ejecutarConfirmacion()"
+  (onCancel)="cancelarConfirmacion()">
+</app-confirm-modal>
+

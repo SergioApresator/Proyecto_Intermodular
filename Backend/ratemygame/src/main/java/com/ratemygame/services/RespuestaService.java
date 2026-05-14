@@ -68,8 +68,9 @@ public class RespuestaService {
         respuesta.setNoMeGustas(0);
         respuesta.setUsuario(usuarioOpt.get());
         respuesta.setResena(resenaOpt.get());
-        respuesta.setId_respuesta_padre(respuestaDTO.getId_respuesta_padre());
+        respuesta.setIdRespuestaPadre(respuestaDTO.getId_respuesta_padre());
         respuesta.setFechaRespuesta(LocalDateTime.now(ZoneId.of("Europe/Madrid")));
+
 
         Respuesta savedRespuesta = respuestaRepository.save(respuesta);
         return Optional.of(convertToDTO(savedRespuesta));
@@ -134,13 +135,26 @@ public class RespuestaService {
         return Optional.of(dto);
     }
 
+    @Transactional
     public boolean deleteRespuesta(Long id) {
         if (respuestaRepository.existsById(id)) {
+            // 1. Eliminar votos de la respuesta
+            respuestaVotoRepository.deleteByRespuesta_Id(id);
+            
+            // 2. Desvincular respuestas que dependen de esta (hijos)
+            List<Respuesta> hijos = respuestaRepository.findByIdRespuestaPadre(id);
+            for (Respuesta hijo : hijos) {
+                hijo.setIdRespuestaPadre(null);
+                respuestaRepository.save(hijo);
+            }
+            
+            // 3. Eliminar la respuesta
             respuestaRepository.deleteById(id);
             return true;
         }
         return false;
     }
+
 
     private RespuestaDTO convertToDTO(Respuesta respuesta) {
         RespuestaDTO dto = new RespuestaDTO();
@@ -156,9 +170,10 @@ public class RespuestaService {
         if (respuesta.getResena() != null) {
             dto.setId_resena(respuesta.getResena().getId());
         }
-        dto.setId_respuesta_padre(respuesta.getId_respuesta_padre());
-        if (respuesta.getId_respuesta_padre() != null) {
-            respuestaRepository.findById(respuesta.getId_respuesta_padre()).ifPresent(padre -> {
+        dto.setId_respuesta_padre(respuesta.getIdRespuestaPadre());
+        if (respuesta.getIdRespuestaPadre() != null) {
+            respuestaRepository.findById(respuesta.getIdRespuestaPadre()).ifPresent(padre -> {
+
                 if (padre.getUsuario() != null) {
                     dto.setNombreUsuarioPadre(padre.getUsuario().getUsername());
                 }

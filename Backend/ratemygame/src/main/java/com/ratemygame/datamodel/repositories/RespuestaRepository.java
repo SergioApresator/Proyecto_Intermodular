@@ -10,6 +10,8 @@ import com.ratemygame.datamodel.entities.Respuesta;
 public interface RespuestaRepository extends JpaRepository<Respuesta, Long> {
     List<Respuesta> findByResena_Id(Long resenaId);
     List<Respuesta> findByUsuario_Id(Long usuarioId);
+    List<Respuesta> findByIdRespuestaPadre(Long idPadre);
     void deleteByResena_Id(Long resenaId);
+
 
 }
