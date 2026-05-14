@@ -1,6 +1,6 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Usuarios } from '../usuarios';
 import { ResenasService } from '../resenas';
 import { Videojuegos } from '../videojuegos';
@@ -12,54 +12,58 @@ import { catchError, map } from 'rxjs/operators';
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './perfil-publico.html',
-  styleUrl: './perfil-publico.css',
+  styleUrl: './perfil-publico.css'
 })
-
 export class PerfilPublico implements OnInit {
-
-  constructor(
-    private usuariosServicio: Usuarios,
-    private resenasServicio: ResenasService,
-    private videojuegosServicio: Videojuegos,
-    private ruta: ActivatedRoute,
-    private cdr: ChangeDetectorRef
-  ) {}
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private usuariosServicio = inject(Usuarios);
+  private resenasServicio = inject(ResenasService);
+  private videojuegosServicio = inject(Videojuegos);
+  private cdr = inject(ChangeDetectorRef);
 
   usuario: any = null;
   cargando: boolean = true;
   error: string = '';
+
+  pestanaActual: string = 'resumen';
+  
   resenas: any[] = [];
   cargandoResenas: boolean = true;
+
   listas: any[] = [];
   cargandoListas: boolean = true;
 
-  get favoritosCount(): number {
-    const favList = this.listas.find(l => l.nombre === 'Favoritos');
-    return favList ? favList.juegos.length : 0;
-  }
-
   ngOnInit() {
-    //Obtenemos el id del usuario de la URL
-    const id = Number(this.ruta.snapshot.paramMap.get('id'));
-    if (!id) {
-      this.error = 'Usuario no encontrado.';
-      this.cargando = false;
-      return;
-    }
-    this.cargarPerfil(id);
-    this.cargarResenas(id);
-    this.cargarListas(id);
+    this.route.paramMap.subscribe(params => {
+      const idStr = params.get('id');
+      if (idStr) {
+        this.cargarDatos(Number(idStr));
+      }
+    });
   }
 
-  cargarPerfil(id: number) {
+  cambiarPestana(id: string) {
+    this.pestanaActual = id;
+    this.cdr.detectChanges();
+  }
+
+  volver() {
+    this.router.navigate(['/buscar-usuarios']);
+  }
+
+  cargarDatos(id: number) {
+    this.cargando = true;
     this.usuariosServicio.getUsuarioById(id).subscribe({
-      next: (data: any) => {
-        this.usuario = data;
+      next: (u) => {
+        this.usuario = u;
         this.cargando = false;
+        this.cargarResenas(id);
+        this.cargarListas(id);
         this.cdr.detectChanges();
       },
       error: () => {
-        this.error = 'No se pudo cargar el perfil.';
+        this.error = 'No se pudo cargar el perfil del usuario.';
         this.cargando = false;
         this.cdr.detectChanges();
       }
@@ -67,44 +71,31 @@ export class PerfilPublico implements OnInit {
   }
 
   cargarResenas(id: number) {
+    this.cargandoResenas = true;
     this.resenasServicio.getResenasPorUsuario(id).subscribe({
-      next: (resenas: any[]) => {
-        if (!resenas || resenas.length === 0) {
-          this.resenas = [];
-          this.cargandoResenas = false;
-          this.cdr.detectChanges();
-          return;
-        }
-
-        const peticiones = resenas.map((resena: any) =>
-          this.videojuegosServicio.getJuegoDetalles(resena.id_videojuego.toString()).pipe(
-            map((juego: any) => ({
-              ...resena,
-              nombreJuego: juego.name,
-              imagenJuego: juego.background_image,
+      next: (data: any) => {
+        const peticiones = data.map((r: any) => 
+          this.videojuegosServicio.getJuegoDetalles(r.id_videojuego.toString()).pipe(
+            map(juego => ({
+              ...r,
+              nombreJuego: juego ? juego.name : 'Juego desconocido',
+              imagenJuego: juego ? juego.background_image : null
             })),
-            catchError(() => of({
-              ...resena,
-              nombreJuego: `Juego #${resena.id_videojuego}`,
-              imagenJuego: null,
-            }))
+            catchError(() => of(r))
           )
         );
 
-        forkJoin(peticiones).subscribe({
-          next: (resenasEnriquecidas: any) => {
-            this.resenas = resenasEnriquecidas.sort((a: any, b: any) =>
-              new Date(b.fechaResena).getTime() - new Date(a.fechaResena).getTime()
-            );
+        if (peticiones.length > 0) {
+          forkJoin(peticiones).subscribe((res: any) => {
+            this.resenas = res;
             this.cargandoResenas = false;
             this.cdr.detectChanges();
-          },
-          error: () => {
-            this.resenas = resenas;
-            this.cargandoResenas = false;
-            this.cdr.detectChanges();
-          }
-        });
+          });
+        } else {
+          this.resenas = [];
+          this.cargandoResenas = false;
+          this.cdr.detectChanges();
+        }
       },
       error: () => {
         this.cargandoResenas = false;
@@ -114,52 +105,38 @@ export class PerfilPublico implements OnInit {
   }
 
   cargarListas(id: number) {
+    this.cargandoListas = true;
     this.usuariosServicio.getListasUsuario(id).subscribe({
-      next: (listasBrutas: any[]) => {
-        if (listasBrutas.length === 0) {
-          this.listas = [];
-          this.cargandoListas = false;
-          this.cdr.detectChanges();
-          return;
-        }
-
-        const grupos: { [key: string]: number[] } = {};
-        listasBrutas.forEach(item => {
-          if (!grupos[item.nombre]) grupos[item.nombre] = [];
-          grupos[item.nombre].push(item.id_videojuego);
-        });
-
+      next: (grupos: any) => {
         const nombresListas = Object.keys(grupos);
         const peticionesListas = nombresListas.map(nombre => {
-          const ids = grupos[nombre];
-          const peticionesJuegos = ids.map(gameId =>
-            this.videojuegosServicio.getJuegoDetalles(gameId.toString()).pipe(
+          const items = grupos[nombre];
+          const peticionesJuegos = items.map((it: any) => 
+            this.videojuegosServicio.getJuegoDetalles(it.gameId.toString()).pipe(
+              map(j => (j ? { ...j, entryId: it.entryId } : null)),
               catchError(() => of(null))
             )
           );
+          
           return forkJoin(peticionesJuegos).pipe(
-            map(juegos => ({
+            map((juegos: any) => ({
               nombre,
-              juegos: juegos.filter(j => j !== null)
+              juegos: juegos.filter((j: any) => j !== null)
             }))
           );
         });
 
-        forkJoin(peticionesListas).subscribe({
-          next: (resultado: any[]) => {
-            this.listas = resultado.sort((a, b) => {
-              if (a.nombre === 'Favoritos') return -1;
-              if (b.nombre === 'Favoritos') return 1;
-              return a.nombre.localeCompare(b.nombre);
-            });
+        if (peticionesListas.length > 0) {
+          forkJoin(peticionesListas).subscribe((res: any[]) => {
+            this.listas = res;
             this.cargandoListas = false;
             this.cdr.detectChanges();
-          },
-          error: () => {
-            this.cargandoListas = false;
-            this.cdr.detectChanges();
-          }
-        });
+          });
+        } else {
+          this.listas = [];
+          this.cargandoListas = false;
+          this.cdr.detectChanges();
+        }
       },
       error: () => {
         this.cargandoListas = false;
@@ -168,7 +145,17 @@ export class PerfilPublico implements OnInit {
     });
   }
 
-  getStars(puntuacion: number): number[] { return Array(puntuacion).fill(0); }
-  getEmptyStars(puntuacion: number): number[] { return Array(5 - puntuacion).fill(0); }
-  getInitials(): string { return this.usuario?.username ? this.usuario.username.charAt(0).toUpperCase() : '?'; }
+
+  get favoritosCount(): number {
+    const favList = this.listas.find(l => l.nombre === 'Favoritos');
+    return favList ? favList.juegos.length : 0;
+  }
+
+  getInitials(): string {
+    if (!this.usuario || !this.usuario.username) return '?';
+    return this.usuario.username.charAt(0).toUpperCase();
+  }
+
+  getStars(p: number) { return Array(p).fill(0); }
+  getEmptyStars(p: number) { return Array(5 - p).fill(0); }
 }

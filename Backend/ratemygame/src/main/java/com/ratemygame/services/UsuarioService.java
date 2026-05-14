@@ -125,4 +125,12 @@ public class UsuarioService {
             .map(this::convertToDTO)
             .collect(Collectors.toList());
     }
+
+    public List<UsuarioDTO> buscarUsuariosGeneral(String query) {
+        return usuarioRepository.buscarUsuariosGeneral(query).stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+    }
 }
+
+

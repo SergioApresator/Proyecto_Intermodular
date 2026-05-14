@@ -1,137 +1,150 @@
-<!-- Mientras carga -->
-<div *ngIf="cargando" class="contenedor-cargando">
-  <p>Cargando perfil...</p>
-</div>
-
-<!-- Error -->
-<div *ngIf="!cargando && error" class="contenedor-cargando">
-  <p>{{ error }}</p>
-</div>
-
-<!-- Contenido -->
-<div *ngIf="!cargando && usuario" class="perfil-page">
-
-  <!-- BANNER -->
-  <div class="perfil-banner">
-    <div class="banner-bg" [style.background-image]="usuario.banner_url ? 'url(' + usuario.banner_url + ')' : ''"></div>
-
-    <div class="perfil-identidad">
-
-      <!-- Avatar -->
-      <div class="avatar-grande">
-        <img *ngIf="usuario.foto_url" [src]="usuario.foto_url" [alt]="usuario.username" class="avatar-imagen">
-        <div *ngIf="!usuario.foto_url" class="avatar-iniciales-grande">{{ getInitials() }}</div>
-      </div>
-
-      <!-- Info -->
-      <div class="perfil-info-header">
-        <h1 class="perfil-username">{{ usuario.username }}</h1>
-        <div class="perfil-stats-header">
-          <span class="stat-badge">⭐ {{ favoritosCount }} Favoritos</span>
-          <span class="stat-badge">📝 {{ resenas.length }} Reseñas</span>
-        </div>
-      </div>
-
-    </div>
+<div class="perfil-viewport">
+  
+  <!-- CARGANDO / ERROR GLOBAL -->
+  <div class="estado-centrado" *ngIf="cargando">
+    <div class="spinner"></div>
+    <p>Cargando perfil...</p>
+  </div>
+  <div class="estado-centrado" *ngIf="!cargando && error">
+    <p class="texto-error">{{ error }}</p>
   </div>
 
-  <!-- CUERPO -->
-  <div class="perfil-grid">
-
-    <!-- SIDEBAR -->
-    <aside class="perfil-sidebar">
-
-      <!-- Biografía -->
-      <div class="seccion-card">
-        <h2 class="seccion-titulo">Sobre mí</h2>
-        <p class="bio-texto" *ngIf="usuario.biografia">{{ usuario.biografia }}</p>
-        <p class="bio-vacia" *ngIf="!usuario.biografia">Este usuario no tiene biografía.</p>
+  <!-- CONTENIDO PRINCIPAL -->
+  <div class="perfil-layout" *ngIf="!cargando && usuario">
+    
+    <!-- BARRA SUPERIOR -->
+    <header class="perfil-nav">
+      <div class="nav-left">
+        <button class="btn-volver" (click)="volver()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          VOLVER
+        </button>
       </div>
-
-      <!-- Detalles -->
-      <div class="seccion-card">
-        <h2 class="seccion-titulo">Detalles</h2>
-        <div class="info-vertical">
-          <div class="info-item">
-            <span class="info-label">Nombre</span>
-            <span class="info-valor">{{ usuario.nombre || '—' }} {{ usuario.apellidos || '' }}</span>
-          </div>
-        </div>
+      <nav class="nav-tabs">
+        <button class="nav-tab" [class.active]="pestanaActual === 'resumen'" (click)="cambiarPestana('resumen')">RESUMEN</button>
+        <button class="nav-tab" [class.active]="pestanaActual === 'listas'" (click)="cambiarPestana('listas')">LISTAS</button>
+        <button class="nav-tab" [class.active]="pestanaActual === 'resenas'" (click)="cambiarPestana('resenas')">RESEÑAS</button>
+      </nav>
+      <div class="nav-right">
+        <span class="public-badge">PERFIL PÚBLICO</span>
       </div>
+    </header>
 
-    </aside>
-
-    <!-- CONTENIDO PRINCIPAL -->
-    <main class="perfil-main">
-
-      <!-- LISTAS -->
-      <div *ngIf="cargandoListas" class="vacio-placeholder">
-        <p>Cargando listas...</p>
-      </div>
-
-      <div *ngIf="!cargandoListas && listas.length === 0" class="seccion-card">
-        <h2 class="seccion-titulo">Listas</h2>
-        <div class="vacio-placeholder">
-          <p>Este usuario no tiene listas.</p>
-        </div>
-      </div>
-
-      <div *ngFor="let lista of listas" class="seccion-card">
-        <h2 class="seccion-titulo">
-          {{ lista.nombre }}
-          <span class="count-badge">{{ lista.juegos.length }}</span>
-        </h2>
-        <div class="favoritos-grid">
-          <div *ngFor="let juego of lista.juegos" class="favorito-item" [routerLink]="['/juego', juego.id]">
-            <div class="favorito-imagen">
-              <img [src]="juego.background_image" [alt]="juego.name">
-              <div class="favorito-overlay"><span>⭐ {{ juego.rating }}</span></div>
+    <!-- PLAYER CARD BAR -->
+    <div class="player-card-bar">
+      <div class="player-card-bg" [style.background-image]="usuario.banner_url ? 'url(' + usuario.banner_url + ')' : ''">
+        <div class="player-card-content">
+          <div class="avatar-box">
+            <div class="avatar-grande" [class.no-photo]="!usuario.foto_url">
+              <img *ngIf="usuario.foto_url" [src]="usuario.foto_url" [alt]="usuario.username">
+              <span *ngIf="!usuario.foto_url">{{ getInitials() }}</span>
             </div>
-            <p class="favorito-nombre">{{ juego.name }}</p>
+          </div>
+          <div class="player-info">
+            <h1 class="player-name">{{ usuario.username }}</h1>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- RESEÑAS -->
-      <div class="seccion-card">
-        <h2 class="seccion-titulo">
-          Reseñas
-          <span class="count-badge" *ngIf="!cargandoResenas && resenas.length > 0">{{ resenas.length }}</span>
-        </h2>
-
-        <div *ngIf="!cargandoResenas && resenas.length > 0" class="lista-resenas-perfil">
-          <div *ngFor="let resena of resenas" class="tarjeta-resena-perfil">
-            <a [routerLink]="['/juego', resena.id_videojuego]" class="resena-juego-link">
-              <div class="resena-juego-imagen">
-                <img *ngIf="resena.imagenJuego" [src]="resena.imagenJuego" [alt]="resena.nombreJuego">
+    <!-- CONTENIDO DE LA PESTAÑA -->
+    <main class="tab-content-area">
+      
+      <!-- TAB: RESUMEN -->
+      <div class="tab-pane resumen-pane" *ngIf="pestanaActual === 'resumen'">
+        <div class="resumen-grid">
+          <div class="resumen-col info-col">
+            <h2 class="pane-title">BIOGRAFÍA</h2>
+            <div class="bio-container">
+              <p class="bio-text" *ngIf="usuario.biografia">{{ usuario.biografia }}</p>
+              <p class="bio-empty" *ngIf="!usuario.biografia">Este usuario aún no ha compartido su biografía.</p>
+            </div>
+            
+            <h2 class="pane-title" style="margin-top: 30px;">DETALLES</h2>
+            <div class="details-list">
+              <div class="detail-row">
+                <span class="label">NOMBRE</span>
+                <span class="value">{{ usuario.nombre || '—' }} {{ usuario.apellidos || '' }}</span>
               </div>
-            </a>
-            <div class="resena-contenido-perfil">
-              <div class="resena-cabecera-perfil">
-                <a [routerLink]="['/juego', resena.id_videojuego]" class="resena-nombre-juego">{{ resena.nombreJuego }}</a>
-                <span class="resena-fecha">{{ resena.fechaResena | date:'mediumDate' }}</span>
+            </div>
+          </div>
+          <div class="resumen-col stats-col">
+            <h2 class="pane-title">ESTADÍSTICAS</h2>
+            <div class="big-stats">
+              <div class="big-stat">
+                <span class="stat-value">{{ resenas.length }}</span>
+                <span class="stat-label">RESEÑAS</span>
               </div>
-              <div class="resena-estrellas">
-                <span class="estrella llena" *ngFor="let s of getStars(resena.puntuacion)">★</span>
-                <span class="estrella vacia" *ngFor="let s of getEmptyStars(resena.puntuacion)">★</span>
+              <div class="big-stat">
+                <span class="stat-value">{{ favoritosCount }}</span>
+                <span class="stat-label">FAVORITOS</span>
               </div>
-              <p class="resena-mensaje">{{ resena.mensaje }}</p>
             </div>
           </div>
         </div>
+      </div>
 
-        <div *ngIf="!cargandoResenas && resenas.length === 0" class="vacio-placeholder">
-          <p>Este usuario no tiene reseñas.</p>
+      <!-- TAB: LISTAS -->
+      <div class="tab-pane listas-pane" *ngIf="pestanaActual === 'listas'">
+        <div *ngIf="cargandoListas" class="loading-pane">
+          <div class="spinner-mini"></div>
+          <p>Cargando listas...</p>
         </div>
 
+        <div *ngIf="!cargandoListas && listas.length === 0" class="empty-state">
+          Este usuario no tiene listas públicas.
+        </div>
+
+        <div *ngIf="!cargandoListas && listas.length > 0">
+          <div *ngFor="let lista of listas" class="lista-group">
+            <div class="lista-header-row">
+              <h2 class="pane-title">{{ lista.nombre }}</h2>
+            </div>
+            <div class="horizontal-scroll-grid">
+              <div *ngFor="let juego of lista.juegos" class="juego-card" [routerLink]="['/juego', juego.id]">
+                <div class="juego-thumb">
+                  <img [src]="juego.background_image" [alt]="juego.name">
+                  <div class="rating-tag">★ {{ juego.rating }}</div>
+                </div>
+                <p class="juego-title">{{ juego.name }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: RESEÑAS -->
+      <div class="tab-pane resenas-pane" *ngIf="pestanaActual === 'resenas'">
+        <div *ngIf="cargandoResenas" class="loading-pane">
+          <div class="spinner-mini"></div>
+          <p>Cargando reseñas...</p>
+        </div>
+
+        <div *ngIf="!cargandoResenas && resenas.length === 0" class="empty-state">
+          Este usuario no ha publicado ninguna reseña todavía.
+        </div>
+
+        <div *ngIf="!cargandoResenas && resenas.length > 0" class="resenas-list">
+          <div *ngFor="let resena of resenas" class="resena-item">
+            <div class="resena-game-box" [routerLink]="['/juego', resena.id_videojuego]">
+              <img *ngIf="resena.imagenJuego" [src]="resena.imagenJuego" [alt]="resena.nombreJuego">
+            </div>
+            <div class="resena-body">
+              <div class="resena-header">
+                <span class="game-name">{{ resena.nombreJuego }}</span>
+                <span class="date">{{ resena.fechaResena | date:'mediumDate' }}</span>
+              </div>
+              <div class="stars">
+                <span *ngFor="let s of getStars(resena.puntuacion)">★</span>
+                <span *ngFor="let s of getEmptyStars(resena.puntuacion)" style="opacity: 0.3;">★</span>
+              </div>
+              <p class="message">{{ resena.mensaje }}</p>
+            </div>
+          </div>
+        </div>
       </div>
 
     </main>
-  </div>
 
-  <!-- Boton volver -->
-  <div class="contenedor-volver">
-    <button class="btn-volver" routerLink="/buscar-usuarios">Volver a la búsqueda</button>
   </div>
-
 </div>

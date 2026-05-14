@@ -1,41 +1,60 @@
-<div class="contenedor">
-  <h2 class="titulo">Buscar Usuarios</h2>
+<div class="contenedor-busqueda-usuarios">
+  
+  <!-- HERO HEADER -->
+  <header class="header-usuarios">
+    <div class="accent-line"></div>
+    <h1>LOCALIZAR USUARIOS</h1>
+    <p>Busca en la red global de RateMyGame y conecta con otros jugadores.</p>
+  </header>
 
-  <!-- Buscador -->
-  <div class="buscador">
-    <input
-      type="text"
-      class="input-busqueda"
-      placeholder="Escribe un nombre de usuario..."
-      [(ngModel)]="terminoBusqueda"
-      (keyup.enter)="buscar()">
-    <button class="btn-buscar" (click)="buscar()">Buscar</button>
+  <!-- TACTICAL SEARCH HUB -->
+  <section class="search-hub-ow">
+    <div class="search-controls">
+      <div class="input-wrapper-ow">
+        <input
+          type="text"
+          placeholder="INTRODUCE EL NOMBRE DE USUARIO O ID..."
+          [(ngModel)]="terminoBusqueda"
+          (keyup.enter)="buscar()">
+      </div>
+      <button class="btn-buscar-ow" (click)="buscar()" [disabled]="buscando">
+        {{ buscando ? 'BUSCANDO...' : 'INICIAR BÚSQUEDA' }}
+      </button>
+    </div>
+  </section>
+
+  <!-- LOADING STATE -->
+  <div *ngIf="buscando" class="loading-ow">
+    <div class="ow-spinner"></div>
+    <p class="user-full-name">CONECTANDO CON LA BASE DE DATOS...</p>
   </div>
 
-  <!-- Cargando -->
-  <div *ngIf="buscando" class="estado">
-    <p>Buscando...</p>
+  <!-- EMPTY / NO RESULTS STATE -->
+  <div *ngIf="busquedaRealizada && !buscando && resultados.length === 0" class="empty-state-ow">
+    <p>SIN RESULTADOS: NO SE HAN ENCONTRADO COINCIDENCIAS</p>
   </div>
 
-  <!-- Sin resultados -->
-  <div *ngIf="busquedaRealizada && !buscando && resultados.length === 0" class="estado">
-    <p>No se encontraron usuarios con ese nombre.</p>
-  </div>
-
-  <!-- Resultados -->
-  <div *ngIf="resultados.length > 0" class="lista-resultados">
-    <div *ngFor="let usuario of resultados" class="tarjeta-usuario" [routerLink]="['/perfil', usuario.id]">
-
-      <!-- Avatar -->
-      <div class="avatar">
-        <img *ngIf="usuario.foto_url" [src]="usuario.foto_url" [alt]="usuario.username" class="avatar-imagen">
-        <div *ngIf="!usuario.foto_url" class="avatar-iniciales">{{ usuario.username?.charAt(0).toUpperCase() }}</div>
+  <!-- RESULTS GRID -->
+  <div *ngIf="resultados.length > 0 && !buscando" class="usuarios-grid">
+    <div *ngFor="let usuario of resultados" class="usuario-card-premium" [routerLink]="['/perfil', usuario.id]">
+      
+      <!-- AVATAR HUB -->
+      <div class="avatar-hub">
+        <div class="avatar-ow-large">
+          <img *ngIf="usuario.foto_url" [src]="usuario.foto_url" [alt]="usuario.username">
+          <span *ngIf="!usuario.foto_url" class="avatar-initial">{{ usuario.username?.charAt(0).toUpperCase() }}</span>
+        </div>
       </div>
 
-      <!-- Info -->
-      <div class="usuario-info">
-        <p class="usuario-username">{{ usuario.username }}</p>
-        <p class="usuario-nombre">{{ usuario.nombre }} {{ usuario.apellidos }}</p>
+      <!-- USER META -->
+      <div class="user-meta-ow">
+        <span class="user-tag-ow">{{ usuario.username }}</span>
+        <span class="user-full-name">{{ usuario.nombre }} {{ usuario.apellidos }}</span>
+      </div>
+
+      <!-- TACTICAL INDICATOR -->
+      <div class="tactical-arrow">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
       </div>
 
     </div>

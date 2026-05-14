@@ -15,4 +15,11 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 	Optional<Usuario> findByEmail(String email);
 	Optional<Usuario> findByUsernameOrEmail(String username, String email);
 	List<Usuario> findByUsernameContainingIgnoreCase(String username);
+
+	@org.springframework.data.jpa.repository.Query("SELECT u FROM Usuario u WHERE " +
+		"LOWER(u.username) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+		"LOWER(CONCAT(u.nombre, ' ', u.apellidos)) LIKE LOWER(CONCAT('%', :query, '%'))")
+	List<Usuario> buscarUsuariosGeneral(String query);
 }
+
+
