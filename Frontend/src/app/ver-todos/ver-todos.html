@@ -74,23 +74,5 @@
     </div>
 </div>
 
-<div *ngIf="!cargando" class="contenedor">
-    <h2 class="titulo">{{ titulo }}</h2>
-    <div class="cuadricula">
-        <div *ngFor="let juego of juegos" class="tarjeta" [routerLink]="['/juego', juego.id]">
-            <img [src]="juego.background_image" [alt]="juego.name" class="tarjeta-imagen">
-            <div class="tarjeta-info">
-                <p class="tarjeta-nombre">{{ juego.name }}</p>
-                <p class="tarjeta-rating" *ngIf="genero !== 'proximos'">{{ juego.rating }} / 5</p>
-                <p class="tarjeta-rating" *ngIf="genero === 'proximos'">Fecha: {{ juego.released }}</p>
-            </div>
-        </div>
-    </div>
 
-    <div class="contenedor-boton">
-        <button class="btn-pagina" (click)="paginaAnterior()" [disabled]="paginaActual === 1">Anterior</button>
-        <span class="pagina-actual">Página {{ paginaActual }}</span>
-        <button class="btn-pagina" (click)="paginaSiguiente()" [disabled]="!hayPaginaSiguiente">Siguiente</button>
-    </div>
-</div>
 <app-footer></app-footer>
