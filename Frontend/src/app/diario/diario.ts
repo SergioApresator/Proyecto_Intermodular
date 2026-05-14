@@ -3,11 +3,14 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ResenasService } from '../resenas';
 import { Videojuegos } from '../videojuegos';
+import { Footer } from '../footer/footer';
+
 
 @Component({
   selector: 'app-diario',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, Footer],
+
   templateUrl: './diario.html',
   styleUrl: './diario.css',
 })
@@ -23,6 +26,11 @@ export class Diario implements OnInit {
   respuestas: any[] = []; // Para el conteo total
   cargando: boolean = true;
   usuarioId: number | null = null;
+  
+  // Modal para ver más
+  mostrarModalDetalle: boolean = false;
+  resenaSeleccionada: any = null;
+
 
 
   ngOnInit() {
@@ -78,8 +86,10 @@ export class Diario implements OnInit {
           this.resenasServicio.getResenaPorId(resp.id_resena).subscribe({
             next: (resena: any) => {
               resp.mensajeResena = resena.mensaje;
+              resp.usuarioResena = resena.nombreUsuario;
               this.cdr.detectChanges();
             },
+
             error: (err: any) => {
               console.log('Error al cargar la resena', err);
             }
@@ -126,5 +136,15 @@ export class Diario implements OnInit {
 
   mostrarRespuestas() {
     this.mostrandoResenas = false;
+  }
+
+  abrirModal(resena: any) {
+    this.resenaSeleccionada = resena;
+    this.mostrarModalDetalle = true;
+  }
+
+  cerrarModal() {
+    this.mostrarModalDetalle = false;
+    this.resenaSeleccionada = null;
   }
 }

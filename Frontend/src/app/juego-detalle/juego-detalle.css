@@ -685,6 +685,18 @@
     background: white;
 }
 
+.char-counter {
+    position: absolute;
+    bottom: -22px;
+    right: 0;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #94a3b8;
+    letter-spacing: 1px;
+}
+
+
+
 /* TACTICAL TOGGLE */
 .checkbox-tactical .toggle-switch {
     display: flex;

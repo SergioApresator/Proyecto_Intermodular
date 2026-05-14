@@ -348,9 +348,14 @@
       <div class="ow-form-row-modern">
         <label>TU MENSAJE</label>
         <div class="textarea-wrapper">
-          <textarea [(ngModel)]="nuevaResena.mensaje" placeholder="Escribe tu reseña aquí..."></textarea>
+          <textarea [(ngModel)]="nuevaResena.mensaje" placeholder="Escribe tu reseña aquí..." maxlength="1000"></textarea>
           <div class="textarea-border"></div>
+          <div class="char-counter" *ngIf="nuevaResena.mensaje">
+            {{ nuevaResena.mensaje.length }}/1000
+          </div>
         </div>
+
+
       </div>
 
       <div class="ow-form-row-modern checkbox-tactical">
