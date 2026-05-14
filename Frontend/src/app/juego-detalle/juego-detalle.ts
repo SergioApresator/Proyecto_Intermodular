@@ -1,17 +1,25 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+
+
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { Videojuegos } from '../videojuegos';
 import { Usuarios } from '../usuarios';
 import { ResenasService } from '../resenas';
 import { RespuestasService } from '../respuestas';
+import { ConfirmModal } from '../confirm-modal/confirm-modal.component';
+import { Footer } from '../footer/footer';
+
+
 
 @Component({
   selector: 'app-juego-detalle',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, Footer, ConfirmModal],
+
+
   templateUrl: './juego-detalle.html',
   styleUrl: './juego-detalle.css'
 })
@@ -32,6 +40,15 @@ export class JuegoDetalle implements OnInit, OnDestroy {
   usuarioId: number | null = null;
   cambiandoFavorito: boolean = false;
   cambiandoPendiente: boolean = false;
+
+  // Modal de confirmación genérico
+  modalConfirmacionVisible: boolean = false;
+  modalConfirmacionConfig = {
+    titulo: 'CONFIRMAR',
+    mensaje: '¿Estás seguro?',
+    tipo: 'warning' as 'danger' | 'warning' | 'info',
+    accion: () => {}
+  };
 
   resenas: any[] = [];
   mostrarModalResena: boolean = false;
@@ -450,13 +467,56 @@ export class JuegoDetalle implements OnInit, OnDestroy {
   }
 
   eliminarResena(idResena: number) {
-    if (!confirm('¿Estás seguro de que deseas eliminar esta reseña?')) return;
-    this.resenasServicio.eliminarResena(idResena).subscribe({
-      next: () => {
-        this.resenas = this.resenas.filter(r => r.id !== idResena);
-        this.cdr.detectChanges();
-      },
-      error: () => { alert('No se pudo eliminar la reseña.'); }
-    });
+    this.mostrarConfirmacion(
+      'ELIMINAR RESEÑA',
+      '¿Estás seguro de que deseas eliminar esta reseña? Esta acción no se puede deshacer.',
+      'danger',
+      () => {
+        this.resenasServicio.eliminarResena(idResena).subscribe({
+          next: () => {
+            this.resenas = this.resenas.filter(r => r.id !== idResena);
+            this.cdr.detectChanges();
+          },
+          error: () => { alert('No se pudo eliminar la reseña.'); }
+        });
+      }
+    );
+  }
+
+  eliminarRespuesta(resena: any, idRespuesta: number) {
+    this.mostrarConfirmacion(
+      'ELIMINAR RESPUESTA',
+      '¿Estás seguro de que deseas eliminar esta respuesta?',
+      'danger',
+      () => {
+        this.respuestasServicio.eliminarRespuesta(idRespuesta).subscribe({
+          next: () => {
+            resena.respuestas = resena.respuestas.filter((r: any) => r.id !== idRespuesta);
+            this.cdr.detectChanges();
+          },
+          error: () => { alert('No se pudo eliminar la respuesta.'); }
+        });
+      }
+    );
+  }
+
+  // Helpers para el modal de confirmación
+  mostrarConfirmacion(titulo: string, mensaje: string, tipo: 'danger' | 'warning', accion: () => void) {
+    this.modalConfirmacionConfig = { titulo, mensaje, tipo, accion };
+    this.modalConfirmacionVisible = true;
+    this.cdr.detectChanges();
+  }
+
+  ejecutarConfirmacion() {
+    this.modalConfirmacionConfig.accion();
+    this.modalConfirmacionVisible = false;
+    this.cdr.detectChanges();
+  }
+
+  cancelarConfirmacion() {
+    this.modalConfirmacionVisible = false;
+    this.cdr.detectChanges();
   }
 }
+
+

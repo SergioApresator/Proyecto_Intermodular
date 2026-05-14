@@ -272,11 +272,13 @@
     display: flex;
     gap: 25px;
     overflow-x: auto;
+    padding-top: 15px; /* Espacio para el hover translateY */
     padding-bottom: 25px;
     width: 100%;
     scrollbar-width: thin;
     scrollbar-color: #3b82f6 #f1f5f9;
 }
+
 
 .strip-card {
     min-width: 240px;

@@ -182,7 +182,19 @@
     border: 1px solid #e2e8f0;
     height: 350px;
     overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+.entry-content.clickable-card {
+    cursor: pointer;
+}
+
+.entry-content.clickable-card:hover {
+    transform: translateY(-5px) scale(1.01);
+    box-shadow: 25px 25px 0 rgba(59, 130, 246, 0.1);
+    border-color: #3b82f6;
+}
+
 
 .entry-content.no-media {
     grid-template-columns: 1fr;
@@ -273,7 +285,8 @@
     margin-bottom: 10px;
     font-weight: 500;
     overflow-wrap: anywhere;
-    word-break: break-all;
+    word-break: break-word;
+
     white-space: pre-wrap;
     overflow: hidden;
 }
