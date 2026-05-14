@@ -59,13 +59,24 @@
             <p>Asegúrate de que los términos de búsqueda sean correctos o prueba con otra categoría.</p>
         </div>
 
-        <!-- ACTIONS -->
-        <div class="search-actions">
-            <button *ngIf="hayMas" class="btn-primary-ow" (click)="cargarMas()" [disabled]="cargandoMas">
-                <span *ngIf="!cargandoMas">CARGAR MÁS RESULTADOS</span>
-                <span *ngIf="cargandoMas" class="loader-dots">...</span>
+        <!-- PAGINATION CONTROLS -->
+        <div class="pagination-hub">
+            <button class="btn-pagination-ow" (click)="paginaAnterior()" [disabled]="paginaActual === 1">
+                <span class="btn-arrow">⇠</span> ANTERIOR
             </button>
+            
+            <div class="page-indicator">
+                <span class="page-number">PÁGINA {{ paginaActual }}</span>
+            </div>
 
+
+            <button class="btn-pagination-ow" (click)="paginaSiguiente()" [disabled]="!hayPaginaSiguiente">
+                SIGUIENTE <span class="btn-arrow">⇢</span>
+            </button>
+        </div>
+
+        <!-- BACK ACTION -->
+        <div class="search-footer-actions">
             <button class="btn-back-home" routerLink="/inicial">
                 VOLVER AL INICIO
             </button>
@@ -73,6 +84,5 @@
 
     </div>
 </div>
-
 
 <app-footer></app-footer>

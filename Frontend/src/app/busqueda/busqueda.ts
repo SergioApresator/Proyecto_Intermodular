@@ -20,10 +20,12 @@ export class Busqueda implements OnInit {
 
   juegos: any[] = [];
   cargando: boolean = true;
-  cargandoMas: boolean = false;
   termino: string = '';
   paginaActual: number = 1;
-  hayMas: boolean = true;
+  hayPaginaSiguiente: boolean = true;
+
+
+
 
   // Filtros
   filtros: any = {
@@ -124,20 +126,22 @@ export class Busqueda implements OnInit {
     this.filtros = { ...estado.filtros };
     this.juegos = [...estado.juegos];
     this.paginaActual = estado.paginaActual;
-    this.hayMas = estado.hayMas;
+    this.hayPaginaSiguiente = estado.hayPaginaSiguiente;
     this.cargando = false;
     this.cdr.detectChanges();
   }
 
   guardarEstado() {
     this.videojuegosServicio.ultimoEstadoBusqueda = {
+
       termino: this.termino,
       filtros: { ...this.filtros },
       juegos: [...this.juegos],
       paginaActual: this.paginaActual,
-      hayMas: this.hayMas
+      hayPaginaSiguiente: this.hayPaginaSiguiente
     };
   }
+
 
   toggleDropdown(nombre: string, event: Event) {
     event.stopPropagation();
@@ -168,30 +172,31 @@ export class Busqueda implements OnInit {
   reiniciarBusqueda() {
     this.juegos = [];
     this.paginaActual = 1;
-    this.hayMas = true;
+    this.hayPaginaSiguiente = true;
     this.cargando = true;
     this.ejecutarBusqueda();
   }
 
-  ejecutarBusqueda() {
 
+  ejecutarBusqueda() {
+    this.cargando = true;
+    this.cdr.detectChanges();
     this.videojuegosServicio.buscarJuegosPaginados(this.termino, this.paginaActual, this.filtros).subscribe({
       next: (respuesta: any) => {
-        this.juegos = [...this.juegos, ...respuesta.results];
-        this.hayMas = respuesta.next !== null;
+        this.juegos = respuesta.results;
+        this.hayPaginaSiguiente = respuesta.next !== null;
         this.cargando = false;
-        this.cargandoMas = false;
         this.guardarEstado();
         this.cdr.detectChanges();
       },
       error: (err: any) => {
         console.error('Error en búsqueda:', err);
         this.cargando = false;
-        this.cargandoMas = false;
         this.cdr.detectChanges();
       }
     });
   }
+
 
   validarAnio(): boolean {
     const dates = this.filtros.anio.trim();
@@ -232,11 +237,20 @@ export class Busqueda implements OnInit {
     this.guardarEstado(); // Guardar el estado limpio
   }
 
-  cargarMas() {
-    if (this.hayMas && !this.cargandoMas) {
-      this.cargandoMas = true;
+  paginaAnterior() {
+    if (this.paginaActual > 1) {
+      this.paginaActual--;
+      this.ejecutarBusqueda();
+      window.scrollTo(0, 0);
+    }
+  }
+
+  paginaSiguiente() {
+    if (this.hayPaginaSiguiente) {
       this.paginaActual++;
       this.ejecutarBusqueda();
+      window.scrollTo(0, 0);
     }
   }
 }
+

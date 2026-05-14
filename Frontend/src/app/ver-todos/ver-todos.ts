@@ -15,16 +15,14 @@ import { Footer } from '../footer/footer';
 
 export class VerTodos implements OnInit {
 
-  constructor(private videojuegosServicio: Videojuegos, private ruta: ActivatedRoute, private cdr: ChangeDetectorRef) {}
+  constructor(private videojuegosServicio: Videojuegos, private ruta: ActivatedRoute, private cdr: ChangeDetectorRef) { }
 
   juegos: any[] = [];
   cargando: boolean = true;
-  cargandoMas: boolean = false;
   titulo: string = '';
   genero: string = '';
   paginaActual: number = 1;
-  hayMas: boolean = true;
-
+  hayPaginaSiguiente: boolean = true;
 
   ngOnInit() {
     this.genero = this.ruta.snapshot.paramMap.get('genero') || '';
@@ -43,47 +41,65 @@ export class VerTodos implements OnInit {
     this.cargarJuegos();
   }
 
-  cargarJuegos(append: boolean = false) {
-    if (!append) {
-      this.cargando = true;
-      this.juegos = [];
-      this.paginaActual = 1;
-    } else {
-      this.cargandoMas = true;
-    }
-    this.cdr.detectChanges();
-
-    const observer = {
-      next: (respuesta: any) => {
-        if (append) {
-          this.juegos = [...this.juegos, ...respuesta.results];
-        } else {
-          this.juegos = respuesta.results;
-        }
-        this.hayMas = respuesta.next !== null;
-        this.cargando = false;
-        this.cargandoMas = false;
-        this.cdr.detectChanges();
-      },
-      error: (err: any) => {
-        console.log('Error al cargar juegos', err);
-        this.cargando = false;
-        this.cargandoMas = false;
-        this.cdr.detectChanges();
-      }
-    };
-
+  cargarJuegos() {
+    this.cargando = true; this.cdr.detectChanges();
     if (this.genero === 'popular') {
-      this.videojuegosServicio.getPopularesPaginados(this.paginaActual).subscribe(observer);
+      this.videojuegosServicio.getPopularesPaginados(this.paginaActual).subscribe({
+        next: (respuesta: any) => {
+          //Añade los juegos nuevos a la lista existente
+          this.juegos = respuesta.results
+          //Si no hay siguiente pagina desactiva el boton
+          this.hayPaginaSiguiente = respuesta.next !== null;
+          this.cargando = false;
+          this.cdr.detectChanges();
+        },
+        error: (err: any) => {
+          console.log('Error al cargar juegos', err);
+          this.cargando = false;
+        }
+      });
     } else if (this.genero === 'proximos') {
-      this.videojuegosServicio.getProximosPaginados(this.paginaActual).subscribe(observer);
+      this.videojuegosServicio.getProximosPaginados(this.paginaActual).subscribe({
+        next: (respuesta: any) => {
+          this.juegos = respuesta.results
+          this.hayPaginaSiguiente = respuesta.next !== null;
+          this.cargando = false;
+          this.cdr.detectChanges();
+        },
+        error: (err: any) => {
+          console.log('Error al cargar proximos lanzamientos', err);
+          this.cargando = false;
+        }
+      });
     } else {
-      this.videojuegosServicio.getJuegosPaginados(this.genero, this.paginaActual).subscribe(observer);
+      this.videojuegosServicio.getJuegosPaginados(this.genero, this.paginaActual).subscribe({
+        next: (respuesta: any) => {
+          this.juegos = respuesta.results
+          this.hayPaginaSiguiente = respuesta.next !== null;
+          this.cargando = false;
+          this.cdr.detectChanges();
+        },
+        error: (err: any) => {
+          console.log('Error al cargar juegos', err);
+          this.cargando = false;
+        }
+      });
     }
   }
 
-  cargarMas() {
-    this.paginaActual++;
-    this.cargarJuegos(true);
+  paginaAnterior() {
+    if (this.paginaActual > 1) {
+      this.paginaActual--;
+      this.cargarJuegos();
+      window.scrollTo(0, 0);
+    }
+  }
+
+  paginaSiguiente() {
+    if (this.hayPaginaSiguiente) {
+      this.paginaActual++;
+      this.cargarJuegos();
+      window.scrollTo(0, 0);
+    }
   }
 }
