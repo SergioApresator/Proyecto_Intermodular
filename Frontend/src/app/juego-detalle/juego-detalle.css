@@ -328,8 +328,35 @@
 .avatar-img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .user-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; text-align: center; color: #1e293b; margin-top: 5px; }
 .review-main { padding: 30px; position: relative; }
-.review-body { font-size: 1.2rem; line-height: 1.6; color: #334155; font-weight: 500; }
-.review-body p { margin-bottom: 10px; }
+.review-body {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: #334155;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+    word-break: break-all;
+}
+
+.review-body p {
+    margin-bottom: 10px;
+    overflow-wrap: anywhere;
+    word-break: break-all;
+}
+
+.ver-mas-inline {
+    color: #3b82f6;
+    font-weight: 700;
+    cursor: pointer;
+    margin-left: 5px;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 1px;
+    font-size: 1.1rem;
+}
+
+.ver-mas-inline:hover {
+    text-decoration: underline;
+}
+
 .review-date { font-size: 0.85rem; font-weight: 700; color: #94a3b8; margin-bottom: 10px; }
 .vote-group { display: flex; gap: 10px; margin-top: 15px; }
 .vote-btn-sm { background: white; border: 1px solid #e2e8f0; padding: 4px 10px; border-radius: 4px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; color: #94a3b8; }
@@ -354,7 +381,15 @@
 .avatar-tiny-ow { width: 30px; height: 30px; background: #3b82f6; color: white; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-family: 'Bebas Neue', sans-serif; overflow: hidden; }
 .reply-user { font-weight: 700; font-size: 0.9rem; color: #1e293b; }
 .reply-date { font-size: 0.75rem; color: #94a3b8; margin-left: auto; }
-.reply-body { font-size: 1.05rem; line-height: 1.5; color: #334155; font-weight: 500; }
+.reply-body { 
+    font-size: 1.05rem; 
+    line-height: 1.5; 
+    color: #334155; 
+    font-weight: 500;
+    overflow-wrap: anywhere;
+    word-break: break-all;
+}
+
 .reply-footer { margin-top: 10px; display: flex; justify-content: space-between; align-items: center; }
 .reply-to-btn { background: none; border: none; color: #3b82f6; font-family: 'Bebas Neue', sans-serif; cursor: pointer; font-size: 0.9rem; }
 .reply-to-btn:hover { text-decoration: underline; }
@@ -1109,58 +1144,70 @@
     transition: all 0.3s;
     display: block;
 }
-.spoiler-container-ow.simplified::before {
-    content: '';
-    position: absolute;
-    top: -15px;
-    left: -15px;
-    right: -15px;
-    bottom: -15px;
-    background: #f1f5f9;
+/* ─── NEUTRAL SPOILER ADVICE ─── */
+.spoiler-advice-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f8fafc;
     border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    z-index: 0;
-    transition: opacity 0.5s, visibility 0.5s;
-    pointer-events: none;
+    padding: 10px 20px;
+    margin: 10px 0;
+    border-radius: 4px;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.95rem;
 }
-.spoiler-container-ow.simplified.revealed::before {
-    opacity: 0;
-    visibility: hidden;
+
+.advice-icon {
+    width: 20px;
+    height: 20px;
+    fill: #3b82f6; /* Subtle blue for the info icon */
+    flex-shrink: 0;
 }
-.spoiler-eye-btn-centered { 
-    position: absolute; 
-    top: 50%; 
-    left: 50%; 
-    transform: translate(-50%, -50%); 
-    z-index: 10; 
-    background: #64748b; 
-    border: none; 
-    width: 44px; 
-    height: 44px; 
-    border-radius: 50%; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    cursor: pointer; 
-    color: white; 
-    transition: all 0.2s; 
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
+
+.btn-show-spoiler {
+    margin-left: auto;
+    background: #1e293b;
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: background 0.2s;
+    border-radius: 2px;
 }
-.spoiler-eye-btn-centered:hover { transform: translate(-50%, -50%) scale(1.1); background: #334155; }
-.eye-icon { width: 24px; height: 24px; fill: currentColor; }
-.spoiler-content-ow { 
-    position: relative;
-    z-index: 1;
-    margin: 0; 
-    font-size: 1.2rem; 
-    line-height: 1.6;
-    font-weight: 500; 
-    color: #334155; 
-    width: 100%; 
-    text-align: left; 
-    transition: filter 0.6s ease, opacity 0.6s ease; 
+
+.btn-show-spoiler:hover {
+    background: #3b82f6;
 }
-.spoiler-content-ow.blurred { filter: blur(15px); pointer-events: none; user-select: none; opacity: 0.5; }
+
+.review-text-content {
+    margin-top: 15px;
+}
+
+.btn-hide-spoiler {
+    background: none;
+    border: none;
+    color: #3b82f6;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    padding: 0;
+    margin-top: 10px;
+    display: block;
+}
+
+.btn-hide-spoiler:hover {
+    text-decoration: underline;
+    color: #2563eb;
+}
+
+
+
 
 .empty-reviews-ow {
     text-align: center;
