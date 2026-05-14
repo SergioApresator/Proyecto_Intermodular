@@ -1,5 +1,56 @@
-<div *ngIf="cargando" class="contenedor-cargando">
-  <p>CARGANDO BASE DE DATOS...</p>
+<div *ngIf="cargando" class="skeleton-juego-wrapper">
+
+  <!-- Skeleton Hero -->
+  <div class="skeleton-juego-hero"></div>
+
+  <!-- Skeleton Action Bar -->
+  <div class="skeleton-action-bar">
+    <div class="skeleton-action-btn" *ngFor="let i of [1,2,3,4]"></div>
+  </div>
+
+  <!-- Skeleton Contenido -->
+  <div class="skeleton-juego-content">
+
+    <!-- Skeleton Galeria -->
+    <div class="skeleton-juego-card">
+      <div class="skeleton-juego-titulo"></div>
+      <div class="skeleton-galeria"></div>
+      <div class="skeleton-thumbnails">
+        <div class="skeleton-thumb" *ngFor="let i of [1,2,3,4,5]"></div>
+      </div>
+    </div>
+
+    <!-- Skeleton Descripcion -->
+    <div class="skeleton-juego-card">
+      <div class="skeleton-juego-titulo"></div>
+      <div class="skeleton-linea" *ngFor="let i of [1,2,3,4,5]"></div>
+    </div>
+
+    <!-- Skeleton Detalles tecnicos -->
+    <div class="skeleton-juego-card">
+      <div class="skeleton-juego-titulo"></div>
+      <div class="skeleton-tech-grid">
+        <div class="skeleton-tech-item" *ngFor="let i of [1,2,3,4]"></div>
+      </div>
+    </div>
+
+    <!-- Skeleton Resenas -->
+    <div class="skeleton-juego-card">
+      <div class="skeleton-juego-titulo"></div>
+      <div class="skeleton-resena" *ngFor="let i of [1,2,3]">
+        <div class="skeleton-resena-lado">
+          <div class="skeleton-avatar-cuadrado"></div>
+          <div class="skeleton-linea corta"></div>
+        </div>
+        <div class="skeleton-resena-cuerpo">
+          <div class="skeleton-linea"></div>
+          <div class="skeleton-linea"></div>
+          <div class="skeleton-linea corta"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 <div *ngIf="!cargando && juego" class="detalle-contenedor">
