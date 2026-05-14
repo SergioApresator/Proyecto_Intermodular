@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+
 
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
@@ -16,7 +17,8 @@ import { Footer } from '../footer/footer';
 @Component({
   selector: 'app-juego-detalle',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, Footer, ConfirmModal],
+  imports: [CommonModule, FormsModule, Footer, ConfirmModal],
+
 
   templateUrl: './juego-detalle.html',
   styleUrl: './juego-detalle.css'
