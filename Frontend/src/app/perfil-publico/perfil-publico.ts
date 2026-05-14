@@ -107,7 +107,21 @@ export class PerfilPublico implements OnInit {
   cargarListas(id: number) {
     this.cargandoListas = true;
     this.usuariosServicio.getListasUsuario(id).subscribe({
-      next: (grupos: any) => {
+      next: (listasBrutas: any[]) => {
+        if (!listasBrutas || listasBrutas.length === 0) {
+          this.listas = [];
+          this.cargandoListas = false;
+          this.cdr.detectChanges();
+          return;
+        }
+
+        // Agrupar por nombre de lista
+        const grupos: { [key: string]: { gameId: number, entryId: number }[] } = {};
+        listasBrutas.forEach(item => {
+          if (!grupos[item.nombre]) grupos[item.nombre] = [];
+          grupos[item.nombre].push({ gameId: item.id_videojuego, entryId: item.id });
+        });
+
         const nombresListas = Object.keys(grupos);
         const peticionesListas = nombresListas.map(nombre => {
           const items = grupos[nombre];
@@ -128,7 +142,11 @@ export class PerfilPublico implements OnInit {
 
         if (peticionesListas.length > 0) {
           forkJoin(peticionesListas).subscribe((res: any[]) => {
-            this.listas = res;
+            this.listas = res.sort((a, b) => {
+              if (a.nombre === 'Favoritos') return -1;
+              if (b.nombre === 'Favoritos') return 1;
+              return a.nombre.localeCompare(b.nombre);
+            });
             this.cargandoListas = false;
             this.cdr.detectChanges();
           });
@@ -144,6 +162,7 @@ export class PerfilPublico implements OnInit {
       }
     });
   }
+
 
 
   get favoritosCount(): number {
