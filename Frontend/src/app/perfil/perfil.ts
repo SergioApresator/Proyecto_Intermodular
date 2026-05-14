@@ -5,13 +5,19 @@ import { Router, RouterLink } from '@angular/router';
 import { Usuarios } from '../usuarios';
 import { ResenasService } from '../resenas';
 import { Videojuegos } from '../videojuegos';
+import { Footer } from '../footer/footer';
+import { ConfirmModal } from '../confirm-modal/confirm-modal.component';
+
 import { forkJoin, of, Subject } from 'rxjs';
+
 import { catchError, map, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, ConfirmModal, Footer],
+
+
   templateUrl: './perfil.html',
   styleUrl: './perfil.css',
 })
@@ -48,6 +54,16 @@ export class Perfil implements OnInit {
   resultadosBusqueda: any[] = [];
   buscando: boolean = false;
   private searchSubject = new Subject<string>();
+  
+  // Modal de confirmación genérico
+  modalConfirmacionVisible: boolean = false;
+  modalConfirmacionConfig = {
+    titulo: 'CONFIRMAR',
+    mensaje: '¿Estás seguro?',
+    tipo: 'warning' as 'danger' | 'warning' | 'info',
+    accion: () => {}
+  };
+
 
   get favoritosCount(): number {
     const favList = this.listas.find(l => l.nombre === 'Favoritos');
@@ -198,20 +214,27 @@ export class Perfil implements OnInit {
   }
 
   eliminarResena(idResena: number) {
-    if (!confirm('¿Estás seguro de que deseas eliminar esta reseña?')) return;
-    this.resenasServicio.eliminarResena(idResena).subscribe({
-      next: () => {
-        this.resenas = this.resenas.filter(r => r.id !== idResena);
-        this.mensajeExito = 'Reseña eliminada correctamente.';
-        this.cdr.detectChanges();
-        setTimeout(() => (this.mensajeExito = ''), 3000);
-      },
-      error: () => {
-        this.error = 'No se pudo eliminar la reseña.';
-        this.cdr.detectChanges();
+    this.mostrarConfirmacion(
+      'ELIMINAR RESEÑA',
+      '¿Estás seguro de que deseas eliminar esta reseña? Esta acción no se puede deshacer.',
+      'danger',
+      () => {
+        this.resenasServicio.eliminarResena(idResena).subscribe({
+          next: () => {
+            this.resenas = this.resenas.filter(r => r.id !== idResena);
+            this.mensajeExito = 'Reseña eliminada correctamente.';
+            this.cdr.detectChanges();
+            setTimeout(() => (this.mensajeExito = ''), 3000);
+          },
+          error: () => {
+            this.error = 'No se pudo eliminar la reseña.';
+            this.cdr.detectChanges();
+          }
+        });
       }
-    });
+    );
   }
+
 
   cargarTodasLasListas(id: number) {
     this.cargandoListas = true;
@@ -407,28 +430,33 @@ export class Perfil implements OnInit {
 
   resetearFoto() {
     if (!this.usuario?.id) return;
-    if (!confirm('¿Estás seguro de que deseas eliminar tu foto de perfil?')) return;
     
-    this.usuariosServicio.resetearFotoPerfil(this.usuario.id).subscribe({
-      next: (data: any) => {
-        this.usuario = data;
-        localStorage.removeItem('foto_url');
-        // Sincronizar con el formulario de edición
-        if (this.formEdicion) this.formEdicion.foto_url = '';
-        
-        this.previewFoto = null;
-        this.archivoSeleccionado = null;
-        this.mensajeExito = 'Foto de perfil eliminada.';
-        this.usuariosServicio.notificarCambioPerfil();
-        this.cdr.detectChanges();
-        setTimeout(() => { this.mensajeExito = ''; this.cdr.detectChanges(); }, 3000);
-      },
-      error: () => {
-        this.errorFoto = 'Error al eliminar la foto.';
-        this.cdr.detectChanges();
+    this.mostrarConfirmacion(
+      'ELIMINAR FOTO',
+      '¿Estás seguro de que deseas eliminar tu foto de perfil?',
+      'danger',
+      () => {
+        this.usuariosServicio.resetearFotoPerfil(this.usuario.id).subscribe({
+          next: (data: any) => {
+            this.usuario = data;
+            localStorage.removeItem('foto_url');
+            if (this.formEdicion) this.formEdicion.foto_url = '';
+            this.previewFoto = null;
+            this.archivoSeleccionado = null;
+            this.mensajeExito = 'Foto de perfil eliminada.';
+            this.usuariosServicio.notificarCambioPerfil();
+            this.cdr.detectChanges();
+            setTimeout(() => { this.mensajeExito = ''; this.cdr.detectChanges(); }, 3000);
+          },
+          error: () => {
+            this.errorFoto = 'Error al eliminar la foto.';
+            this.cdr.detectChanges();
+          }
+        });
       }
-    });
+    );
   }
+
 
   cancelarFoto() {
     this.archivoSeleccionado = null;
@@ -577,4 +605,23 @@ export class Perfil implements OnInit {
 
   getStars(puntuacion: number): number[] { return Array(puntuacion).fill(0); }
   getInitials(): string { return this.usuario?.username ? this.usuario.username.charAt(0).toUpperCase() : '?'; }
+
+  // Helpers para el modal de confirmación
+  mostrarConfirmacion(titulo: string, mensaje: string, tipo: 'danger' | 'warning', accion: () => void) {
+    this.modalConfirmacionConfig = { titulo, mensaje, tipo, accion };
+    this.modalConfirmacionVisible = true;
+    this.cdr.detectChanges();
+  }
+
+  ejecutarConfirmacion() {
+    this.modalConfirmacionConfig.accion();
+    this.modalConfirmacionVisible = false;
+    this.cdr.detectChanges();
+  }
+
+  cancelarConfirmacion() {
+    this.modalConfirmacionVisible = false;
+    this.cdr.detectChanges();
+  }
 }
+

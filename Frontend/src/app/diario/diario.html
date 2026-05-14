@@ -83,7 +83,8 @@
             <div class="date-badge" *ngIf="i === 0">{{ grupo.fecha | date:'dd MMM yyyy' }}</div>
           </div>
 
-          <article class="entry-content">
+          <article class="entry-content clickable-card" [routerLink]="['/juego', resena.id_videojuego]">
+
             <div class="entry-media">
               <img *ngIf="resena.imagenJuego" [src]="resena.imagenJuego" [alt]="resena.nombreJuego">
               <div class="rating-overlay">★ {{ resena.puntuacion }}</div>
@@ -100,9 +101,10 @@
 
 
               
-              <button class="btn-ver-mas" *ngIf="resena.mensaje.length > 300" (click)="abrirModal(resena)">
+              <button class="btn-ver-mas" *ngIf="resena.mensaje.length > 300" (click)="abrirModal(resena); $event.stopPropagation()">
                 VER MÁS +
               </button>
+
 
 
 
@@ -150,7 +152,8 @@
             <div class="date-badge" *ngIf="i === 0">{{ grupo.fecha | date:'dd MMM yyyy' }}</div>
           </div>
 
-          <article class="entry-content no-media">
+          <article class="entry-content no-media clickable-card" [routerLink]="['/juego', respuesta.id_videojuego]">
+
 
             <div class="entry-details">
               <div class="scroll-area">
@@ -169,9 +172,10 @@
 
               </div>
               
-              <button class="btn-ver-mas" *ngIf="respuesta.mensaje.length > 300" (click)="abrirModal(respuesta)">
+              <button class="btn-ver-mas" *ngIf="respuesta.mensaje.length > 300" (click)="abrirModal(respuesta); $event.stopPropagation()">
                 VER MÁS +
               </button>
+
 
 
 

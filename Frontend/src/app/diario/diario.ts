@@ -87,7 +87,9 @@ export class Diario implements OnInit {
             next: (resena: any) => {
               resp.mensajeResena = resena.mensaje;
               resp.usuarioResena = resena.nombreUsuario;
+              resp.id_videojuego = resena.id_videojuego;
               this.cdr.detectChanges();
+
             },
 
             error: (err: any) => {
