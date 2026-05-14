@@ -30,14 +30,30 @@ public class UsuarioController {
 
     @Value("${app.upload.dir}")
     private String uploadDir;
-
+    
     @PostMapping("/login")
-    public ResponseEntity<UsuarioDTO> loginUsuario(@RequestBody Map<String, String> credentials) {
-        String email = credentials.get("email");
+    public ResponseEntity<UsuarioDTO> login(@RequestBody Map<String, String> credentials) {
+        String identifier = credentials.get("identifier");
+        if (identifier == null) {
+            identifier = credentials.get("username");
+        }
+        if (identifier == null) {
+            identifier = credentials.get("email");
+        }
         String password = credentials.get("password");
-        return usuarioService.loginUsuario(email, password)
+        return usuarioService.login(identifier, password)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
+    }
+
+    @PostMapping("/login-username")
+    public ResponseEntity<UsuarioDTO> loginUsuarioUsername(@RequestBody Map<String, String> credentials) {
+        return login(credentials);
+    }
+
+    @PostMapping("/login-email")
+    public ResponseEntity<UsuarioDTO> loginUsuarioEmail(@RequestBody Map<String, String> credentials) {
+        return login(credentials);
     }
 
     // Spring Security already validates the JWT before reaching this method.
@@ -167,8 +183,15 @@ public class UsuarioController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
 
-    } catch (IOException e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    @DeleteMapping("/{id}/foto")
+    public ResponseEntity<UsuarioDTO> resetearFotoPerfil(@PathVariable Long id) {
+        return usuarioService.actualizarFotoUrl(id, null)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }

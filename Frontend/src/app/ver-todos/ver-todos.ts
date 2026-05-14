@@ -3,10 +3,12 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Videojuegos } from '../videojuegos';
 
+import { Footer } from '../footer/footer';
+
 @Component({
   selector: 'app-ver-todos',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, Footer],
   templateUrl: './ver-todos.html',
   styleUrl: './ver-todos.css',
 })
@@ -30,6 +32,10 @@ export class VerTodos implements OnInit {
     else if (this.genero === 'horror') this.titulo = 'Terror';
     else if (this.genero === 'role-playing-games-rpg') this.titulo = 'RPG';
     else if (this.genero === 'proximos') this.titulo = 'Próximos Lanzamientos';
+    else if (this.genero === 'shooter') this.titulo = 'Shooter';
+    else if (this.genero === 'adventure') this.titulo = 'Aventura';
+    else if (this.genero === 'sports') this.titulo = 'Deportes';
+    else if (this.genero === 'indie') this.titulo = 'Indie';
 
     //Carga la primera pagina
     this.cargarJuegos();

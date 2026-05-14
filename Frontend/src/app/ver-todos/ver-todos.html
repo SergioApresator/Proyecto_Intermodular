@@ -1,23 +1,96 @@
-<div *ngIf="cargando" class="contenedor-cargando">
-  <p>Cargando...</p>
+<div class="search-page-wrapper">
+    <div class="noise-overlay"></div>
+
+    <!-- HERO HEADER -->
+    <header class="search-hero">
+        <div class="hero-content">
+            <div class="tech-tag">ARCHIVE // EXPLORE</div>
+            <h1 class="hero-title">{{ titulo | uppercase }}</h1>
+            <div class="tech-line"></div>
+        </div>
+    </header>
+
+    <!-- LOADING STATE -->
+    <div *ngIf="cargando" class="loading-container">
+        <div class="loader-ow">
+            <div class="loader-circle"></div>
+            <p>SINCRONIZANDO DATOS...</p>
+        </div>
+    </div>
+
+    <!-- RESULTS GRID -->
+    <div *ngIf="!cargando" class="results-container">
+
+        <div class="results-meta">
+            <span>MOSTRANDO {{ juegos.length }} RESULTADOS ENCONTRADOS</span>
+        </div>
+
+        <div class="results-grid" *ngIf="juegos.length > 0">
+            <div *ngFor="let juego of juegos; let i = index" class="game-card strip-card"
+                [routerLink]="['/juego', juego.id]" [style.animation-delay]="(i % 20) * 0.05 + 's'">
+
+                <div class="card-image-wrapper">
+                    <img [src]="juego.background_image" [alt]="juego.name" class="card-img">
+                    <div class="card-rating-badge" *ngIf="genero !== 'proximos'">
+                        ★ {{ juego.rating }}
+                    </div>
+                    <div class="card-date-badge" *ngIf="genero === 'proximos'">
+                        {{ juego.released | date:'MMM yyyy' | uppercase }}
+                    </div>
+                </div>
+
+                <div class="card-info">
+                    <h3 class="card-name">{{ juego.name }}</h3>
+                    <p class="card-meta" *ngIf="genero !== 'proximos'">{{ juego.released | date:'yyyy' }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- EMPTY STATE -->
+        <div class="empty-results" *ngIf="juegos.length === 0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                <line x1="11" y1="8" x2="11" y2="14"></line>
+                <line x1="8" y1="11" x2="14" y2="11"></line>
+            </svg>
+            <h3>NO SE ENCONTRARON ARCHIVOS</h3>
+            <p>Asegúrate de que los términos de búsqueda sean correctos o prueba con otra categoría.</p>
+        </div>
+
+        <!-- ACTIONS -->
+        <div class="search-actions">
+            <button *ngIf="hayMas" class="btn-primary-ow" (click)="cargarMas()" [disabled]="cargandoMas">
+                <span *ngIf="!cargandoMas">CARGAR MÁS RESULTADOS</span>
+                <span *ngIf="cargandoMas" class="loader-dots">...</span>
+            </button>
+
+            <button class="btn-back-home" routerLink="/inicial">
+                VOLVER AL INICIO
+            </button>
+        </div>
+
+    </div>
 </div>
 
 <div *ngIf="!cargando" class="contenedor">
-  <h2 class="titulo">{{ titulo }}</h2>
-  <div class="cuadricula">
-    <div *ngFor="let juego of juegos" class="tarjeta" [routerLink]="['/juego', juego.id]">
-      <img [src]="juego.background_image" [alt]="juego.name" class="tarjeta-imagen">
-      <div class="tarjeta-info">
-        <p class="tarjeta-nombre">{{ juego.name }}</p>
-        <p class="tarjeta-rating" *ngIf="genero !== 'proximos'">{{ juego.rating }} / 5</p>
-        <p class="tarjeta-rating" *ngIf="genero === 'proximos'">Fecha: {{ juego.released }}</p>
-      </div>
+    <h2 class="titulo">{{ titulo }}</h2>
+    <div class="cuadricula">
+        <div *ngFor="let juego of juegos" class="tarjeta" [routerLink]="['/juego', juego.id]">
+            <img [src]="juego.background_image" [alt]="juego.name" class="tarjeta-imagen">
+            <div class="tarjeta-info">
+                <p class="tarjeta-nombre">{{ juego.name }}</p>
+                <p class="tarjeta-rating" *ngIf="genero !== 'proximos'">{{ juego.rating }} / 5</p>
+                <p class="tarjeta-rating" *ngIf="genero === 'proximos'">Fecha: {{ juego.released }}</p>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <div class="contenedor-boton">
-    <button class="btn-pagina" (click)="paginaAnterior()" [disabled]="paginaActual === 1">Anterior</button>
-    <span class="pagina-actual">Página {{ paginaActual }}</span>
-    <button class="btn-pagina" (click)="paginaSiguiente()" [disabled]="!hayPaginaSiguiente">Siguiente</button>
-  </div>
+    <div class="contenedor-boton">
+        <button class="btn-pagina" (click)="paginaAnterior()" [disabled]="paginaActual === 1">Anterior</button>
+        <span class="pagina-actual">Página {{ paginaActual }}</span>
+        <button class="btn-pagina" (click)="paginaSiguiente()" [disabled]="!hayPaginaSiguiente">Siguiente</button>
+    </div>
 </div>
+<app-footer></app-footer>

@@ -8,12 +8,16 @@ import com.ratemygame.datamodel.entities.ResenaVoto;
 import com.ratemygame.datamodel.entities.Usuario;
 import com.ratemygame.datamodel.repositories.ResenaRepository;
 import com.ratemygame.datamodel.repositories.ResenaVotoRepository;
+import com.ratemygame.datamodel.repositories.RespuestaRepository;
+import com.ratemygame.datamodel.repositories.RespuestaVotoRepository;
+
 import com.ratemygame.datamodel.repositories.UsuarioRepository;
 import com.ratemygame.dtos.ResenaDTO;
 
 import jakarta.transaction.Transactional;
+import java.time.ZoneId;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,9 +34,27 @@ public class ResenaService {
     @Autowired
     private ResenaVotoRepository resenaVotoRepository;
 
+    @Autowired
+    private RespuestaRepository respuestaRepository;
+
+    @Autowired
+    private RespuestaVotoRepository respuestaVotoRepository;
+
+
     public List<ResenaDTO> getResenasByVideojuego(Long idVideojuego) {
         return resenaRepository.findByIdVideojuego(idVideojuego).stream()
                 .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<ResenaDTO> getResenasByVideojuegoWithVoto(Long idVideojuego, Long idUsuario) {
+        return resenaRepository.findByIdVideojuego(idVideojuego).stream()
+                .map(resena -> {
+                    ResenaDTO dto = convertToDTO(resena);
+                    Optional<ResenaVoto> voto = resenaVotoRepository.findByResena_IdAndUsuario_Id(resena.getId(), idUsuario);
+                    dto.setVotoUsuarioActual(voto.map(ResenaVoto::getEsMeGusta).orElse(null));
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -54,8 +76,10 @@ public class ResenaService {
         resena.setTieneSpoiler(resenaDTO.getTieneSpoiler() != null ? resenaDTO.getTieneSpoiler() : false);
         resena.setMeGustas(0);
         resena.setNoMeGustas(0);
-        resena.setFechaResena(LocalDate.now());
+        resena.setFechaResena(LocalDateTime.now(ZoneId.of("Europe/Madrid")));
         resena.setId_videojuego(resenaDTO.getId_videojuego());
+        resena.setNombreVideojuego(resenaDTO.getNombreVideojuego());
+        resena.setFotoVideojuego(resenaDTO.getFotoVideojuego());
         resena.setUsuario(usuarioOpt.get());
 
         Resena savedResena = resenaRepository.save(resena);
@@ -121,13 +145,28 @@ public class ResenaService {
         return Optional.of(dto);
     }
 
+    @Transactional
     public boolean deleteResena(Long id) {
         if (resenaRepository.existsById(id)) {
+            // 1. Eliminar votos de la reseña
+            resenaVotoRepository.deleteByResena_Id(id);
+            
+            // 2. Eliminar votos de todas las respuestas de esta reseña
+            List<com.ratemygame.datamodel.entities.Respuesta> respuestas = respuestaRepository.findByResena_Id(id);
+            for (com.ratemygame.datamodel.entities.Respuesta resp : respuestas) {
+                respuestaVotoRepository.deleteByRespuesta_Id(resp.getId());
+            }
+            
+            // 3. Eliminar las respuestas de la reseña
+            respuestaRepository.deleteByResena_Id(id);
+
+            // 4. Eliminar la reseña
             resenaRepository.deleteById(id);
             return true;
         }
         return false;
     }
+
 
     private ResenaDTO convertToDTO(Resena resena) {
         ResenaDTO dto = new ResenaDTO();
@@ -139,6 +178,8 @@ public class ResenaService {
         dto.setNoMeGustas(resena.getNoMeGustas());
         dto.setFechaResena(resena.getFechaResena());
         dto.setId_videojuego(resena.getId_videojuego());
+        dto.setNombreVideojuego(resena.getNombreVideojuego());
+        dto.setFotoVideojuego(resena.getFotoVideojuego());
         if (resena.getUsuario() != null) {
             dto.setId_usuario(resena.getUsuario().getId());
             dto.setNombreUsuario(resena.getUsuario().getUsername());
@@ -149,5 +190,11 @@ public class ResenaService {
 
     public Optional<ResenaDTO> getResenaById(Long id) {
         return resenaRepository.findById(id).map(this::convertToDTO);
+    }
+
+    public List<ResenaDTO> getRecentReviews() {
+        return resenaRepository.findTop10ByOrderByFechaResenaDescIdDesc().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 }

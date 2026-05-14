@@ -1,6 +1,6 @@
 package com.ratemygame.datamodel.entities;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
@@ -25,8 +25,9 @@ public class Resena {
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "MENSAJE")
+    @Column(name = "MENSAJE", length = 1000)
     private String mensaje;
+
 
     @Column(name = "PUNTUACION")
     private int puntuacion;
@@ -41,7 +42,7 @@ public class Resena {
     private Integer noMeGustas;
 
     @Column(name = "FECHA_RESENA")
-    private LocalDate fechaResena;
+    private LocalDateTime fechaResena;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "ID_USUARIO", 
@@ -52,4 +53,10 @@ public class Resena {
 
     @Column(name = "ID_VIDEOJUEGO")
     private Long id_videojuego;
+
+    @Column(name = "NOMBRE_VIDEOJUEGO")
+    private String nombreVideojuego;
+
+    @Column(name = "FOTO_VIDEOJUEGO")
+    private String fotoVideojuego;
 }
