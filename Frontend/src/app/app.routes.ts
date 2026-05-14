@@ -9,6 +9,8 @@ import { Perfil } from './perfil/perfil';
 import { authGuard } from './auth.guard';
 import { AcercaDe } from './acerca-de/acerca-de';
 import { Busqueda } from './busqueda/busqueda';
+import { BuscarUsuarios } from './buscar-usuarios/buscar-usuarios';
+import { PerfilPublico } from './perfil-publico/perfil-publico';
 
 export const routes: Routes = [
     //La ruta raiz redirige directamente a inicial
@@ -24,5 +26,7 @@ export const routes: Routes = [
     
     // Rutas protegidas: requieren token JWT válido
     { path: 'perfil', component: Perfil, canActivate: [authGuard] },
-    { path: 'acerca-de', component: AcercaDe }
+    { path: 'acerca-de', component: AcercaDe },
+    { path: 'buscar-usuarios', component: BuscarUsuarios },
+    { path: 'perfil/:id', component: PerfilPublico }
 ];

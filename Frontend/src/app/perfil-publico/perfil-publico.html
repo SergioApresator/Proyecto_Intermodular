@@ -1,0 +1,137 @@
+<!-- Mientras carga -->
+<div *ngIf="cargando" class="contenedor-cargando">
+  <p>Cargando perfil...</p>
+</div>
+
+<!-- Error -->
+<div *ngIf="!cargando && error" class="contenedor-cargando">
+  <p>{{ error }}</p>
+</div>
+
+<!-- Contenido -->
+<div *ngIf="!cargando && usuario" class="perfil-page">
+
+  <!-- BANNER -->
+  <div class="perfil-banner">
+    <div class="banner-bg" [style.background-image]="usuario.banner_url ? 'url(' + usuario.banner_url + ')' : ''"></div>
+
+    <div class="perfil-identidad">
+
+      <!-- Avatar -->
+      <div class="avatar-grande">
+        <img *ngIf="usuario.foto_url" [src]="usuario.foto_url" [alt]="usuario.username" class="avatar-imagen">
+        <div *ngIf="!usuario.foto_url" class="avatar-iniciales-grande">{{ getInitials() }}</div>
+      </div>
+
+      <!-- Info -->
+      <div class="perfil-info-header">
+        <h1 class="perfil-username">{{ usuario.username }}</h1>
+        <div class="perfil-stats-header">
+          <span class="stat-badge">⭐ {{ favoritosCount }} Favoritos</span>
+          <span class="stat-badge">📝 {{ resenas.length }} Reseñas</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CUERPO -->
+  <div class="perfil-grid">
+
+    <!-- SIDEBAR -->
+    <aside class="perfil-sidebar">
+
+      <!-- Biografía -->
+      <div class="seccion-card">
+        <h2 class="seccion-titulo">Sobre mí</h2>
+        <p class="bio-texto" *ngIf="usuario.biografia">{{ usuario.biografia }}</p>
+        <p class="bio-vacia" *ngIf="!usuario.biografia">Este usuario no tiene biografía.</p>
+      </div>
+
+      <!-- Detalles -->
+      <div class="seccion-card">
+        <h2 class="seccion-titulo">Detalles</h2>
+        <div class="info-vertical">
+          <div class="info-item">
+            <span class="info-label">Nombre</span>
+            <span class="info-valor">{{ usuario.nombre || '—' }} {{ usuario.apellidos || '' }}</span>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="perfil-main">
+
+      <!-- LISTAS -->
+      <div *ngIf="cargandoListas" class="vacio-placeholder">
+        <p>Cargando listas...</p>
+      </div>
+
+      <div *ngIf="!cargandoListas && listas.length === 0" class="seccion-card">
+        <h2 class="seccion-titulo">Listas</h2>
+        <div class="vacio-placeholder">
+          <p>Este usuario no tiene listas.</p>
+        </div>
+      </div>
+
+      <div *ngFor="let lista of listas" class="seccion-card">
+        <h2 class="seccion-titulo">
+          {{ lista.nombre }}
+          <span class="count-badge">{{ lista.juegos.length }}</span>
+        </h2>
+        <div class="favoritos-grid">
+          <div *ngFor="let juego of lista.juegos" class="favorito-item" [routerLink]="['/juego', juego.id]">
+            <div class="favorito-imagen">
+              <img [src]="juego.background_image" [alt]="juego.name">
+              <div class="favorito-overlay"><span>⭐ {{ juego.rating }}</span></div>
+            </div>
+            <p class="favorito-nombre">{{ juego.name }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESEÑAS -->
+      <div class="seccion-card">
+        <h2 class="seccion-titulo">
+          Reseñas
+          <span class="count-badge" *ngIf="!cargandoResenas && resenas.length > 0">{{ resenas.length }}</span>
+        </h2>
+
+        <div *ngIf="!cargandoResenas && resenas.length > 0" class="lista-resenas-perfil">
+          <div *ngFor="let resena of resenas" class="tarjeta-resena-perfil">
+            <a [routerLink]="['/juego', resena.id_videojuego]" class="resena-juego-link">
+              <div class="resena-juego-imagen">
+                <img *ngIf="resena.imagenJuego" [src]="resena.imagenJuego" [alt]="resena.nombreJuego">
+              </div>
+            </a>
+            <div class="resena-contenido-perfil">
+              <div class="resena-cabecera-perfil">
+                <a [routerLink]="['/juego', resena.id_videojuego]" class="resena-nombre-juego">{{ resena.nombreJuego }}</a>
+                <span class="resena-fecha">{{ resena.fechaResena | date:'mediumDate' }}</span>
+              </div>
+              <div class="resena-estrellas">
+                <span class="estrella llena" *ngFor="let s of getStars(resena.puntuacion)">★</span>
+                <span class="estrella vacia" *ngFor="let s of getEmptyStars(resena.puntuacion)">★</span>
+              </div>
+              <p class="resena-mensaje">{{ resena.mensaje }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="!cargandoResenas && resenas.length === 0" class="vacio-placeholder">
+          <p>Este usuario no tiene reseñas.</p>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Boton volver -->
+  <div class="contenedor-volver">
+    <button class="btn-volver" routerLink="/buscar-usuarios">Volver a la búsqueda</button>
+  </div>
+
+</div>

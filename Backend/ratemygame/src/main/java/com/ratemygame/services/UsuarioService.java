@@ -119,4 +119,10 @@ public class UsuarioService {
         dto.setBiografia(usuario.getBiografia());
         return dto;
     }
+
+    public List<UsuarioDTO> buscarPorUsername(String username) {
+        return usuarioRepository.findByUsernameContainingIgnoreCase(username).stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+    }
 }

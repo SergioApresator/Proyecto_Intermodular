@@ -1,0 +1,44 @@
+<div class="contenedor">
+  <h2 class="titulo">Buscar Usuarios</h2>
+
+  <!-- Buscador -->
+  <div class="buscador">
+    <input
+      type="text"
+      class="input-busqueda"
+      placeholder="Escribe un nombre de usuario..."
+      [(ngModel)]="terminoBusqueda"
+      (keyup.enter)="buscar()">
+    <button class="btn-buscar" (click)="buscar()">Buscar</button>
+  </div>
+
+  <!-- Cargando -->
+  <div *ngIf="buscando" class="estado">
+    <p>Buscando...</p>
+  </div>
+
+  <!-- Sin resultados -->
+  <div *ngIf="busquedaRealizada && !buscando && resultados.length === 0" class="estado">
+    <p>No se encontraron usuarios con ese nombre.</p>
+  </div>
+
+  <!-- Resultados -->
+  <div *ngIf="resultados.length > 0" class="lista-resultados">
+    <div *ngFor="let usuario of resultados" class="tarjeta-usuario" [routerLink]="['/perfil', usuario.id]">
+
+      <!-- Avatar -->
+      <div class="avatar">
+        <img *ngIf="usuario.foto_url" [src]="usuario.foto_url" [alt]="usuario.username" class="avatar-imagen">
+        <div *ngIf="!usuario.foto_url" class="avatar-iniciales">{{ usuario.username?.charAt(0).toUpperCase() }}</div>
+      </div>
+
+      <!-- Info -->
+      <div class="usuario-info">
+        <p class="usuario-username">{{ usuario.username }}</p>
+        <p class="usuario-nombre">{{ usuario.nombre }} {{ usuario.apellidos }}</p>
+      </div>
+
+    </div>
+  </div>
+
+</div>
