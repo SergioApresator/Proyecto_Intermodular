@@ -133,6 +133,11 @@
     z-index: 0;
 }
 
+.diario-feed.is-empty::before {
+    display: none;
+}
+
+
 
 .day-group {
     display: flex;
@@ -359,7 +364,58 @@
 
 
 
+/* ─── EMPTY STATE STYLES ─── */
+.sin-resenas {
+    text-align: center;
+    padding: 100px 40px;
+    background: white;
+    border: 3px dashed #e2e8f0;
+    color: #64748b;
+    box-shadow: 20px 20px 0 rgba(30, 41, 59, 0.05);
+}
+
+.sin-resenas p {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 40px;
+    letter-spacing: 1px;
+}
+
+.btn-accion {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 18px 50px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: skewX(-15deg);
+    box-shadow: 8px 8px 0 #1e293b;
+    display: inline-block;
+}
+
+.btn-accion:hover {
+    background: #f99e1a; /* Overwatch Orange - Matches ratings and primary actions */
+    color: white;
+    transform: skewX(-15deg) translate(-4px, -4px);
+    box-shadow: 8px 8px 0 #1e293b;
+}
+
+
+
+
+
+.btn-accion:active {
+    transform: skewX(-15deg) translate(0, 0);
+    box-shadow: 4px 4px 0 #1e293b;
+}
+
+
 /* RESPONSIVE */
+
 @media (max-width: 1024px) {
     .diario-header { grid-template-columns: 1fr; text-align: center; }
     .stats-overview { justify-content: center; }

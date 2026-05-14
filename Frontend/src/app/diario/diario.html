@@ -65,13 +65,15 @@
     </div>
 
     <!-- RESENAS -->
-    <div *ngIf="mostrandoResenas" class="diario-feed">
+    <div *ngIf="mostrandoResenas" class="diario-feed" [class.is-empty]="resenas.length === 0">
+
 
       <!-- Si no hay resenas -->
       <div *ngIf="resenas.length === 0" class="sin-resenas">
-        <p>No se han encontrado registros de reseñas en la base de datos.</p>
+        <p>No se han encontrado registros de reseñas.</p>
         <button class="btn-accion" routerLink="/inicial">EXPLORAR JUEGOS</button>
       </div>
+
 
       <!-- Lista de resenas -->
       <div *ngFor="let grupo of resenasAgrupadas" class="day-group">
@@ -131,7 +133,8 @@
     </div>
 
     <!-- RESPUESTAS -->
-    <div *ngIf="!mostrandoResenas" class="diario-feed">
+    <div *ngIf="!mostrandoResenas" class="diario-feed" [class.is-empty]="respuestas.length === 0">
+
 
       <!-- Si no hay respuestas -->
       <div *ngIf="respuestas.length === 0" class="sin-resenas">
