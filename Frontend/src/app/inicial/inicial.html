@@ -146,7 +146,8 @@
       </div>
 
       <div class="activity-feed">
-        <div *ngFor="let resena of resenasRecientes" class="activity-item">
+        <div *ngFor="let resena of resenasRecientes" class="activity-item" [routerLink]="['/juego', resena.id_videojuego]" style="cursor: pointer;">
+
           <div class="activity-user">
             <img [src]="resena.fotoUsuario || 'assets/default-avatar.png'" class="user-avatar" alt="">
             <div class="user-info">
@@ -163,7 +164,8 @@
               <div>
                 <div *ngIf="resena.tieneSpoiler" class="activity-spoiler">
                   Contiene spoilers
-                  <button class="btn-spoiler-activity" (click)="resena.mostrarSpoiler = !resena.mostrarSpoiler">
+                  <button class="btn-spoiler-activity" (click)="resena.mostrarSpoiler = !resena.mostrarSpoiler; $event.stopPropagation()">
+
                     {{ resena.mostrarSpoiler ? 'Ocultar' : 'Ver igualmente' }}
                   </button>
                 </div>

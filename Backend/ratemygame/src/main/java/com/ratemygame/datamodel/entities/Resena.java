@@ -25,8 +25,9 @@ public class Resena {
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "MENSAJE")
+    @Column(name = "MENSAJE", length = 1000)
     private String mensaje;
+
 
     @Column(name = "PUNTUACION")
     private int puntuacion;

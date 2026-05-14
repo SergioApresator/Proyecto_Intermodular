@@ -24,8 +24,9 @@ public class Respuesta {
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "MENSAJE")
+    @Column(name = "MENSAJE", length = 1000)
     private String mensaje;
+
 
     @Column(name = "ME_GUSTAS")
     private Integer meGustas;

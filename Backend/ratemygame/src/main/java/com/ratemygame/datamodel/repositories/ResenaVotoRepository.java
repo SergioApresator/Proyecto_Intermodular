@@ -10,4 +10,6 @@ import java.util.Optional;
 @Repository
 public interface ResenaVotoRepository extends JpaRepository<ResenaVoto, Long> {
     Optional<ResenaVoto> findByResena_IdAndUsuario_Id(Long idResena, Long idUsuario);
+    void deleteByResena_Id(Long idResena);
+
 }

@@ -225,15 +225,32 @@
               </button>
               <div class="review-date">{{ resena.fechaResena | date:'dd.MM.yyyy HH:mm' }}</div>
               <div class="review-body">
-                <div *ngIf="resena.tieneSpoiler" class="spoiler-container-ow simplified" [class.revealed]="resena.mostrarSpoiler">
-                  <button class="spoiler-eye-btn-centered" *ngIf="!resena.mostrarSpoiler" (click)="resena.mostrarSpoiler = true" title="Revelar spoiler">
-                    <svg viewBox="0 0 24 24" class="eye-icon"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-                  </button>
-                  <div class="spoiler-content-ow" [class.blurred]="!resena.mostrarSpoiler">
-                    {{ resena.mensaje }}
-                  </div>
+                <!-- Diseño de Spoiler mas Simple y Neutro -->
+                <div *ngIf="resena.tieneSpoiler && !resena.mostrarSpoiler" class="spoiler-advice-bar">
+                  <svg viewBox="0 0 24 24" class="advice-icon"><path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+                  <span>Esta reseña contiene spoilers.</span>
+                  <button class="btn-show-spoiler" (click)="resena.mostrarSpoiler = true">MOSTRAR</button>
                 </div>
-                <p *ngIf="!resena.tieneSpoiler">{{ resena.mensaje }}</p>
+
+                <div class="review-text-content" *ngIf="!resena.tieneSpoiler || resena.mostrarSpoiler">
+                  <p>
+                    {{ (resena.mensaje.length > 400 && !resena.expandido) ? (resena.mensaje | slice:0:400) + '...' : resena.mensaje }}
+                    <span *ngIf="resena.mensaje.length > 400" (click)="resena.expandido = !resena.expandido" class="ver-mas-inline">
+                      {{ resena.expandido ? 'Ver menos' : 'Ver más' }}
+                    </span>
+                  </p>
+                  
+                  <!-- Botón para volver a ocultar -->
+                  <button *ngIf="resena.tieneSpoiler && resena.mostrarSpoiler" 
+                          (click)="resena.mostrarSpoiler = false" 
+                          class="btn-hide-spoiler">
+                    OCULTAR SPOILER
+                  </button>
+                </div>
+
+
+
+
               </div>
               
               <div class="review-footer">
@@ -348,9 +365,14 @@
       <div class="ow-form-row-modern">
         <label>TU MENSAJE</label>
         <div class="textarea-wrapper">
-          <textarea [(ngModel)]="nuevaResena.mensaje" placeholder="Escribe tu reseña aquí..."></textarea>
+          <textarea [(ngModel)]="nuevaResena.mensaje" placeholder="Escribe tu reseña aquí..." maxlength="1000"></textarea>
           <div class="textarea-border"></div>
+          <div class="char-counter" *ngIf="nuevaResena.mensaje">
+            {{ nuevaResena.mensaje.length }}/1000
+          </div>
         </div>
+
+
       </div>
 
       <div class="ow-form-row-modern checkbox-tactical">
