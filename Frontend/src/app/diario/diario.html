@@ -150,7 +150,8 @@
             <div class="date-badge" *ngIf="i === 0">{{ grupo.fecha | date:'dd MMM yyyy' }}</div>
           </div>
 
-          <article class="entry-content no-media">
+          <article class="entry-content no-media clickable-card" [routerLink]="['/juego', respuesta.id_videojuego]">
+
 
             <div class="entry-details">
               <div class="scroll-area">

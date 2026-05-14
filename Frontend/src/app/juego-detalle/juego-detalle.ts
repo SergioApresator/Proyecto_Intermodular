@@ -459,4 +459,16 @@ export class JuegoDetalle implements OnInit, OnDestroy {
       error: () => { alert('No se pudo eliminar la reseña.'); }
     });
   }
+
+  eliminarRespuesta(resena: any, idRespuesta: number) {
+    if (!confirm('¿Estás seguro de que deseas eliminar esta respuesta?')) return;
+    this.respuestasServicio.eliminarRespuesta(idRespuesta).subscribe({
+      next: () => {
+        resena.respuestas = resena.respuestas.filter((r: any) => r.id !== idRespuesta);
+        this.cdr.detectChanges();
+      },
+      error: () => { alert('No se pudo eliminar la respuesta.'); }
+    });
+  }
 }
+
