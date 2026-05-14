@@ -13,4 +13,5 @@ public class UsuarioDTO {
     private String banner_url;
     private String biografia;
     private String token;
+    private Boolean esAdmin;
 }

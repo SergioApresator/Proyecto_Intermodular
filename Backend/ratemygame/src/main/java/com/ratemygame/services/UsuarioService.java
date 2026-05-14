@@ -58,6 +58,7 @@ public class UsuarioService {
 
     public UsuarioDTO createUsuario(Usuario usuario) {
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+        usuario.setEsAdmin(false);
         Usuario savedUsuario = usuarioRepository.save(usuario);
         String token = jwtService.generateToken(new CustomUserDetails(savedUsuario));
         UsuarioDTO dto = convertToDTO(savedUsuario);
@@ -117,6 +118,7 @@ public class UsuarioService {
         dto.setFoto_url(usuario.getFoto_url());
         dto.setBanner_url(usuario.getBannerUrl());
         dto.setBiografia(usuario.getBiografia());
+        dto.setEsAdmin(usuario.getEsAdmin() != null ? usuario.getEsAdmin() : false);
         return dto;
     }
 }

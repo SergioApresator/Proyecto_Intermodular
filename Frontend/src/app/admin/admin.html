@@ -44,11 +44,14 @@
             </div>
 
             <div class="card-footer">
-              <button class="btn btn-safe" (click)="validarResena(resena.id)">
-                ✅ Validar (Sin Spoiler)
+              <button class="btn btn-safe" title="Marcar como válida (sin spoiler)" (click)="validarResena(resena.id)">
+                ✅ Validar
               </button>
-              <button class="btn btn-danger" (click)="marcarComoSpoiler(resena.id)">
-                ⚠️ Marcar como Spoiler
+              <button class="btn btn-warning" title="Marcar que contiene spoilers" (click)="marcarComoSpoiler(resena.id)">
+                ⚠️ Spoiler
+              </button>
+              <button class="btn btn-danger" title="Eliminar reseña por contenido inapropiado" (click)="eliminarResena(resena.id)">
+                🗑️ Borrar
               </button>
             </div>
           </div>

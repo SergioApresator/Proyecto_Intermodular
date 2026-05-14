@@ -13,11 +13,19 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.Table;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.CascadeType;
+import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Entity
 @Table(name="RESENA")
 @Data
+@EqualsAndHashCode(exclude = {"respuestas", "votos"})
+@ToString(exclude = {"respuestas", "votos"})
 public class Resena {
     
     @Id
@@ -61,4 +69,12 @@ public class Resena {
 
     @Column(name = "REVISADA")
     private Boolean revisada;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "resena", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Respuesta> respuestas;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "resena", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<ResenaVoto> votos;
 }

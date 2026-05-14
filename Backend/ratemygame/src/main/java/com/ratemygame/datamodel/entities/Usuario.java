@@ -59,4 +59,7 @@ public class Usuario {
     @JsonIgnore
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "usuario")
     private Set<Resena> resenas;
+
+    @Column(name = "ES_ADMIN")
+    private Boolean esAdmin;
 }

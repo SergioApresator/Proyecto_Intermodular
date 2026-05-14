@@ -11,12 +11,20 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.ForeignKey;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.CascadeType;
 import java.time.LocalDateTime;
+import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Entity
 @Table(name = "RESPUESTA")
 @Data
+@EqualsAndHashCode(exclude = {"votos"})
+@ToString(exclude = {"votos"})
 public class Respuesta {
 
     @Id
@@ -52,4 +60,8 @@ public class Respuesta {
 
     @Column(name = "FECHA_RESPUESTA")
     private LocalDateTime fechaRespuesta;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "respuesta", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<RespuestaVoto> votos;
 }

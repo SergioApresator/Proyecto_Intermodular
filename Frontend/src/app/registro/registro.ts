@@ -18,13 +18,13 @@ export class Registro {
   private router = inject(Router);
 
   // Inyecto el servicio
-  constructor(private usuariosServicio: Usuarios) {}
+  constructor(private usuariosServicio: Usuarios) { }
 
   // Validador personalizado para asegurar que las contraseñas coincidan
   passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
     const password = control.get('password');
     const confirmPassword = control.get('confirmPassword');
-    
+
     if (password && confirmPassword && password.value !== confirmPassword.value) {
       confirmPassword.setErrors({ passwordMismatch: true });
       return { passwordMismatch: true };
@@ -36,16 +36,16 @@ export class Registro {
     nombre: new FormControl('', [Validators.required, Validators.pattern(/^[a-zA-ZÀ-ÿ\s]{2,40}$/)]),
     apellidos: new FormControl('', [Validators.required, Validators.pattern(/^[a-zA-ZÀ-ÿ\s]{2,40}$/)]),
     username: new FormControl('', [
-      Validators.required, 
+      Validators.required,
       Validators.maxLength(20),
       Validators.pattern(/^[a-zA-Z0-9_]+$/) // Solo alfanuméricos y guiones bajos
     ]),
     email: new FormControl('', [
-      Validators.required, 
+      Validators.required,
       Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/) // Email estricto
     ]),
     password: new FormControl('', [
-      Validators.required, 
+      Validators.required,
       Validators.minLength(8),
       Validators.pattern(/^(?=.*[0-9]).*$/) // Al menos un número
     ]),
@@ -61,7 +61,8 @@ export class Registro {
         apellidos: rawData.apellidos?.trim(),
         username: rawData.username?.trim(),
         email: rawData.email?.trim()?.toLowerCase(),
-        password: rawData.password // La contraseña no se trimmea usualmente por seguridad/precisión
+        password: rawData.password, // La contraseña no se trimmea usualmente por seguridad/precisión
+        esAdmin: false
       };
 
       this.usuariosServicio.guardarUsuario(cleanData).subscribe({

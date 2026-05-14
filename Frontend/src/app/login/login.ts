@@ -73,6 +73,11 @@ export class Login implements OnInit {
       if (foto) {
         localStorage.setItem('foto_url', foto);
       }
+      if (usuarioEncontrado.esAdmin) {
+        localStorage.setItem('esAdmin', 'true');
+      } else {
+        localStorage.removeItem('esAdmin');
+      }
     }
     this.router.navigate(['/inicial']);
   }

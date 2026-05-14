@@ -1,4 +1,5 @@
-import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ResenasService } from '../resenas';
 
@@ -13,12 +14,20 @@ export class Admin implements OnInit {
 
   resenasARevisar: any[] = [];
 
+  private router = inject(Router);
+
   constructor(
     private resenasServicio: ResenasService,
     private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
+    // Protección de la ruta para usuarios no administradores
+    if (typeof window !== 'undefined' && localStorage.getItem('esAdmin') !== 'true') {
+      this.router.navigate(['/inicial']);
+      return;
+    }
+
     this.cargarResenas();
   }
 
@@ -87,6 +96,21 @@ export class Admin implements OnInit {
         console.error('Error al obtener la reseña para validarla:', err);
       }
     });
+  }
+
+  eliminarResena(id: number) {
+    if (confirm('¿Estás seguro de que deseas ELIMINAR esta reseña permanentemente por contenido inapropiado?')) {
+      this.resenasServicio.eliminarResena(id).subscribe({
+        next: () => {
+          this.resenasARevisar = this.resenasARevisar.filter(r => r.id !== id);
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Error al eliminar la reseña:', err);
+          alert('Hubo un error al intentar eliminar la reseña.');
+        }
+      });
+    }
   }
 }
 

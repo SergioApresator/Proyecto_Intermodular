@@ -218,6 +218,17 @@
     box-shadow: 5px 5px 0 #047857;
 }
 
+.btn-warning {
+    background: #f59e0b;
+    color: #ffffff;
+    box-shadow: 3px 3px 0 #b45309;
+}
+
+.btn-warning:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0 #b45309;
+}
+
 .btn-danger {
     background: #ef4444;
     color: #ffffff;
@@ -265,4 +276,4 @@
     .admin-sidebar {
         display: none;
     }
-}
+}
