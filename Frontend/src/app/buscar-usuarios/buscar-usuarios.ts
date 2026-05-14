@@ -24,9 +24,12 @@ export class BuscarUsuarios {
 
     this.buscando = true;
     this.busquedaRealizada = true;
+    const miId = localStorage.getItem('usuarioId');
+
     this.usuariosServicio.buscarUsuarios(this.terminoBusqueda).subscribe({
       next: (respuesta: any) => {
-        this.resultados = respuesta;
+        //Filtramos el usuario logueado de los resultados
+        this.resultados = respuesta.filter((u: any) => u.id.toString() !== miId);
         this.buscando = false;
         this.cdr.detectChanges();
       },
