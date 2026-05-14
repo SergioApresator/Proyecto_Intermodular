@@ -280,7 +280,18 @@
     padding: 0 40px;
     position: relative;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    overflow: hidden;
 }
+
+.player-card-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 30%, rgba(0, 0, 0, 0) 70%);
+    z-index: 1;
+    pointer-events: none;
+}
+
 
 .player-card-content {
     position: relative;
