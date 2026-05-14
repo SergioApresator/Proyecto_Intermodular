@@ -468,3 +468,16 @@
 
   </div>
 </div>
+
+<app-footer></app-footer>
+
+<!-- Modal de Confirmación Genérico -->
+<app-confirm-modal 
+  [visible]="modalConfirmacionVisible"
+  [title]="modalConfirmacionConfig.titulo"
+  [message]="modalConfirmacionConfig.mensaje"
+  [type]="modalConfirmacionConfig.tipo"
+  (onConfirm)="ejecutarConfirmacion()"
+  (onCancel)="cancelarConfirmacion()">
+</app-confirm-modal>
+

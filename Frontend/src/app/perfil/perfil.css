@@ -596,6 +596,13 @@
     margin-bottom: 8px;
 }
 
+.resena-body .message {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    line-height: 1.5;
+}
+
+
 .error-banner {
     background: rgba(239, 68, 68, 0.1);
     border-left: 4px solid #ef4444;
