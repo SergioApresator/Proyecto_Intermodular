@@ -760,9 +760,19 @@
     100% { background-position: 1000px 0; }
 }
 
-.skeleton-wrapper {
-    width: 100%;
+/* ===== SKELETON LOADING ===== */
+@keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
 }
+
+.skeleton-base {
+    background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeleton-wrapper { width: 100%; }
 
 .skeleton-hero {
     width: 100%;
@@ -824,13 +834,14 @@
     overflow: hidden;
 }
 
-.skeleton-card {
+.skeleton-card-vertical {
     min-width: 240px;
     height: 370px;
     border-radius: 4px;
     background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
     background-size: 1000px 100%;
     animation: shimmer 1.5s infinite;
+    flex-shrink: 0;
 }
 
 .skeleton-generos {
@@ -841,6 +852,20 @@
 }
 
 .skeleton-genero {
+    border-radius: 4px;
+    background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeleton-proximos {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+}
+
+.skeleton-proximo {
+    height: 240px;
     border-radius: 4px;
     background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
     background-size: 1000px 100%;
@@ -859,7 +884,11 @@
 .skeleton-activity-item {
     display: flex;
     gap: 15px;
-    align-items: center;
+    align-items: flex-start;
+    padding: 15px;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
 }
 
 .skeleton-avatar {
@@ -888,4 +917,5 @@
 }
 
 .skeleton-line.largo { width: 100%; }
+.skeleton-line.medio { width: 80%; }
 .skeleton-line.corto { width: 60%; }

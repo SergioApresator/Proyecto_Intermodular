@@ -15,11 +15,11 @@
   <div class="skeleton-content container">
     <div class="skeleton-main">
 
-      <!-- Skeleton seccion juegos -->
+      <!-- Skeleton Lo mejor del año -->
       <div class="skeleton-section">
         <div class="skeleton-titulo"></div>
         <div class="skeleton-strip">
-          <div class="skeleton-card" *ngFor="let i of [1,2,3,4,5]"></div>
+          <div class="skeleton-card-vertical" *ngFor="let i of [1,2,3]"></div>
         </div>
       </div>
 
@@ -28,6 +28,14 @@
         <div class="skeleton-titulo"></div>
         <div class="skeleton-generos">
           <div class="skeleton-genero" *ngFor="let i of [1,2,3,4,5,6,7,8]"></div>
+        </div>
+      </div>
+
+      <!-- Skeleton proximamente -->
+      <div class="skeleton-section">
+        <div class="skeleton-titulo"></div>
+        <div class="skeleton-proximos">
+          <div class="skeleton-proximo" *ngFor="let i of [1,2,3,4]"></div>
         </div>
       </div>
 
@@ -41,6 +49,7 @@
         <div class="skeleton-lines">
           <div class="skeleton-line largo"></div>
           <div class="skeleton-line corto"></div>
+          <div class="skeleton-line medio"></div>
         </div>
       </div>
     </div>
