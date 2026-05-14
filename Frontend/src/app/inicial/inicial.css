@@ -550,6 +550,14 @@
     align-items: flex-start;
 }
 
+.activity-rating > div {
+    flex: 1;
+    min-width: 0;
+}
+
+
+
+
 .rating-box {
     background: #3b82f6;
     color: #ffffff;
@@ -568,10 +576,16 @@
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    overflow-wrap: anywhere;
-    word-break: break-all;
+    overflow-wrap: break-word;
+    word-break: break-word;
     text-overflow: ellipsis;
+    width: 100%;
 }
+
+
+
+
+
 
 
 .top-critics {

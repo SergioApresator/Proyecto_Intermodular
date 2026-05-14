@@ -233,7 +233,7 @@
                 </div>
 
                 <div class="review-text-content" *ngIf="!resena.tieneSpoiler || resena.mostrarSpoiler">
-                  <p>
+                  <p [class.expanded]="resena.expandido">
                     {{ (resena.mensaje.length > 400 && !resena.expandido) ? (resena.mensaje | slice:0:400) + '...' : resena.mensaje }}
                     <span *ngIf="resena.mensaje.length > 400" (click)="resena.expandido = !resena.expandido" class="ver-mas-inline">
                       {{ resena.expandido ? 'Ver menos' : 'Ver más' }}
