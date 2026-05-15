@@ -51,6 +51,8 @@ export class Busqueda implements OnInit {
   };
 
 
+
+
   generosDisponibles = [
     { id: '', nombre: 'Todos los géneros' },
     { id: '4', nombre: 'Acción' },
@@ -87,7 +89,6 @@ export class Busqueda implements OnInit {
     { id: '118', nombre: 'Story Rich' },
     { id: '411', nombre: 'Cooperative' },
   ];
-
   metacriticDisponibles = [
     { id: '', nombre: 'Cualquier nota' },
     { id: '90,100', nombre: '90-100 (Imprescindibles)' },
@@ -98,12 +99,17 @@ export class Busqueda implements OnInit {
 
   ordenDisponibles = [
     { id: 'relevance', nombre: 'Relevancia' },
-    { id: '-added', nombre: 'Más recientes' },
+    { id: '-released', nombre: 'Más recientes' },
+
     { id: '-rating', nombre: 'Mejor valorados' },
     { id: '-metacritic', nombre: 'Metacritic' },
     { id: 'released', nombre: 'Fecha lanzamiento' },
     { id: 'name', nombre: 'Nombre (A-Z)' },
   ];
+
+
+
+
 
   dropdownsAbiertos: any = {
     genero: false,
@@ -221,8 +227,10 @@ export class Busqueda implements OnInit {
   getNombreFiltro(campo: string, lista: any[]): string {
     if (campo === 'orden' || campo === 'anio') {
       const item = lista.find(i => i.id === this.filtros[campo]);
+      // Si es relevancia, no mostramos el indicador de orden
       return item ? item.nombre : 'Seleccionar';
     } else {
+
       const seleccionados = this.filtros[campo];
       if (seleccionados.length === 0) return lista[0].nombre;
       if (seleccionados.length === 1) {
@@ -249,6 +257,10 @@ export class Busqueda implements OnInit {
     this.intentosExtra = 0; // Resetear intentos extra
     this.ejecutarBusqueda();
   }
+
+
+
+
 
 
 
@@ -404,7 +416,17 @@ export class Busqueda implements OnInit {
   }
 
   private cumpleFiltros(juego: any): boolean {
+    // 0. Verificar Precisión del Texto (AND logic para palabras clave)
+    if (this.termino && this.termino.trim().length > 2) {
+      const palabras = this.termino.toLowerCase().split(' ').filter(p => p.length > 1);
+      const nombreJuego = juego.name.toLowerCase();
+      // Verificamos que el nombre del juego contenga TODAS las palabras buscadas
+      const coincideTodo = palabras.every(p => nombreJuego.includes(p));
+      if (!coincideTodo) return false;
+    }
+
     // 1. Verificar Géneros (AND)
+
     if (this.filtros.genero.length > 0) {
       const matchGenres = this.filtros.genero.every((gId: string) => {
         if (gId === 'horror') return juego.tags?.some((t: any) => t.slug === 'horror');

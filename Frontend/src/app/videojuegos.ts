@@ -126,6 +126,8 @@ export class Videojuegos {
       urlBusqueda += `&ordering=-added`;
     }
 
+
+
     let genresToPass = [];
     let tagsToPass = [];
 
