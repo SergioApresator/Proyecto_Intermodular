@@ -168,7 +168,16 @@
     margin-bottom: 50px;
 }
 
+.team-names {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 20px;
+    letter-spacing: -0.5px;
+}
+
 .team-tag {
+
     display: inline-block;
     background: #1e293b;
     color: white;
