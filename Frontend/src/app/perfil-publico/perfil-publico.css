@@ -368,7 +368,13 @@
 .resena-header .game-name {
     font-weight: 700;
     font-size: 1.1rem;
+    transition: color 0.2s;
 }
+
+.resena-header .game-name:hover {
+    color: #3b82f6;
+}
+
 
 .stars {
     color: #f59e0b;

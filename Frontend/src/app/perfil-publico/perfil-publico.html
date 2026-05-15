@@ -131,7 +131,8 @@
             </div>
             <div class="resena-body">
               <div class="resena-header">
-                <span class="game-name">{{ resena.nombreJuego }}</span>
+                <span class="game-name" [routerLink]="['/juego', resena.id_videojuego]" style="cursor: pointer;">{{ resena.nombreJuego }}</span>
+
                 <span class="date">{{ resena.fechaResena | date:'mediumDate' }}</span>
               </div>
               <div class="stars">
