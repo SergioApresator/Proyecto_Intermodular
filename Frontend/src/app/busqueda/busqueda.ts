@@ -103,9 +103,10 @@ export class Busqueda implements OnInit {
 
     { id: '-rating', nombre: 'Mejor valorados' },
     { id: '-metacritic', nombre: 'Metacritic' },
-    { id: 'released', nombre: 'Fecha lanzamiento' },
-    { id: 'name', nombre: 'Nombre (A-Z)' },
+    { id: 'released', nombre: 'Más antiguos' },
+
   ];
+
 
 
 
