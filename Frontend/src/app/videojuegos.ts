@@ -112,7 +112,8 @@ export class Videojuegos {
     }
 
     // search_precise=true desactiva el fuzzy matching, haciendo la búsqueda más rápida en el servidor de RAWG
-    let urlBusqueda = `${this.url}/games?key=${this.apiKey}&page_size=20&page=${pagina}`;
+    let urlBusqueda = `${this.url}/games?key=${this.apiKey}&page_size=40&page=${pagina}`;
+
 
     if (termino && termino.trim()) {
       urlBusqueda += `&search=${termino}&search_precise=true`;
@@ -125,18 +126,54 @@ export class Videojuegos {
       urlBusqueda += `&ordering=-added`;
     }
 
-    if (filtros.genero) {
-      urlBusqueda += `&genres=${filtros.genero}`;
+    let genresToPass = [];
+    let tagsToPass = [];
+
+    if (Array.isArray(filtros.genero)) {
+      filtros.genero.forEach((g: string) => {
+        if (g === 'horror') tagsToPass.push('horror');
+        else genresToPass.push(g);
+      });
+    } else if (filtros.genero) {
+      if (filtros.genero === 'horror') tagsToPass.push('horror');
+      else genresToPass.push(filtros.genero);
     }
-    if (filtros.plataforma) {
+
+    if (Array.isArray(filtros.tags)) {
+      tagsToPass.push(...filtros.tags);
+    } else if (filtros.tags) {
+      tagsToPass.push(filtros.tags);
+    }
+
+    if (genresToPass.length > 0) {
+      urlBusqueda += `&genres=${genresToPass.join(',')}`;
+    }
+    if (tagsToPass.length > 0) {
+      urlBusqueda += `&tags=${tagsToPass.join(',')}`;
+    }
+
+    if (Array.isArray(filtros.plataforma) && filtros.plataforma.length > 0) {
+      urlBusqueda += `&parent_platforms=${filtros.plataforma.join(',')}`;
+    } else if (typeof filtros.plataforma === 'string' && filtros.plataforma) {
       urlBusqueda += `&parent_platforms=${filtros.plataforma}`;
     }
-    if (filtros.tags) {
-      urlBusqueda += `&tags=${filtros.tags}`;
-    }
-    if (filtros.metacritic) {
+
+    if (Array.isArray(filtros.metacritic) && filtros.metacritic.length > 0) {
+      // Calculamos el rango min y max global para pedir a la API
+      let minGlobal = 100;
+      let maxGlobal = 0;
+      filtros.metacritic.forEach((range: string) => {
+        const [min, max] = range.split(',').map(Number);
+        if (min < minGlobal) minGlobal = min;
+        if (max > maxGlobal) maxGlobal = max;
+      });
+      urlBusqueda += `&metacritic=${minGlobal},${maxGlobal}`;
+    } else if (typeof filtros.metacritic === 'string' && filtros.metacritic) {
       urlBusqueda += `&metacritic=${filtros.metacritic}`;
     }
+
+
+
     if (filtros.anio) {
       let dates = filtros.anio.trim();
       // Si el usuario pone solo un año (ej: 2024)

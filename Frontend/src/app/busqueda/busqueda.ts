@@ -21,21 +21,27 @@ export class Busqueda implements OnInit {
   juegos: any[] = [];
   cargando: boolean = true;
   termino: string = '';
-  paginaActual: number = 1;
+  paginaActual: number = 1; // Página VIRTUAL (la que ve el usuario)
+  paginaApi: number = 1;    // Página REAL de la API RAWG
+  bufferJuegos: any[] = []; // Juegos que ya pasaron el filtro pero no se han mostrado
   hayPaginaSiguiente: boolean = true;
+  intentosExtra: number = 0;
+
+
 
 
 
 
   // Filtros
   filtros: any = {
-    genero: '',
-    plataforma: '',
+    genero: [],
+    plataforma: [],
     orden: 'relevance',
-    tags: '',
-    metacritic: '',
+    tags: [],
+    metacritic: [],
     anio: ''
   };
+
 
   generosDisponibles = [
     { id: '', nombre: 'Todos los géneros' },
@@ -49,7 +55,9 @@ export class Busqueda implements OnInit {
     { id: '15', nombre: 'Deportes' },
     { id: '14', nombre: 'Simulación' },
     { id: '7', nombre: 'Puzzle' },
+    { id: 'horror', nombre: 'Terror' },
   ];
+
 
   plataformasDisponibles = [
     { id: '', nombre: 'Todas las plataformas' },
@@ -120,27 +128,31 @@ export class Busqueda implements OnInit {
     });
   }
 
+  guardarEstado() {
+    this.videojuegosServicio.ultimoEstadoBusqueda = {
+      termino: this.termino,
+      filtros: { ...this.filtros },
+      juegos: [...this.juegos],
+      bufferJuegos: [...this.bufferJuegos],
+      paginaActual: this.paginaActual,
+      paginaApi: this.paginaApi,
+      hayPaginaSiguiente: this.hayPaginaSiguiente
+    };
+  }
+
   restaurarEstado() {
     const estado = this.videojuegosServicio.ultimoEstadoBusqueda;
     this.termino = estado.termino;
     this.filtros = { ...estado.filtros };
     this.juegos = [...estado.juegos];
+    this.bufferJuegos = [...(estado.bufferJuegos || [])];
     this.paginaActual = estado.paginaActual;
+    this.paginaApi = estado.paginaApi || estado.paginaActual;
     this.hayPaginaSiguiente = estado.hayPaginaSiguiente;
     this.cargando = false;
     this.cdr.detectChanges();
   }
 
-  guardarEstado() {
-    this.videojuegosServicio.ultimoEstadoBusqueda = {
-
-      termino: this.termino,
-      filtros: { ...this.filtros },
-      juegos: [...this.juegos],
-      paginaActual: this.paginaActual,
-      hayPaginaSiguiente: this.hayPaginaSiguiente
-    };
-  }
 
 
   toggleDropdown(nombre: string, event: Event) {
@@ -160,43 +172,109 @@ export class Busqueda implements OnInit {
   }
 
   seleccionarFiltro(campo: string, valor: any) {
-    this.filtros[campo] = valor;
+    if (campo === 'orden' || campo === 'anio') {
+      this.filtros[campo] = valor;
+    } else {
+      if (valor === '') {
+        this.filtros[campo] = [];
+      } else {
+        const index = this.filtros[campo].indexOf(valor);
+        if (index > -1) {
+          this.filtros[campo].splice(index, 1);
+        } else {
+          this.filtros[campo].push(valor);
+        }
+      }
+    }
     this.reiniciarBusqueda();
   }
 
-  getNombreFiltro(campo: string, lista: any[]): string {
-    const item = lista.find(i => i.id === this.filtros[campo]);
-    return item ? item.nombre : 'Seleccionar';
+  esSeleccionado(campo: string, valor: any): boolean {
+    if (campo === 'orden' || campo === 'anio') {
+      return this.filtros[campo] === valor;
+    }
+    if (valor === '') return this.filtros[campo].length === 0;
+    return this.filtros[campo].indexOf(valor) > -1;
   }
+
+  getNombreFiltro(campo: string, lista: any[]): string {
+    if (campo === 'orden' || campo === 'anio') {
+      const item = lista.find(i => i.id === this.filtros[campo]);
+      return item ? item.nombre : 'Seleccionar';
+    } else {
+      const seleccionados = this.filtros[campo];
+      if (seleccionados.length === 0) return lista[0].nombre;
+      if (seleccionados.length === 1) {
+        const item = lista.find(i => i.id === seleccionados[0]);
+        return item ? item.nombre : 'Seleccionar';
+      }
+      return `${seleccionados.length} SELECCIONADOS`;
+    }
+  }
+
 
   reiniciarBusqueda() {
     this.juegos = [];
+    this.bufferJuegos = [];
     this.paginaActual = 1;
+    this.paginaApi = 1;
     this.hayPaginaSiguiente = true;
     this.cargando = true;
     this.ejecutarBusqueda();
   }
 
 
+
   ejecutarBusqueda() {
     this.cargando = true;
     this.cdr.detectChanges();
-    this.videojuegosServicio.buscarJuegosPaginados(this.termino, this.paginaActual, this.filtros).subscribe({
+
+    // 1. Si ya tenemos suficientes juegos en el buffer para completar una página de 20
+    if (this.bufferJuegos.length >= 20) {
+      this.juegos = this.bufferJuegos.splice(0, 20);
+      this.finalizarBusqueda();
+      return;
+    }
+
+    // 2. Si no, necesitamos pedir más a la API
+    this.videojuegosServicio.buscarJuegosPaginados(this.termino, this.paginaApi, this.filtros).subscribe({
       next: (respuesta: any) => {
-        this.juegos = respuesta.results;
+        const rawResults = respuesta.results || [];
+        
+        // Filtrar con lógica AND (Intersección) + Metacritic (OR)
+        const filtrados = rawResults.filter((juego: any) => this.cumpleFiltros(juego));
+
+
+        // Añadir los nuevos juegos filtrados al buffer
+        this.bufferJuegos = [...this.bufferJuegos, ...filtrados];
         this.hayPaginaSiguiente = respuesta.next !== null;
-        this.cargando = false;
-        this.guardarEstado();
-        this.cdr.detectChanges();
+        this.paginaApi++;
+
+        // 3. ¿Tenemos ya 20 para mostrar? 
+        // O ¿se acabaron las páginas de la API?
+        // O ¿hemos hecho ya demasiados intentos (evitar bucle infinito)?
+        if (this.bufferJuegos.length < 20 && this.hayPaginaSiguiente && this.intentosExtra < 8) {
+          this.intentosExtra++;
+          this.ejecutarBusqueda(); // Llamada recursiva interna
+        } else {
+          // Tomamos los primeros 20 (o los que haya) para mostrar
+          this.juegos = this.bufferJuegos.splice(0, 20);
+          this.finalizarBusqueda();
+        }
       },
       error: (err: any) => {
         console.error('Error en búsqueda:', err);
-        this.cargando = false;
-        this.cdr.detectChanges();
+        this.finalizarBusqueda();
       }
     });
   }
 
+  private finalizarBusqueda() {
+    this.intentosExtra = 0;
+    this.cargando = false;
+    this.guardarEstado();
+    this.cdr.detectChanges();
+  }
 
   validarAnio(): boolean {
     const dates = this.filtros.anio.trim();
@@ -204,10 +282,8 @@ export class Busqueda implements OnInit {
       this.errorAnio = false;
       return true;
     }
-
     const regexSingle = /^\d{4}$/;
     const regexRange = /^\d{4}-\d{4}$/;
-
     if (regexSingle.test(dates) || regexRange.test(dates)) {
       this.errorAnio = false;
       return true;
@@ -225,32 +301,115 @@ export class Busqueda implements OnInit {
 
   limpiarFiltros() {
     this.filtros = {
-      genero: '',
-      plataforma: '',
+      genero: [],
+      plataforma: [],
       orden: 'relevance',
-      tags: '',
-      metacritic: '',
+      tags: [],
+      metacritic: [],
       anio: ''
     };
     this.errorAnio = false;
     this.reiniciarBusqueda();
-    this.guardarEstado(); // Guardar el estado limpio
+    this.guardarEstado();
   }
 
   paginaAnterior() {
     if (this.paginaActual > 1) {
       this.paginaActual--;
-      this.ejecutarBusqueda();
-      window.scrollTo(0, 0);
+      // Para volver atrás de forma segura con buffer, reiniciamos y cargamos hasta la página virtual
+      this.reiniciarBusquedaVirtual();
     }
   }
 
   paginaSiguiente() {
-    if (this.hayPaginaSiguiente) {
+    if (this.hayPaginaSiguiente || this.bufferJuegos.length > 0) {
       this.paginaActual++;
       this.ejecutarBusqueda();
       window.scrollTo(0, 0);
     }
   }
+
+  private reiniciarBusquedaVirtual() {
+    const targetPage = this.paginaActual;
+    this.juegos = [];
+    this.bufferJuegos = [];
+    this.paginaApi = 1;
+    this.hayPaginaSiguiente = true;
+    this.cargando = true;
+    this.cdr.detectChanges();
+    this.cargarHastaPaginaVirtual(targetPage);
+  }
+
+  private cargarHastaPaginaVirtual(target: number) {
+    if (target === 1) {
+      this.ejecutarBusqueda();
+      return;
+    }
+    
+    this.videojuegosServicio.buscarJuegosPaginados(this.termino, this.paginaApi, this.filtros).subscribe({
+      next: (respuesta: any) => {
+        const rawResults = respuesta.results || [];
+        const filtrados = rawResults.filter((juego: any) => this.cumpleFiltros(juego));
+
+
+        this.bufferJuegos = [...this.bufferJuegos, ...filtrados];
+        this.paginaApi++;
+        this.hayPaginaSiguiente = respuesta.next !== null;
+
+        if (this.bufferJuegos.length >= 20) {
+          // Descartamos esta página y seguimos si no es el target
+          if (target > 1) {
+            this.bufferJuegos.splice(0, 20);
+            this.cargarHastaPaginaVirtual(target - 1);
+          } else {
+            this.ejecutarBusqueda();
+          }
+        } else if (this.hayPaginaSiguiente) {
+          this.cargarHastaPaginaVirtual(target); // Seguimos llenando el buffer para la página actual
+        } else {
+          this.ejecutarBusqueda();
+        }
+      }
+    });
+  }
+
+  private cumpleFiltros(juego: any): boolean {
+    // 1. Verificar Géneros (AND)
+    if (this.filtros.genero.length > 0) {
+      const matchGenres = this.filtros.genero.every((gId: string) => {
+        if (gId === 'horror') return juego.tags?.some((t: any) => t.slug === 'horror');
+        return juego.genres?.some((g: any) => g.id.toString() === gId);
+      });
+      if (!matchGenres) return false;
+    }
+
+    // 2. Verificar Plataformas (AND)
+    if (this.filtros.plataforma.length > 0) {
+      const matchPlatforms = this.filtros.plataforma.every((pId: string) => {
+        return juego.parent_platforms?.some((p: any) => p.platform.id.toString() === pId);
+      });
+      if (!matchPlatforms) return false;
+    }
+
+    // 3. Verificar Tags (AND)
+    if (this.filtros.tags.length > 0) {
+      const matchTags = this.filtros.tags.every((tId: string) => {
+        return juego.tags?.some((t: any) => t.id.toString() === tId);
+      });
+      if (!matchTags) return false;
+    }
+
+    // 4. Verificar Metacritic (OR)
+    if (this.filtros.metacritic.length > 0) {
+      const matchMetacritic = this.filtros.metacritic.some((mRange: string) => {
+        const [min, max] = mRange.split(',').map(Number);
+        return juego.metacritic >= min && juego.metacritic <= max;
+      });
+      if (!matchMetacritic) return false;
+    }
+
+    return true;
+  }
 }
+
 

@@ -30,8 +30,9 @@
                     <div class="dropdown-icon-ow"></div>
                     <ul class="options-list-ow" *ngIf="dropdownsAbiertos.genero">
                         <li *ngFor="let opt of generosDisponibles" 
-                            [class.selected]="filtros.genero === opt.id"
-                            (click)="seleccionarFiltro('genero', opt.id)">
+                            [class.selected]="esSeleccionado('genero', opt.id)"
+                            (click)="seleccionarFiltro('genero', opt.id); $event.stopPropagation()">
+
                             {{ opt.nombre }}
                         </li>
                     </ul>
@@ -44,8 +45,9 @@
                     <div class="dropdown-icon-ow"></div>
                     <ul class="options-list-ow" *ngIf="dropdownsAbiertos.plataforma">
                         <li *ngFor="let opt of plataformasDisponibles" 
-                            [class.selected]="filtros.plataforma === opt.id"
-                            (click)="seleccionarFiltro('plataforma', opt.id)">
+                            [class.selected]="esSeleccionado('plataforma', opt.id)"
+                            (click)="seleccionarFiltro('plataforma', opt.id); $event.stopPropagation()">
+
                             {{ opt.nombre }}
                         </li>
                     </ul>
@@ -68,8 +70,9 @@
                     <div class="dropdown-icon-ow"></div>
                     <ul class="options-list-ow" *ngIf="dropdownsAbiertos.tags">
                         <li *ngFor="let opt of tagsDisponibles" 
-                            [class.selected]="filtros.tags === opt.id"
-                            (click)="seleccionarFiltro('tags', opt.id)">
+                            [class.selected]="esSeleccionado('tags', opt.id)"
+                            (click)="seleccionarFiltro('tags', opt.id); $event.stopPropagation()">
+
                             {{ opt.nombre }}
                         </li>
                     </ul>
@@ -82,8 +85,9 @@
                     <div class="dropdown-icon-ow"></div>
                     <ul class="options-list-ow" *ngIf="dropdownsAbiertos.metacritic">
                         <li *ngFor="let opt of metacriticDisponibles" 
-                            [class.selected]="filtros.metacritic === opt.id"
-                            (click)="seleccionarFiltro('metacritic', opt.id)">
+                            [class.selected]="esSeleccionado('metacritic', opt.id)"
+                            (click)="seleccionarFiltro('metacritic', opt.id); $event.stopPropagation()">
+
                             {{ opt.nombre }}
                         </li>
                     </ul>
@@ -96,8 +100,9 @@
                     <div class="dropdown-icon-ow"></div>
                     <ul class="options-list-ow" *ngIf="dropdownsAbiertos.orden">
                         <li *ngFor="let opt of ordenDisponibles" 
-                            [class.selected]="filtros.orden === opt.id"
+                            [class.selected]="esSeleccionado('orden', opt.id)"
                             (click)="seleccionarFiltro('orden', opt.id)">
+
                             {{ opt.nombre }}
                         </li>
                     </ul>
