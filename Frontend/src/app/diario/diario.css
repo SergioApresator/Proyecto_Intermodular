@@ -275,21 +275,35 @@
     margin-bottom: 15px;
     line-height: 1;
     color: #1e293b;
+    transition: color 0.2s;
+    cursor: pointer;
+    width: fit-content;
 }
 
 
+.game-title:hover {
+    color: #f99e1a;
+}
+
+
+
 .entry-text {
-    font-size: 1.1rem; /* Reducido de 1.2rem */
+    font-size: 1.1rem;
     line-height: 1.5;
     color: #475569;
     margin-bottom: 10px;
     font-weight: 500;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-
-    white-space: pre-wrap;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
     overflow: hidden;
+    word-break: normal;
+    overflow-wrap: break-word;
 }
+
+
+
+
 
 .quoted-message {
     background: #f1f5f9;
@@ -549,13 +563,15 @@
 }
 
 .modal-mensaje-completo {
-    font-size: 1.2rem; /* Reducido de 1.4rem */
-    line-height: 1.6; /* Reducido de 1.8 */
+    font-size: 1.2rem;
+    line-height: 1.6;
     color: #334155;
     white-space: pre-wrap;
-    overflow-wrap: anywhere;
-    word-break: break-all;
+    overflow-wrap: normal;
+    word-break: normal;
+    overflow: hidden;
 }
+
 
 
 

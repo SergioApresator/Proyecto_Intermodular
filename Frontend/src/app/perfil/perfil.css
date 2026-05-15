@@ -572,7 +572,13 @@
 .resena-header .game-name {
     font-weight: 700;
     font-size: 1.1rem;
+    transition: color 0.2s;
 }
+
+.resena-header .game-name:hover {
+    color: #3b82f6;
+}
+
 
 .header-right {
     display: flex;
@@ -608,10 +614,19 @@
 }
 
 .resena-body .message {
-    word-break: break-word;
-    overflow-wrap: anywhere;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
     line-height: 1.5;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
+
+
+
+
+
 
 
 .error-banner {

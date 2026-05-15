@@ -162,16 +162,15 @@
             <div class="activity-rating">
               <span class="rating-box">{{ resena.puntuacion }}</span>
               <div>
-                <div *ngIf="resena.tieneSpoiler" class="activity-spoiler">
-                  Contiene spoilers
-                  <button class="btn-spoiler-activity" (click)="resena.mostrarSpoiler = !resena.mostrarSpoiler; $event.stopPropagation()">
-
-                    {{ resena.mostrarSpoiler ? 'Ocultar' : 'Ver igualmente' }}
-                  </button>
+                <div *ngIf="resena.tieneSpoiler && !resena.mostrarSpoiler" class="spoiler-advice-bar-activity">
+                  <span>Esta reseña contiene spoilers.</span>
+                  <button class="btn-show-spoiler-activity" (click)="resena.mostrarSpoiler = true; $event.stopPropagation()">MOSTRAR</button>
                 </div>
-                <p class="review-snippet" *ngIf="!resena.tieneSpoiler || resena.mostrarSpoiler">{{ resena.mensaje }}</p>
+                  <p class="review-snippet" *ngIf="!resena.tieneSpoiler || resena.mostrarSpoiler">{{ resena.mensaje }}</p>
+                  <button *ngIf="resena.tieneSpoiler && resena.mostrarSpoiler" (click)="resena.mostrarSpoiler = false; $event.stopPropagation()" class="btn-hide-spoiler-activity">OCULTAR</button>
               </div>
             </div>
+
           </div>
         </div>
 

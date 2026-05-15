@@ -83,16 +83,19 @@
             <div class="date-badge" *ngIf="i === 0">{{ grupo.fecha | date:'dd MMM yyyy' }}</div>
           </div>
 
-          <article class="entry-content clickable-card" [routerLink]="['/juego', resena.id_videojuego]">
+          <article class="entry-content clickable-card" (click)="abrirModal(resena)">
 
-            <div class="entry-media">
+
+            <div class="entry-media" [routerLink]="['/juego', resena.id_videojuego]" (click)="$event.stopPropagation()" style="cursor: pointer;">
+
               <img *ngIf="resena.imagenJuego" [src]="resena.imagenJuego" [alt]="resena.nombreJuego">
               <div class="rating-overlay">★ {{ resena.puntuacion }}</div>
             </div>
 
             <div class="entry-details">
               <div class="scroll-area">
-                <h3 class="game-title">{{ resena.nombreJuego }}</h3>
+                <h3 class="game-title" [routerLink]="['/juego', resena.id_videojuego]" (click)="$event.stopPropagation()" style="cursor: pointer;">{{ resena.nombreJuego }}</h3>
+
                 
                 <p class="entry-text">
                   {{ resena.mensaje.length > 300 ? (resena.mensaje | slice:0:300) + '...' : resena.mensaje }}
@@ -152,14 +155,18 @@
             <div class="date-badge" *ngIf="i === 0">{{ grupo.fecha | date:'dd MMM yyyy' }}</div>
           </div>
 
-          <article class="entry-content no-media clickable-card" [routerLink]="['/juego', respuesta.id_videojuego]">
+          <article class="entry-content no-media clickable-card" (click)="abrirModal(respuesta)">
+
 
 
             <div class="entry-details">
               <div class="scroll-area">
-                <h3 class="game-title" style="font-size: 1.3rem;" *ngIf="respuesta.usuarioResena">
+                <h3 class="game-title" style="font-size: 1.3rem; cursor: pointer;" *ngIf="respuesta.usuarioResena" [routerLink]="['/juego', respuesta.id_videojuego]" (click)="$event.stopPropagation()">
                   RESPUESTA A {{ respuesta.usuarioResena | uppercase }}
                 </h3>
+
+
+
 
                 <!-- Mensaje Original Citado -->
                 <div class="quoted-message" *ngIf="respuesta.mensajeResena">

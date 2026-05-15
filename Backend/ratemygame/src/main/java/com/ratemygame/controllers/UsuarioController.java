@@ -194,4 +194,13 @@ public class UsuarioController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/buscar")
+    public ResponseEntity<List<UsuarioDTO>> buscarUsuarios(@RequestParam(required = false) String username, @RequestParam(required = false) String query) {
+        if (query != null) {
+            return ResponseEntity.ok(usuarioService.buscarUsuariosGeneral(query));
+        }
+        return ResponseEntity.ok(usuarioService.buscarPorUsername(username != null ? username : ""));
+    }
 }
+
