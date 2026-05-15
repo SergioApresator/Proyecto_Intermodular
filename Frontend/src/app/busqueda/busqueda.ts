@@ -1,8 +1,12 @@
-import { Component, OnInit, inject, ChangeDetectorRef, HostListener } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef, HostListener, OnDestroy } from '@angular/core';
+
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Videojuegos } from '../videojuegos';
 import { FormsModule } from '@angular/forms';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+
 
 import { Footer } from '../footer/footer';
 
@@ -26,6 +30,10 @@ export class Busqueda implements OnInit {
   bufferJuegos: any[] = []; // Juegos que ya pasaron el filtro pero no se han mostrado
   hayPaginaSiguiente: boolean = true;
   intentosExtra: number = 0;
+
+  private searchSubscription?: Subscription;
+  private searchSubject = new Subject<void>();
+
 
 
 
@@ -109,6 +117,13 @@ export class Busqueda implements OnInit {
   errorAnio: boolean = false;
 
   ngOnInit() {
+    // Configurar debounce para la búsqueda
+    this.searchSubject.pipe(
+      debounceTime(400)
+    ).subscribe(() => {
+      this.reiniciarBusqueda();
+    });
+
     this.route.queryParams.subscribe(params => {
       const queryTerm = params['q'];
       
@@ -127,6 +142,12 @@ export class Busqueda implements OnInit {
       }
     });
   }
+
+  ngOnDestroy() {
+    if (this.searchSubscription) this.searchSubscription.unsubscribe();
+    this.searchSubject.complete();
+  }
+
 
   guardarEstado() {
     this.videojuegosServicio.ultimoEstadoBusqueda = {
@@ -214,14 +235,21 @@ export class Busqueda implements OnInit {
 
 
   reiniciarBusqueda() {
+    // Cancelar cualquier búsqueda en curso
+    if (this.searchSubscription) {
+      this.searchSubscription.unsubscribe();
+    }
+
     this.juegos = [];
     this.bufferJuegos = [];
     this.paginaActual = 1;
     this.paginaApi = 1;
     this.hayPaginaSiguiente = true;
     this.cargando = true;
+    this.intentosExtra = 0; // Resetear intentos extra
     this.ejecutarBusqueda();
   }
+
 
 
 
@@ -237,8 +265,9 @@ export class Busqueda implements OnInit {
     }
 
     // 2. Si no, necesitamos pedir más a la API
-    this.videojuegosServicio.buscarJuegosPaginados(this.termino, this.paginaApi, this.filtros).subscribe({
+    this.searchSubscription = this.videojuegosServicio.buscarJuegosPaginados(this.termino, this.paginaApi, this.filtros).subscribe({
       next: (respuesta: any) => {
+
         const rawResults = respuesta.results || [];
         
         // Filtrar con lógica AND (Intersección) + Metacritic (OR)
@@ -295,9 +324,10 @@ export class Busqueda implements OnInit {
 
   aplicarFiltros() {
     if (this.validarAnio()) {
-      this.reiniciarBusqueda();
+      this.searchSubject.next();
     }
   }
+
 
   limpiarFiltros() {
     this.filtros = {

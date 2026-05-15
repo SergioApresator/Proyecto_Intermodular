@@ -308,8 +308,17 @@
 
 .filter-group.actions {
     display: flex;
-    align-items: flex-end;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: 0;
 }
+
+.filter-group.actions::before {
+    content: '';
+    height: 1.1rem; /* Aproximadamente el alto del label + gap */
+    display: block;
+}
+
 
 .btn-reset-ow {
     background: #f1f5f9;
