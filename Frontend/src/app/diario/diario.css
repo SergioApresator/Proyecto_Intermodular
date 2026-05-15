@@ -275,7 +275,16 @@
     margin-bottom: 15px;
     line-height: 1;
     color: #1e293b;
+    transition: color 0.2s;
+    cursor: pointer;
+    width: fit-content;
 }
+
+
+.game-title:hover {
+    color: #f99e1a;
+}
+
 
 
 .entry-text {
