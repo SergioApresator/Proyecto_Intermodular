@@ -631,3 +631,96 @@
         position: relative;
     }
 }
+
+/* ===== SKELETON LOADING ===== */
+@keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+}
+
+.skeleton-ver-todos {
+    padding: 40px 5%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.skeleton-results-meta {
+    width: 250px;
+    height: 20px;
+    border-radius: 4px;
+    margin-bottom: 30px;
+    background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeleton-results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 40px;
+}
+
+.skeleton-game-card {
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    background: white;
+}
+
+.skeleton-card-img {
+    width: 100%;
+    aspect-ratio: 3/4;
+    background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeleton-card-info {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: white;
+}
+
+.skeleton-card-nombre {
+    height: 16px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeleton-card-meta {
+    height: 12px;
+    width: 60%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeleton-btn-paginacion {
+    width: 150px;
+    height: 45px;
+    background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeleton-pagina {
+    width: 120px;
+    height: 40px;
+    background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeleton-btn-volver {
+    width: 180px;
+    height: 40px;
+    margin: 0 auto;
+    background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 1.5s infinite;
+}

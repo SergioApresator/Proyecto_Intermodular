@@ -11,12 +11,31 @@
     </header>
 
     <!-- LOADING STATE -->
-    <div *ngIf="cargando" class="loading-container">
-        <div class="loader-ow">
-            <div class="loader-circle"></div>
-            <p>SINCRONIZANDO DATOS...</p>
+    <!-- SKELETON LOADING -->
+<div *ngIf="cargando" class="skeleton-ver-todos">
+    <div class="skeleton-results-meta"></div>
+    <div class="skeleton-results-grid">
+        <div class="skeleton-game-card" *ngFor="let i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]">
+            <div class="skeleton-card-img"></div>
+            <div class="skeleton-card-info">
+                <div class="skeleton-card-nombre"></div>
+                <div class="skeleton-card-meta"></div>
+            </div>
         </div>
     </div>
+
+    <!-- Skeleton paginacion -->
+    <div class="pagination-hub">
+        <div class="skeleton-btn-paginacion"></div>
+        <div class="skeleton-pagina"></div>
+        <div class="skeleton-btn-paginacion"></div>
+    </div>
+
+    <!-- Skeleton volver -->
+    <div class="search-footer-actions">
+        <div class="skeleton-btn-volver"></div>
+    </div>
+</div>
 
     <!-- RESULTS GRID -->
     <div *ngIf="!cargando" class="results-container">
