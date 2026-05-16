@@ -1286,3 +1286,276 @@
 .skeleton-resena-linea.corta {
     width: 50%;
 }
+
+
+
+@media (max-width: 768px) {
+
+    .perfil-viewport {
+        height: auto;
+        min-height: calc(100vh - 64px);
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .perfil-layout {
+        padding: 0 12px;
+        height: auto;
+    }
+
+    /* NAV */
+    .perfil-nav {
+        padding: 12px 0;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .nav-tabs {
+        gap: 10px;
+        order: 3;
+        width: 100%;
+        border-top: 1px solid rgba(0,0,0,0.08);
+        padding-top: 10px;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+
+    .nav-tabs::-webkit-scrollbar { display: none; }
+
+    .nav-tab {
+        font-size: 0.85rem;
+        white-space: nowrap;
+        padding: 8px 4px;
+        flex-shrink: 0;
+    }
+
+    .nav-tab.active::after {
+        bottom: -12px;
+    }
+
+    /* PLAYER CARD */
+    .player-card-bar {
+        margin: 15px 0;
+    }
+
+    .player-card-bg {
+        height: 120px;
+        padding: 0 15px;
+    }
+
+    .avatar-box {
+        width: 75px;
+        height: 75px;
+    }
+
+    .player-name {
+        font-size: 1.4rem;
+        letter-spacing: -0.5px;
+    }
+
+    .player-card-content {
+        gap: 12px;
+    }
+
+    .btn-overlay-banner {
+        font-size: 0.7rem;
+        padding: 6px 10px;
+    }
+
+    /* CONTENIDO */
+    .tab-content-area {
+        overflow-y: visible;
+        padding-right: 0;
+        margin-bottom: 30px;
+    }
+
+    .resumen-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .big-stats {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .big-stat .stat-value {
+        font-size: 2rem;
+    }
+
+    /* RESEÑAS — grid 2 columnas */
+    .resenas-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .resena-item {
+        flex-direction: column;
+        gap: 6px;
+        padding: 8px;
+        border-left-width: 3px;
+    }
+
+    .resena-game-box {
+        width: 100%;
+        height: 90px;
+        flex-shrink: 0;
+    }
+
+    .resena-game-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .resena-header {
+        flex-direction: column;
+        gap: 2px;
+        align-items: flex-start;
+    }
+
+    .resena-header .game-name {
+        font-size: 0.85rem;
+        line-height: 1.2;
+    }
+
+    .header-right {
+        gap: 8px;
+    }
+
+    .resena-header .date {
+        font-size: 0.7rem;
+    }
+
+    .stars {
+        font-size: 0.75rem;
+        margin-bottom: 4px;
+    }
+
+    .resena-body .message {
+        font-size: 0.8rem;
+        -webkit-line-clamp: 2;
+        line-height: 1.3;
+    }
+
+    /* LISTAS */
+    .juego-card {
+        width: 90px;
+    }
+
+    .juego-title {
+        font-size: 0.75rem;
+        margin-top: 5px;
+    }
+
+    .rating-tag {
+        font-size: 0.65rem;
+        padding: 2px 4px;
+    }
+
+    .lista-group {
+        margin-bottom: 25px;
+    }
+
+    /* AJUSTES */
+    .ajustes-container {
+        padding: 10px 0;
+    }
+
+    .ajustes-grid {
+        grid-template-columns: 1fr;
+        padding: 15px;
+        gap: 15px;
+    }
+
+    .ajustes-grid .field.full {
+        grid-column: 1;
+    }
+
+    .avatar-preview-box {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+
+    .preview-circle {
+        width: 90px;
+        height: 90px;
+    }
+
+    .preview-actions {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .btn-action-ow {
+        padding: 8px 14px;
+        font-size: 0.75rem;
+    }
+
+    .ajustes-actions {
+        flex-wrap: wrap;
+    }
+
+    .btn-primary {
+        width: 100%;
+        padding: 12px;
+        text-align: center;
+    }
+
+    /* MODAL BÚSQUEDA */
+    .modal-content.search-list-modal {
+        width: calc(100% - 20px);
+        margin: 0 10px;
+    }
+
+    .search-list-modal .modal-body {
+        padding: 15px;
+    }
+
+    .result-thumb {
+        width: 60px;
+        height: 38px;
+    }
+
+    .result-name {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .perfil-layout { padding: 0 8px; }
+
+    .player-card-bg {
+        height: 100px;
+        padding: 0 12px;
+    }
+
+    .avatar-box {
+        width: 60px;
+        height: 60px;
+    }
+
+    .player-name { font-size: 1.2rem; }
+
+    .nav-tab { font-size: 0.8rem; }
+
+    .big-stat .stat-value { font-size: 1.8rem; }
+
+    .resenas-list {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .resena-game-box { height: 75px; }
+
+    .resena-header .game-name { font-size: 0.8rem; }
+
+    .resena-body .message { font-size: 0.75rem; }
+
+    .juego-card { width: 80px; }
+
+    .juego-title { font-size: 0.7rem; }
+}
