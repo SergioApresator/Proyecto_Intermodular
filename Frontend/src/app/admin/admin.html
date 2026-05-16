@@ -81,3 +81,13 @@
     </main>
   </div>
 </div>
+
+<!-- Modal de Confirmación -->
+<app-confirm-modal 
+  [visible]="modalConfirmacionVisible"
+  [title]="modalConfirmacionConfig.titulo"
+  [message]="modalConfirmacionConfig.mensaje"
+  [type]="modalConfirmacionConfig.tipo"
+  (onConfirm)="ejecutarConfirmacion()"
+  (onCancel)="cancelarConfirmacion()">
+</app-confirm-modal>

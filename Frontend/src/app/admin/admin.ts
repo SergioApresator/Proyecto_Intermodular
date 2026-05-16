@@ -2,17 +2,30 @@ import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ResenasService } from '../resenas';
+import { ConfirmModal } from '../confirm-modal/confirm-modal.component';
+
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ConfirmModal],
+
   templateUrl: './admin.html',
   styleUrl: './admin.css',
 })
 export class Admin implements OnInit {
 
   resenasARevisar: any[] = [];
+  
+  // Modal de confirmación
+  modalConfirmacionVisible: boolean = false;
+  modalConfirmacionConfig = {
+    titulo: 'CONFIRMAR',
+    mensaje: '¿Estás seguro?',
+    tipo: 'warning' as 'danger' | 'warning' | 'info',
+    accion: () => { }
+  };
+
 
   private router = inject(Router);
 
@@ -99,18 +112,41 @@ export class Admin implements OnInit {
   }
 
   eliminarResena(id: number) {
-    if (confirm('¿Estás seguro de que deseas ELIMINAR esta reseña permanentemente por contenido inapropiado?')) {
-      this.resenasServicio.eliminarResena(id).subscribe({
-        next: () => {
-          this.resenasARevisar = this.resenasARevisar.filter(r => r.id !== id);
-          this.cdr.detectChanges();
-        },
-        error: (err) => {
-          console.error('Error al eliminar la reseña:', err);
-          alert('Hubo un error al intentar eliminar la reseña.');
-        }
-      });
-    }
+    this.mostrarConfirmacion(
+      'ELIMINAR RESEÑA',
+      '¿Estás seguro de que deseas ELIMINAR esta reseña permanentemente por contenido inapropiado? Esta acción no se puede deshacer.',
+      'danger',
+      () => {
+        this.resenasServicio.eliminarResena(id).subscribe({
+          next: () => {
+            this.resenasARevisar = this.resenasARevisar.filter(r => r.id !== id);
+            this.cdr.detectChanges();
+          },
+          error: (err) => {
+            console.error('Error al eliminar la reseña:', err);
+          }
+        });
+      }
+    );
+  }
+
+  // Helpers para el modal
+  mostrarConfirmacion(titulo: string, mensaje: string, tipo: 'danger' | 'warning' | 'info', accion: () => void) {
+    this.modalConfirmacionConfig = { titulo, mensaje, tipo, accion };
+    this.modalConfirmacionVisible = true;
+    this.cdr.detectChanges();
+  }
+
+  ejecutarConfirmacion() {
+    this.modalConfirmacionConfig.accion();
+    this.modalConfirmacionVisible = false;
+    this.cdr.detectChanges();
+  }
+
+  cancelarConfirmacion() {
+    this.modalConfirmacionVisible = false;
+    this.cdr.detectChanges();
   }
 }
+
 
