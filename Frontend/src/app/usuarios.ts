@@ -93,6 +93,15 @@ export class Usuarios {
     });
 }
 
+resetearBanner(id: number): Observable<any> {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    return this.http.delete(`${this.url}/${id}/banner`, {
+        headers: new HttpHeaders({
+            'Authorization': token ? `Bearer ${token}` : ''
+        })
+    });
+}
+
   // --- LISTAS Y FAVORITOS ---
   private urlListas = 'http://localhost:9999/api/listas';
 

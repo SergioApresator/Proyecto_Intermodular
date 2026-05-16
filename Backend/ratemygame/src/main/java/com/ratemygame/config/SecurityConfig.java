@@ -52,7 +52,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/respuestas/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/resenas/usuario/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/resenas/**").permitAll()
-
+                .requestMatchers(HttpMethod.DELETE, "/api/usuarios/*/banner").permitAll()
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .requestMatchers("/uploads/**").permitAll()
                 .anyRequest().authenticated()

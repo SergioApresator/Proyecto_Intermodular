@@ -206,5 +206,12 @@ public class UsuarioController {
         }
         return ResponseEntity.ok(usuarioService.buscarPorUsername(username != null ? username : ""));
     }
+
+    @DeleteMapping("/{id}/banner")
+public ResponseEntity<UsuarioDTO> resetearBanner(@PathVariable Long id) {
+    return usuarioService.actualizarBannerUrl(id, null)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
+}
 }
 
