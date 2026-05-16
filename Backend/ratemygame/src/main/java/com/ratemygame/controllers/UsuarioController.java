@@ -135,6 +135,8 @@ public class UsuarioController {
             // Construir la URL pública de acceso
             String fotoUrl = "http://localhost:9999/uploads/fotos-perfil/" + uniqueFilename;
 
+
+
             // Actualizar foto_url del usuario en la BD
             return usuarioService.actualizarFotoUrl(id, fotoUrl)
                     .map(ResponseEntity::ok)
@@ -178,6 +180,8 @@ public class UsuarioController {
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
         String bannerUrl = "http://localhost:9999/uploads/fotos-perfil/" + uniqueFilename;
+
+
 
         return usuarioService.actualizarBannerUrl(id, bannerUrl)
                 .map(ResponseEntity::ok)
