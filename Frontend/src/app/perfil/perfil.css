@@ -1167,3 +1167,122 @@
     z-index: 2000;
 }
 
+/* ===== SKELETON PERFIL ===== */
+@keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+}
+
+.skeleton-perfil-listas {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.skeleton-lista-grupo {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.skeleton-lista-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 8px;
+    border-bottom: 2px solid rgba(0,0,0,0.1);
+}
+
+.skeleton-lista-titulo {
+    width: 200px;
+    height: 25px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, rgba(0,0,0,0.08) 25%, rgba(0,0,0,0.04) 50%, rgba(0,0,0,0.08) 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeleton-lista-btn {
+    width: 70px;
+    height: 28px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, rgba(0,0,0,0.08) 25%, rgba(0,0,0,0.04) 50%, rgba(0,0,0,0.08) 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeleton-lista-juegos {
+    display: flex;
+    gap: 15px;
+    overflow: hidden;
+}
+
+.skeleton-juego-card {
+    width: 150px;
+    aspect-ratio: 2/3;
+    flex-shrink: 0;
+    border-radius: 4px;
+    background: linear-gradient(90deg, rgba(0,0,0,0.08) 25%, rgba(0,0,0,0.04) 50%, rgba(0,0,0,0.08) 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeleton-perfil-resenas {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.skeleton-resena-item {
+    display: flex;
+    gap: 20px;
+    padding: 15px;
+    background: rgba(255,255,255,0.4);
+    border-left: 5px solid rgba(0,0,0,0.08);
+}
+
+.skeleton-resena-img {
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+    background: linear-gradient(90deg, rgba(0,0,0,0.08) 25%, rgba(0,0,0,0.04) 50%, rgba(0,0,0,0.08) 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeleton-resena-cuerpo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.skeleton-resena-titulo {
+    width: 40%;
+    height: 20px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, rgba(0,0,0,0.08) 25%, rgba(0,0,0,0.04) 50%, rgba(0,0,0,0.08) 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeleton-resena-estrellas {
+    width: 100px;
+    height: 16px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, rgba(0,0,0,0.08) 25%, rgba(0,0,0,0.04) 50%, rgba(0,0,0,0.08) 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeleton-resena-linea {
+    height: 14px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, rgba(0,0,0,0.08) 25%, rgba(0,0,0,0.04) 50%, rgba(0,0,0,0.08) 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeleton-resena-linea.corta {
+    width: 50%;
+}
