@@ -44,33 +44,33 @@ export class Admin implements OnInit {
     });
   }
 
-  marcarComoSpoiler(id: number) {
-    if (confirm('¿Estás seguro de marcar esta reseña como spoiler?')) {
-      // Obtenemos los datos completos de la reseña
-      this.resenasServicio.getResenaPorId(id).subscribe({
-        next: (resenaData) => {
-          // Cambiamos el estado del spoiler
-          resenaData.tieneSpoiler = true;
-          // Actualizamos la reseña completa en base de datos
-          this.resenasServicio.updateResena(id, resenaData).subscribe({
-            next: () => {
-              this.resenasARevisar = this.resenasARevisar.filter(r => r.id !== id);
-              this.cdr.detectChanges();
-            },
-            error: (err) => {
-              console.error('Error al actualizar spoiler en servidor:', err);
-              // Fallback visual en caso de que falle
-              this.resenasARevisar = this.resenasARevisar.filter(r => r.id !== id);
-              this.cdr.detectChanges();
+  toggleSpoiler(id: number) {
+    // Obtenemos los datos completos de la reseña
+    this.resenasServicio.getResenaPorId(id).subscribe({
+      next: (resenaData) => {
+        // Alternamos el estado del spoiler
+        resenaData.tieneSpoiler = !resenaData.tieneSpoiler;
+        // Actualizamos la reseña completa en base de datos
+        this.resenasServicio.updateResena(id, resenaData).subscribe({
+          next: () => {
+            // Buscamos la reseña en nuestra lista local y la actualizamos
+            const index = this.resenasARevisar.findIndex(r => r.id === id);
+            if (index !== -1) {
+              this.resenasARevisar[index].tieneSpoiler = resenaData.tieneSpoiler;
             }
-          });
-        },
-        error: (err) => {
-          console.error('Error al obtener la reseña para actualizarla:', err);
-        }
-      });
-    }
+            this.cdr.detectChanges();
+          },
+          error: (err) => {
+            console.error('Error al actualizar spoiler en servidor:', err);
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Error al obtener la reseña para actualizarla:', err);
+      }
+    });
   }
+
 
   validarResena(id: number) {
     // Obtenemos los datos completos de la reseña

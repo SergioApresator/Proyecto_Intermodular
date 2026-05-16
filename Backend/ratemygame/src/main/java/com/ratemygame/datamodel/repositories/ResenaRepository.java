@@ -17,6 +17,7 @@ public interface ResenaRepository extends JpaRepository<Resena, Long> {
 
     List<Resena> findTop10ByOrderByFechaResenaDescIdDesc();
 
-    @Query("SELECT r FROM Resena r WHERE (r.tieneSpoiler = false OR r.tieneSpoiler IS NULL) AND (r.revisada = false OR r.revisada IS NULL) ORDER BY r.fechaResena DESC")
+    @Query("SELECT r FROM Resena r WHERE (r.revisada = false OR r.revisada IS NULL) ORDER BY r.fechaResena DESC")
     List<Resena> findResenasARevisar();
+
 }
