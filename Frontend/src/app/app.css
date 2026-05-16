@@ -368,6 +368,7 @@
 }
 
 /* ===== NAVBAR RESPONSIVE ===== */
+/* ===== NAVBAR RESPONSIVE ===== */
 
 @media (max-width: 1024px) {
   .navbar {
@@ -407,14 +408,12 @@
     min-height: 60px;
   }
 
-  /* Logo */
   .navbar-logo {
     height: 36px;
     margin-right: 0;
     order: 1;
   }
 
-  /* Nav links pasan a una segunda fila debajo */
   .nav-links {
     order: 3;
     width: 100%;
@@ -425,6 +424,8 @@
     overflow-x: auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
+    display: flex;
+    flex-wrap: nowrap;
   }
 
   .nav-links::-webkit-scrollbar {
@@ -433,17 +434,17 @@
 
   .nav-links a {
     height: 44px;
-    padding: 0 16px;
-    font-size: 1rem;
+    padding: 0 14px;
+    font-size: 0.9rem;
     flex-shrink: 0;
-    transform: skewX(0deg); /* Quita skew en móvil */
+    transform: skewX(0deg);
+    white-space: nowrap;
   }
 
   .nav-links a span {
     transform: skewX(0deg);
   }
 
-  /* Buscador al lado del logo */
   .buscador-global {
     order: 2;
     margin-right: 0;
@@ -456,16 +457,14 @@
   }
 
   .input-global {
-    width: 130px;
+    width: 120px;
     font-size: 0.9rem;
   }
 
-  /* Buscar usuarios */
   .btn-buscar-usuarios {
     order: 2;
   }
 
-  /* Avatar */
   .user-menu-ow {
     order: 2;
     height: 60px;
@@ -476,7 +475,6 @@
     height: 40px;
   }
 
-  /* Dropdown ancho completo */
   .player-card-ow {
     width: 100vw;
     right: -1rem;
@@ -485,12 +483,41 @@
 }
 
 @media (max-width: 480px) {
+  .navbar {
+    padding: 0 0.75rem;
+  }
+
   .input-global {
-    width: 100px;
+    width: 90px;
+    font-size: 0.85rem;
   }
 
   .nav-links a {
-    padding: 0 12px;
-    font-size: 0.9rem;
+    padding: 0 10px;
+    font-size: 0.8rem;
+    height: 40px;
+    letter-spacing: 0.8px;
+    white-space: nowrap;
+  }
+
+  .navbar-logo {
+    height: 32px;
+  }
+
+  .avatar-container-ow {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (max-width: 390px) {
+  .nav-links a {
+    padding: 0 8px;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+  }
+
+  .input-global {
+    width: 75px;
   }
 }
