@@ -308,8 +308,17 @@
 
 .filter-group.actions {
     display: flex;
-    align-items: flex-end;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: 0;
 }
+
+.filter-group.actions::before {
+    content: '';
+    height: 1.1rem; /* Aproximadamente el alto del label + gap */
+    display: block;
+}
+
 
 .btn-reset-ow {
     background: #f1f5f9;
@@ -340,6 +349,39 @@
 .btn-reset-ow:hover svg {
     transform: skewX(12deg) rotate(-45deg);
 }
+
+.order-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.btn-sort-direction {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #3b82f6;
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #3b82f6;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transform: skewX(-12deg);
+}
+
+.btn-sort-direction:hover {
+    border-color: #3b82f6;
+    background: #f8fafc;
+    transform: skewX(-12deg) translateY(-2px);
+    box-shadow: 0 5px 15px rgba(59, 130, 246, 0.1);
+}
+
+.btn-sort-direction svg {
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
 
 /* RESULTS AREA */
 .results-container {

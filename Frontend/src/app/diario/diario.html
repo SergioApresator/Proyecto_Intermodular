@@ -1,9 +1,45 @@
-<!-- Mientras cargan los datos -->
-<div *ngIf="cargando" class="contenedor-cargando">
-  <div class="loader-ow">
-    <div class="loader-circle"></div>
-    <p>ACCEDIENDO A LOS ARCHIVOS...</p>
+<div *ngIf="cargando" class="skeleton-diario">
+
+  <!-- Skeleton Header -->
+  <div class="skeleton-diario-header">
+    <div class="skeleton-titulo-bloque">
+      <div class="skeleton-subtitulo"></div>
+      <div class="skeleton-titulo-grande"></div>
+    </div>
+    <div class="skeleton-diario-stats">
+      <div class="skeleton-stat-box"></div>
+      <div class="skeleton-stat-box"></div>
+    </div>
   </div>
+
+  <!-- Skeleton Tabs -->
+  <div class="skeleton-diario-tabs">
+    <div class="skeleton-tab"></div>
+    <div class="skeleton-tab"></div>
+  </div>
+
+  <!-- Skeleton Entradas -->
+  <div class="skeleton-diario-feed">
+    <div class="skeleton-log-entry" *ngFor="let i of [1,2,3]">
+      <div class="skeleton-date-col">
+        <div class="skeleton-date-badge"></div>
+      </div>
+      <div class="skeleton-entry-content">
+        <div class="skeleton-entry-media"></div>
+        <div class="skeleton-entry-details">
+          <div class="skeleton-entry-titulo"></div>
+          <div class="skeleton-entry-linea"></div>
+          <div class="skeleton-entry-linea"></div>
+          <div class="skeleton-entry-linea corta"></div>
+          <div class="skeleton-entry-footer">
+            <div class="skeleton-footer-item"></div>
+            <div class="skeleton-footer-item"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- MODAL VER MÁS DETALLE -->
@@ -83,16 +119,19 @@
             <div class="date-badge" *ngIf="i === 0">{{ grupo.fecha | date:'dd MMM yyyy' }}</div>
           </div>
 
-          <article class="entry-content clickable-card" [routerLink]="['/juego', resena.id_videojuego]">
+          <article class="entry-content clickable-card" (click)="abrirModal(resena)">
 
-            <div class="entry-media">
+
+            <div class="entry-media" [routerLink]="['/juego', resena.id_videojuego]" (click)="$event.stopPropagation()" style="cursor: pointer;">
+
               <img *ngIf="resena.imagenJuego" [src]="resena.imagenJuego" [alt]="resena.nombreJuego">
               <div class="rating-overlay">★ {{ resena.puntuacion }}</div>
             </div>
 
             <div class="entry-details">
               <div class="scroll-area">
-                <h3 class="game-title">{{ resena.nombreJuego }}</h3>
+                <h3 class="game-title" [routerLink]="['/juego', resena.id_videojuego]" (click)="$event.stopPropagation()" style="cursor: pointer;">{{ resena.nombreJuego }}</h3>
+
                 
                 <p class="entry-text">
                   {{ resena.mensaje.length > 300 ? (resena.mensaje | slice:0:300) + '...' : resena.mensaje }}
@@ -152,14 +191,18 @@
             <div class="date-badge" *ngIf="i === 0">{{ grupo.fecha | date:'dd MMM yyyy' }}</div>
           </div>
 
-          <article class="entry-content no-media clickable-card" [routerLink]="['/juego', respuesta.id_videojuego]">
+          <article class="entry-content no-media clickable-card" (click)="abrirModal(respuesta)">
+
 
 
             <div class="entry-details">
               <div class="scroll-area">
-                <h3 class="game-title" style="font-size: 1.3rem;" *ngIf="respuesta.usuarioResena">
+                <h3 class="game-title" style="font-size: 1.3rem; cursor: pointer;" *ngIf="respuesta.usuarioResena" [routerLink]="['/juego', respuesta.id_videojuego]" (click)="$event.stopPropagation()">
                   RESPUESTA A {{ respuesta.usuarioResena | uppercase }}
                 </h3>
+
+
+
 
                 <!-- Mensaje Original Citado -->
                 <div class="quoted-message" *ngIf="respuesta.mensajeResena">

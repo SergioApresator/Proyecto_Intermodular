@@ -30,8 +30,9 @@
                     <div class="dropdown-icon-ow"></div>
                     <ul class="options-list-ow" *ngIf="dropdownsAbiertos.genero">
                         <li *ngFor="let opt of generosDisponibles" 
-                            [class.selected]="filtros.genero === opt.id"
-                            (click)="seleccionarFiltro('genero', opt.id)">
+                            [class.selected]="esSeleccionado('genero', opt.id)"
+                            (click)="seleccionarFiltro('genero', opt.id); $event.stopPropagation()">
+
                             {{ opt.nombre }}
                         </li>
                     </ul>
@@ -44,8 +45,9 @@
                     <div class="dropdown-icon-ow"></div>
                     <ul class="options-list-ow" *ngIf="dropdownsAbiertos.plataforma">
                         <li *ngFor="let opt of plataformasDisponibles" 
-                            [class.selected]="filtros.plataforma === opt.id"
-                            (click)="seleccionarFiltro('plataforma', opt.id)">
+                            [class.selected]="esSeleccionado('plataforma', opt.id)"
+                            (click)="seleccionarFiltro('plataforma', opt.id); $event.stopPropagation()">
+
                             {{ opt.nombre }}
                         </li>
                     </ul>
@@ -68,8 +70,9 @@
                     <div class="dropdown-icon-ow"></div>
                     <ul class="options-list-ow" *ngIf="dropdownsAbiertos.tags">
                         <li *ngFor="let opt of tagsDisponibles" 
-                            [class.selected]="filtros.tags === opt.id"
-                            (click)="seleccionarFiltro('tags', opt.id)">
+                            [class.selected]="esSeleccionado('tags', opt.id)"
+                            (click)="seleccionarFiltro('tags', opt.id); $event.stopPropagation()">
+
                             {{ opt.nombre }}
                         </li>
                     </ul>
@@ -82,8 +85,9 @@
                     <div class="dropdown-icon-ow"></div>
                     <ul class="options-list-ow" *ngIf="dropdownsAbiertos.metacritic">
                         <li *ngFor="let opt of metacriticDisponibles" 
-                            [class.selected]="filtros.metacritic === opt.id"
-                            (click)="seleccionarFiltro('metacritic', opt.id)">
+                            [class.selected]="esSeleccionado('metacritic', opt.id)"
+                            (click)="seleccionarFiltro('metacritic', opt.id); $event.stopPropagation()">
+
                             {{ opt.nombre }}
                         </li>
                     </ul>
@@ -96,13 +100,15 @@
                     <div class="dropdown-icon-ow"></div>
                     <ul class="options-list-ow" *ngIf="dropdownsAbiertos.orden">
                         <li *ngFor="let opt of ordenDisponibles" 
-                            [class.selected]="filtros.orden === opt.id"
+                            [class.selected]="esSeleccionado('orden', opt.id)"
                             (click)="seleccionarFiltro('orden', opt.id)">
+
                             {{ opt.nombre }}
                         </li>
                     </ul>
                 </div>
             </div>
+
             <div class="filter-group actions">
                 <button class="btn-reset-ow" (click)="limpiarFiltros()" title="Limpiar filtros">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
