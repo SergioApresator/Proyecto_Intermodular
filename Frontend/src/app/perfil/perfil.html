@@ -48,8 +48,12 @@
           </div>
         </div>
         <button class="btn-overlay-banner" (click)="abrirSelectorBanner()">CAMBIAR BANNER</button>
+        <div *ngIf="errorBanner" style="position: absolute; bottom: 10px; right: 10px; background: rgba(239, 68, 68, 0.9); color: white; padding: 5px 15px; font-weight: bold; font-size: 0.9rem; clip-path: polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%);">
+          {{ errorBanner }}
+        </div>
       </div>
     </div>
+
 
     <!-- CONTENIDO DE LA PESTAÑA -->
     <main class="tab-content-area">
@@ -180,7 +184,9 @@
           <!-- SECCION FOTO EN AJUSTES -->
           <div class="seccion-ajustes-foto">
             <h3 class="sub-title">FOTO DE PERFIL</h3>
+            <p class="error-msg-mini" *ngIf="errorFoto" style="color: #ef4444; margin-bottom: 10px; font-weight: bold;">{{ errorFoto }}</p>
             <div class="avatar-preview-box">
+
               <div class="preview-circle" [class.no-photo]="!previewFoto && !usuario.foto_url">
                 <img *ngIf="previewFoto || usuario.foto_url" [src]="previewFoto || usuario.foto_url" alt="Preview">
                 <span *ngIf="!previewFoto && !usuario.foto_url">{{ getInitials() }}</span>
