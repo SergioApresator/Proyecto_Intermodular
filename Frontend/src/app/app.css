@@ -354,3 +354,15 @@
     background: #fff1f2;
     color: #f99e1a;
 }
+
+.btn-buscar-usuarios {
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s ease;
+    text-decoration: none;
+}
+
+.btn-buscar-usuarios:hover {
+    color: #3b82f6;
+}

@@ -121,4 +121,18 @@ public class UsuarioService {
         dto.setEsAdmin(usuario.getEsAdmin() != null ? usuario.getEsAdmin() : false);
         return dto;
     }
+
+    public List<UsuarioDTO> buscarPorUsername(String username) {
+        return usuarioRepository.findByUsernameContainingIgnoreCase(username).stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+    }
+
+    public List<UsuarioDTO> buscarUsuariosGeneral(String query) {
+        return usuarioRepository.buscarUsuariosGeneral(query).stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+    }
 }
+
+

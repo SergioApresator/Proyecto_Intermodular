@@ -8,6 +8,9 @@ import com.ratemygame.datamodel.entities.ResenaVoto;
 import com.ratemygame.datamodel.entities.Usuario;
 import com.ratemygame.datamodel.repositories.ResenaRepository;
 import com.ratemygame.datamodel.repositories.ResenaVotoRepository;
+import com.ratemygame.datamodel.repositories.RespuestaRepository;
+import com.ratemygame.datamodel.repositories.RespuestaVotoRepository;
+
 import com.ratemygame.datamodel.repositories.UsuarioRepository;
 import com.ratemygame.dtos.ResenaDTO;
 
@@ -30,6 +33,13 @@ public class ResenaService {
 
     @Autowired
     private ResenaVotoRepository resenaVotoRepository;
+
+    @Autowired
+    private RespuestaRepository respuestaRepository;
+
+    @Autowired
+    private RespuestaVotoRepository respuestaVotoRepository;
+
 
     public List<ResenaDTO> getResenasByVideojuego(Long idVideojuego) {
         return resenaRepository.findByIdVideojuego(idVideojuego).stream()
@@ -156,13 +166,28 @@ public class ResenaService {
         });
     }
 
+    @Transactional
     public boolean deleteResena(Long id) {
         if (resenaRepository.existsById(id)) {
+            // 1. Eliminar votos de la reseña
+            resenaVotoRepository.deleteByResena_Id(id);
+            
+            // 2. Eliminar votos de todas las respuestas de esta reseña
+            List<com.ratemygame.datamodel.entities.Respuesta> respuestas = respuestaRepository.findByResena_Id(id);
+            for (com.ratemygame.datamodel.entities.Respuesta resp : respuestas) {
+                respuestaVotoRepository.deleteByRespuesta_Id(resp.getId());
+            }
+            
+            // 3. Eliminar las respuestas de la reseña
+            respuestaRepository.deleteByResena_Id(id);
+
+            // 4. Eliminar la reseña
             resenaRepository.deleteById(id);
             return true;
         }
         return false;
     }
+
 
     private ResenaDTO convertToDTO(Resena resena) {
         ResenaDTO dto = new ResenaDTO();

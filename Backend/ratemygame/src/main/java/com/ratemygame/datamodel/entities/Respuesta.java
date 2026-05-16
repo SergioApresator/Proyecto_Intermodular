@@ -32,8 +32,9 @@ public class Respuesta {
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "MENSAJE")
+    @Column(name = "MENSAJE", length = 1000)
     private String mensaje;
+
 
     @Column(name = "ME_GUSTAS")
     private Integer meGustas;
@@ -56,7 +57,8 @@ public class Respuesta {
     private Usuario usuario;
 
     @Column(name = "ID_RESPUESTA_PADRE")
-    private Long id_respuesta_padre;
+    private Long idRespuestaPadre;
+
 
     @Column(name = "FECHA_RESPUESTA")
     private LocalDateTime fechaRespuesta;

@@ -6,4 +6,6 @@ import com.ratemygame.datamodel.entities.RespuestaVoto;
 
 public interface RespuestaVotoRepository extends JpaRepository<RespuestaVoto, Long> {
     Optional<RespuestaVoto> findByRespuesta_IdAndUsuario_Id(Long idRespuesta, Long idUsuario);
+    void deleteByRespuesta_Id(Long idRespuesta);
+
 }

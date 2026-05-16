@@ -7,7 +7,8 @@
   <!-- HERO BANNER -->
   <div class="juego-hero">
     <div class="hero-bg-wrapper">
-      <img [src]="juego.background_image" class="hero-bg-img" alt="Background">
+      <img *ngIf="juego.background_image && !juego['imgError']" [src]="juego.background_image" class="hero-bg-img" alt="Background" (error)="juego['imgError'] = true">
+      <div *ngIf="!juego.background_image || juego['imgError']" class="game-image-placeholder dark-vignette"></div>
       <div class="hero-vignette"></div>
     </div>
     
@@ -111,7 +112,12 @@
         <div class="media-viewer-ow" *ngIf="mediaItems.length > 0">
           <div class="main-stage">
             <ng-container *ngIf="mediaItems[indiceMediaActual].tipo === 'imagen'">
-              <img [src]="mediaItems[indiceMediaActual].url" class="stage-img" alt="Gallery Image">
+              <img *ngIf="mediaItems[indiceMediaActual].url && !mediaItems[indiceMediaActual]['imgError']" 
+                   [src]="mediaItems[indiceMediaActual].url" 
+                   class="stage-img" 
+                   alt="Gallery Image"
+                   (error)="mediaItems[indiceMediaActual]['imgError'] = true">
+              <div *ngIf="!mediaItems[indiceMediaActual].url || mediaItems[indiceMediaActual]['imgError']" class="game-image-placeholder"></div>
             </ng-container>
             <ng-container *ngIf="mediaItems[indiceMediaActual].tipo === 'video'">
               <video [src]="mediaItems[indiceMediaActual].url" [poster]="mediaItems[indiceMediaActual].preview" class="stage-video" controls autoplay muted loop></video>
@@ -219,15 +225,32 @@
               </button>
               <div class="review-date">{{ resena.fechaResena | date:'dd.MM.yyyy HH:mm' }}</div>
               <div class="review-body">
-                <div *ngIf="resena.tieneSpoiler" class="spoiler-container-ow simplified" [class.revealed]="resena.mostrarSpoiler">
-                  <button class="spoiler-eye-btn-centered" *ngIf="!resena.mostrarSpoiler" (click)="resena.mostrarSpoiler = true" title="Revelar spoiler">
-                    <svg viewBox="0 0 24 24" class="eye-icon"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-                  </button>
-                  <div class="spoiler-content-ow" [class.blurred]="!resena.mostrarSpoiler">
-                    {{ resena.mensaje }}
-                  </div>
+                <!-- Diseño de Spoiler mas Simple y Neutro -->
+                <div *ngIf="resena.tieneSpoiler && !resena.mostrarSpoiler" class="spoiler-advice-bar">
+                  <svg viewBox="0 0 24 24" class="advice-icon"><path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+                  <span>Esta reseña contiene spoilers.</span>
+                  <button class="btn-show-spoiler" (click)="resena.mostrarSpoiler = true">MOSTRAR</button>
                 </div>
-                <p *ngIf="!resena.tieneSpoiler">{{ resena.mensaje }}</p>
+
+                <div class="review-text-content" *ngIf="!resena.tieneSpoiler || resena.mostrarSpoiler">
+                  <p [class.expanded]="resena.expandido">
+                    {{ (resena.mensaje.length > 400 && !resena.expandido) ? (resena.mensaje | slice:0:400) + '...' : resena.mensaje }}
+                    <span *ngIf="resena.mensaje.length > 400" (click)="resena.expandido = !resena.expandido" class="ver-mas-inline">
+                      {{ resena.expandido ? 'Ver menos' : 'Ver más' }}
+                    </span>
+                  </p>
+                  
+                  <!-- Botón para volver a ocultar -->
+                  <button *ngIf="resena.tieneSpoiler && resena.mostrarSpoiler" 
+                          (click)="resena.mostrarSpoiler = false" 
+                          class="btn-hide-spoiler">
+                    OCULTAR SPOILER
+                  </button>
+                </div>
+
+
+
+
               </div>
               
               <div class="review-footer">
@@ -261,7 +284,9 @@
                       </span>
                     </div>
                     <span class="reply-date">{{ (resp.fecha_respuesta || resp.fechaRespuesta) | date:'dd.MM.yyyy HH:mm' }}</span>
+                    <button class="delete-reply-x" *ngIf="(resp.id_usuario || resp.idUsuario) === usuarioId" (click)="eliminarRespuesta(resena, resp.id); $event.stopPropagation()" title="Eliminar mi respuesta">✕</button>
                   </div>
+
                   <div class="reply-body">{{ resp.mensaje || resp.comentario }}</div>
                   <div class="reply-footer">
                     <div class="vote-group sm">
@@ -313,7 +338,7 @@
   <div class="ow-modal-premium" (click)="$event.stopPropagation()">
     
     <!-- LEFT SIDE: VISUAL -->
-    <div class="modal-visual" [style.backgroundImage]="'url(' + juego?.background_image + ')'">
+    <div class="modal-visual" [style.backgroundImage]="juego.background_image ? 'url(' + juego.background_image + ')' : 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'">
       <div class="visual-overlay"></div>
       <div class="visual-content">
         <span class="visual-tag">NUEVA RESEÑA</span>
@@ -342,9 +367,14 @@
       <div class="ow-form-row-modern">
         <label>TU MENSAJE</label>
         <div class="textarea-wrapper">
-          <textarea [(ngModel)]="nuevaResena.mensaje" placeholder="Escribe tu reseña aquí..."></textarea>
+          <textarea [(ngModel)]="nuevaResena.mensaje" placeholder="Escribe tu reseña aquí..." maxlength="1000"></textarea>
           <div class="textarea-border"></div>
+          <div class="char-counter" *ngIf="nuevaResena.mensaje">
+            {{ nuevaResena.mensaje.length }}/1000
+          </div>
         </div>
+
+
       </div>
 
       <div class="ow-form-row-modern checkbox-tactical">
@@ -370,7 +400,7 @@
   <div class="ow-modal-lists-ultra" (click)="$event.stopPropagation()">
     
     <!-- LEFT: THEMATIC VISUAL -->
-    <div class="lists-visual" [style.backgroundImage]="'url(' + juego?.background_image + ')'">
+    <div class="lists-visual" [style.backgroundImage]="juego.background_image ? 'url(' + juego.background_image + ')' : 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'">
       <div class="lists-visual-overlay"></div>
       <div class="lists-visual-content">
         <span class="ultra-tag">GESTOR DE COLECCIONES</span>
@@ -438,3 +468,16 @@
 
   </div>
 </div>
+
+<app-footer></app-footer>
+
+<!-- Modal de Confirmación Genérico -->
+<app-confirm-modal 
+  [visible]="modalConfirmacionVisible"
+  [title]="modalConfirmacionConfig.titulo"
+  [message]="modalConfirmacionConfig.mensaje"
+  [type]="modalConfirmacionConfig.tipo"
+  (onConfirm)="ejecutarConfirmacion()"
+  (onCancel)="cancelarConfirmacion()">
+</app-confirm-modal>
+

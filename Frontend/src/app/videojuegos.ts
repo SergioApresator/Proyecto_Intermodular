@@ -15,6 +15,22 @@ export class Videojuegos {
   // Cache para evitar peticiones redundantes
   private cache = new Map<string, any>();
 
+  // Almacenar el último estado para persistencia entre navegaciones
+  public ultimoEstadoBusqueda: any = {
+    termino: '',
+    filtros: {
+      genero: '',
+      plataforma: '',
+      orden: 'relevance',
+      tags: '',
+      metacritic: '',
+      anio: ''
+    },
+    juegos: [],
+    paginaActual: 1,
+    hayMas: true
+  };
+
   ///// PAGINA INICIAL - LISTAS HORIZONTALES /////
 
   //Obtiene juegos destacados para el carrusel (Top Rated All Time)
@@ -96,19 +112,82 @@ export class Videojuegos {
     }
 
     // search_precise=true desactiva el fuzzy matching, haciendo la búsqueda más rápida en el servidor de RAWG
-    let urlBusqueda = `${this.url}/games?key=${this.apiKey}&search=${termino}&page_size=20&page=${pagina}&search_precise=true`;
+    let urlBusqueda = `${this.url}/games?key=${this.apiKey}&page_size=40&page=${pagina}`;
+
+
+    if (termino && termino.trim()) {
+      urlBusqueda += `&search=${termino}&search_precise=true`;
+    }
 
     if (filtros.orden && filtros.orden !== 'relevance') {
       urlBusqueda += `&ordering=${filtros.orden}`;
-    } else if (!filtros.orden) {
+    } else if (!filtros.orden || (filtros.orden === 'relevance' && !termino)) {
+      // Si no hay término, la relevancia no existe, usamos -added por defecto
       urlBusqueda += `&ordering=-added`;
     }
 
-    if (filtros.genero) {
-      urlBusqueda += `&genres=${filtros.genero}`;
+
+
+    let genresToPass = [];
+    let tagsToPass = [];
+
+    if (Array.isArray(filtros.genero)) {
+      filtros.genero.forEach((g: string) => {
+        if (g === 'horror') tagsToPass.push('horror');
+        else genresToPass.push(g);
+      });
+    } else if (filtros.genero) {
+      if (filtros.genero === 'horror') tagsToPass.push('horror');
+      else genresToPass.push(filtros.genero);
     }
-    if (filtros.plataforma) {
+
+    if (Array.isArray(filtros.tags)) {
+      tagsToPass.push(...filtros.tags);
+    } else if (filtros.tags) {
+      tagsToPass.push(filtros.tags);
+    }
+
+    if (genresToPass.length > 0) {
+      urlBusqueda += `&genres=${genresToPass.join(',')}`;
+    }
+    if (tagsToPass.length > 0) {
+      urlBusqueda += `&tags=${tagsToPass.join(',')}`;
+    }
+
+    if (Array.isArray(filtros.plataforma) && filtros.plataforma.length > 0) {
+      urlBusqueda += `&parent_platforms=${filtros.plataforma.join(',')}`;
+    } else if (typeof filtros.plataforma === 'string' && filtros.plataforma) {
       urlBusqueda += `&parent_platforms=${filtros.plataforma}`;
+    }
+
+    if (Array.isArray(filtros.metacritic) && filtros.metacritic.length > 0) {
+      // Calculamos el rango min y max global para pedir a la API
+      let minGlobal = 100;
+      let maxGlobal = 0;
+      filtros.metacritic.forEach((range: string) => {
+        const [min, max] = range.split(',').map(Number);
+        if (min < minGlobal) minGlobal = min;
+        if (max > maxGlobal) maxGlobal = max;
+      });
+      urlBusqueda += `&metacritic=${minGlobal},${maxGlobal}`;
+    } else if (typeof filtros.metacritic === 'string' && filtros.metacritic) {
+      urlBusqueda += `&metacritic=${filtros.metacritic}`;
+    }
+
+
+
+    if (filtros.anio) {
+      let dates = filtros.anio.trim();
+      // Si el usuario pone solo un año (ej: 2024)
+      if (/^\d{4}$/.test(dates)) {
+        dates = `${dates}-01-01,${dates}-12-31`;
+      } 
+      // Si el usuario pone un rango (ej: 2010-2020)
+      else if (/^\d{4}-\d{4}$/.test(dates)) {
+        const parts = dates.split('-');
+        dates = `${parts[0]}-01-01,${parts[1]}-12-31`;
+      }
+      urlBusqueda += `&dates=${dates}`;
     }
 
     return this.http.get(urlBusqueda).pipe(

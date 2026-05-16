@@ -35,3 +35,38 @@ body {
   font-family: 'Rajdhani', sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* Global Game Image Placeholder */
+.game-image-placeholder {
+  width: 100%;
+  height: 100%;
+  background: #f1f5f9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed #cbd5e1;
+  position: relative;
+  overflow: hidden;
+}
+
+.game-image-placeholder::before {
+  content: "SIN IMAGEN";
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.5rem;
+  color: #94a3b8;
+  letter-spacing: 2px;
+  z-index: 1;
+}
+
+.game-image-placeholder::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent 45%, #e2e8f0 45%, #e2e8f0 55%, transparent 55%);
+  background-size: 20px 20px;
+  opacity: 0.3;
+}

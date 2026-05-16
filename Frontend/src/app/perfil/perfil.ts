@@ -5,13 +5,19 @@ import { Router, RouterLink } from '@angular/router';
 import { Usuarios } from '../usuarios';
 import { ResenasService } from '../resenas';
 import { Videojuegos } from '../videojuegos';
+import { Footer } from '../footer/footer';
+import { ConfirmModal } from '../confirm-modal/confirm-modal.component';
+
 import { forkJoin, of, Subject } from 'rxjs';
+
 import { catchError, map, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, ConfirmModal],
+
+
   templateUrl: './perfil.html',
   styleUrl: './perfil.css',
 })
@@ -26,7 +32,7 @@ export class Perfil implements OnInit {
     private resenasServicio: ResenasService,
     private videojuegosServicio: Videojuegos,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   usuario: any = null;
   cargando: boolean = true;
@@ -37,7 +43,7 @@ export class Perfil implements OnInit {
   resenas: any[] = [];
   cargandoResenas: boolean = true;
 
-  listas: any[] = []; 
+  listas: any[] = [];
   cargandoListas: boolean = true;
   listaEnEdicion: string | null = null;
 
@@ -49,6 +55,16 @@ export class Perfil implements OnInit {
   buscando: boolean = false;
   private searchSubject = new Subject<string>();
 
+  // Modal de confirmación genérico
+  modalConfirmacionVisible: boolean = false;
+  modalConfirmacionConfig = {
+    titulo: 'CONFIRMAR',
+    mensaje: '¿Estás seguro?',
+    tipo: 'warning' as 'danger' | 'warning' | 'info',
+    accion: () => { }
+  };
+
+
   get favoritosCount(): number {
     const favList = this.listas.find(l => l.nombre === 'Favoritos');
     return favList ? favList.juegos.length : 0;
@@ -58,7 +74,7 @@ export class Perfil implements OnInit {
 
   cambiarPestana(id: string) {
     this.pestanaActual = id;
-    this.listaEnEdicion = null; 
+    this.listaEnEdicion = null;
     if (id === 'ajustes') {
       this.iniciarEdicion();
     }
@@ -198,20 +214,27 @@ export class Perfil implements OnInit {
   }
 
   eliminarResena(idResena: number) {
-    if (!confirm('¿Estás seguro de que deseas eliminar esta reseña?')) return;
-    this.resenasServicio.eliminarResena(idResena).subscribe({
-      next: () => {
-        this.resenas = this.resenas.filter(r => r.id !== idResena);
-        this.mensajeExito = 'Reseña eliminada correctamente.';
-        this.cdr.detectChanges();
-        setTimeout(() => (this.mensajeExito = ''), 3000);
-      },
-      error: () => {
-        this.error = 'No se pudo eliminar la reseña.';
-        this.cdr.detectChanges();
+    this.mostrarConfirmacion(
+      'ELIMINAR RESEÑA',
+      '¿Estás seguro de que deseas eliminar esta reseña? Esta acción no se puede deshacer.',
+      'danger',
+      () => {
+        this.resenasServicio.eliminarResena(idResena).subscribe({
+          next: () => {
+            this.resenas = this.resenas.filter(r => r.id !== idResena);
+            this.mensajeExito = 'Reseña eliminada correctamente.';
+            this.cdr.detectChanges();
+            setTimeout(() => (this.mensajeExito = ''), 3000);
+          },
+          error: () => {
+            this.error = 'No se pudo eliminar la reseña.';
+            this.cdr.detectChanges();
+          }
+        });
       }
-    });
+    );
   }
+
 
   cargarTodasLasListas(id: number) {
     this.cargandoListas = true;
@@ -233,13 +256,13 @@ export class Perfil implements OnInit {
         const nombresListas = Object.keys(grupos);
         const peticionesListas = nombresListas.map(nombre => {
           const items = grupos[nombre];
-          const peticionesJuegos = items.map(it => 
+          const peticionesJuegos = items.map(it =>
             this.videojuegosServicio.getJuegoDetalles(it.gameId.toString()).pipe(
               map(j => (j ? { ...j, entryId: it.entryId } : null)),
               catchError(() => of(null))
             )
           );
-          
+
           return forkJoin(peticionesJuegos).pipe(
             map(juegos => ({
               nombre,
@@ -323,7 +346,7 @@ export class Perfil implements OnInit {
     const id = typeof window !== 'undefined' ? localStorage.getItem('usuarioId') : null;
     if (!this.listaDestino || !id) return;
     const uid = Number(id);
-    
+
     const lista = this.listas.find(l => l.nombre === this.listaDestino);
     if (lista && lista.juegos.some((j: any) => j.id === juego.id)) {
       alert('Este juego ya está en la lista.');
@@ -388,7 +411,7 @@ export class Perfil implements OnInit {
         if (foto) localStorage.setItem('foto_url', foto);
         // Sincronizar con el formulario de edición
         if (this.formEdicion) this.formEdicion.foto_url = foto;
-        
+
         this.previewFoto = null;
         this.archivoSeleccionado = null;
         this.subiendoFoto = false;
@@ -407,28 +430,33 @@ export class Perfil implements OnInit {
 
   resetearFoto() {
     if (!this.usuario?.id) return;
-    if (!confirm('¿Estás seguro de que deseas eliminar tu foto de perfil?')) return;
-    
-    this.usuariosServicio.resetearFotoPerfil(this.usuario.id).subscribe({
-      next: (data: any) => {
-        this.usuario = data;
-        localStorage.removeItem('foto_url');
-        // Sincronizar con el formulario de edición
-        if (this.formEdicion) this.formEdicion.foto_url = '';
-        
-        this.previewFoto = null;
-        this.archivoSeleccionado = null;
-        this.mensajeExito = 'Foto de perfil eliminada.';
-        this.usuariosServicio.notificarCambioPerfil();
-        this.cdr.detectChanges();
-        setTimeout(() => { this.mensajeExito = ''; this.cdr.detectChanges(); }, 3000);
-      },
-      error: () => {
-        this.errorFoto = 'Error al eliminar la foto.';
-        this.cdr.detectChanges();
+
+    this.mostrarConfirmacion(
+      'ELIMINAR FOTO',
+      '¿Estás seguro de que deseas eliminar tu foto de perfil?',
+      'danger',
+      () => {
+        this.usuariosServicio.resetearFotoPerfil(this.usuario.id).subscribe({
+          next: (data: any) => {
+            this.usuario = data;
+            localStorage.removeItem('foto_url');
+            if (this.formEdicion) this.formEdicion.foto_url = '';
+            this.previewFoto = null;
+            this.archivoSeleccionado = null;
+            this.mensajeExito = 'Foto de perfil eliminada.';
+            this.usuariosServicio.notificarCambioPerfil();
+            this.cdr.detectChanges();
+            setTimeout(() => { this.mensajeExito = ''; this.cdr.detectChanges(); }, 3000);
+          },
+          error: () => {
+            this.errorFoto = 'Error al eliminar la foto.';
+            this.cdr.detectChanges();
+          }
+        });
       }
-    });
+    );
   }
+
 
   cancelarFoto() {
     this.archivoSeleccionado = null;
@@ -446,14 +474,14 @@ export class Perfil implements OnInit {
     const file = input.files[0];
     this.errorBanner = '';
     if (!file.type.startsWith('image/')) {
-        this.errorBanner = 'Solo se permiten imágenes (JPG, PNG, GIF, WebP…)';
-        this.cdr.detectChanges();
-        return;
+      this.errorBanner = 'Solo se permiten imágenes (JPG, PNG, GIF, WebP…)';
+      this.cdr.detectChanges();
+      return;
     }
     if (file.size > 5 * 1024 * 1024) {
-        this.errorBanner = 'La imagen no puede superar los 5 MB.';
-        this.cdr.detectChanges();
-        return;
+      this.errorBanner = 'La imagen no puede superar los 5 MB.';
+      this.cdr.detectChanges();
+      return;
     }
     this.archivoBannerSeleccionado = file;
     this.subirBanner();
@@ -463,23 +491,23 @@ export class Perfil implements OnInit {
     if (!this.archivoBannerSeleccionado || !this.usuario?.id) return;
     this.subiendoBanner = true;
     this.usuariosServicio.subirBanner(this.usuario.id, this.archivoBannerSeleccionado).subscribe({
-        next: (data: any) => {
-            this.usuario = data;
-            const banner = data.banner_url || data.bannerUrl;
-            if (banner) {
-                this.usuario.banner_url = banner;
-                localStorage.setItem('banner_url', banner);
-            }
-            this.previewBanner = null;
-            this.archivoBannerSeleccionado = null;
-            this.subiendoBanner = false;
-            this.cdr.detectChanges();
-        },
-        error: () => {
-            this.errorBanner = 'Error al subir el banner.';
-            this.subiendoBanner = false;
-            this.cdr.detectChanges();
+      next: (data: any) => {
+        this.usuario = data;
+        const banner = data.banner_url || data.bannerUrl;
+        if (banner) {
+          this.usuario.banner_url = banner;
+          localStorage.setItem('banner_url', banner);
         }
+        this.previewBanner = null;
+        this.archivoBannerSeleccionado = null;
+        this.subiendoBanner = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.errorBanner = 'Error al subir el banner.';
+        this.subiendoBanner = false;
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -567,14 +595,33 @@ export class Perfil implements OnInit {
         this.cdr.detectChanges();
         setTimeout(() => { this.mensajeExito = ''; this.cdr.detectChanges(); }, 3000);
       },
-      error: (err: any) => { 
-        this.guardando = false; 
-        this.error = 'Error al guardar los cambios. Es posible que el nombre de usuario o email ya estén en uso.'; 
-        this.cdr.detectChanges(); 
+      error: (err: any) => {
+        this.guardando = false;
+        this.error = 'Error al guardar los cambios. Es posible que el nombre de usuario o email ya estén en uso.';
+        this.cdr.detectChanges();
       }
     });
   }
 
   getStars(puntuacion: number): number[] { return Array(puntuacion).fill(0); }
   getInitials(): string { return this.usuario?.username ? this.usuario.username.charAt(0).toUpperCase() : '?'; }
+
+  // Helpers para el modal de confirmación
+  mostrarConfirmacion(titulo: string, mensaje: string, tipo: 'danger' | 'warning', accion: () => void) {
+    this.modalConfirmacionConfig = { titulo, mensaje, tipo, accion };
+    this.modalConfirmacionVisible = true;
+    this.cdr.detectChanges();
+  }
+
+  ejecutarConfirmacion() {
+    this.modalConfirmacionConfig.accion();
+    this.modalConfirmacionVisible = false;
+    this.cdr.detectChanges();
+  }
+
+  cancelarConfirmacion() {
+    this.modalConfirmacionVisible = false;
+    this.cdr.detectChanges();
+  }
 }
+

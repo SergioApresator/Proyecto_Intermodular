@@ -49,6 +49,11 @@ export class Usuarios {
     return this.http.get(`${this.url}/${id}`, this.getHeaders());
   }
 
+  // Buscar usuarios por username, nombre o apellidos
+  buscarUsuarios(query: string): Observable<any> {
+    return this.http.get(`${this.url}/buscar?query=${query}`);
+  }
+
   // Actualizar usuario
   actualizarUsuario(id: number, datos: any): Observable<any> {
     return this.http.put(`${this.url}/${id}`, datos, this.getHeaders());
