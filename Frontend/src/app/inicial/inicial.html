@@ -204,7 +204,7 @@
             <img [src]="resena.fotoUsuario || 'assets/default-avatar.png'" class="user-avatar" alt="">
             <div class="user-info">
               <span class="user-name">{{ resena.nombreUsuario }}</span>
-              <span class="activity-time">{{ resena.fechaResena | date:'shortTime' }}</span>
+              <span class="activity-time">{{ resena.fechaResena | date:'dd MMM yyyy' }}</span>
             </div>
           </div>
           <div class="activity-content">
