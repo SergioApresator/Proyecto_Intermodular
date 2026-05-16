@@ -1518,9 +1518,13 @@
     /* MODAL RESEÑA */
     .ow-modal-premium {
         grid-template-columns: 1fr;
-        height: 90vh;
-        max-width: 100%;
+        height: auto;
+        max-height: 85vh;
+        max-width: calc(100% - 20px);
         margin: 0 10px;
+        overflow-y: auto;
+        align-self: flex-end;
+        border-radius: 16px 16px 0 0;
     }
 
     .modal-visual {
@@ -1528,11 +1532,20 @@
     }
 
     .modal-form {
-        padding: 30px 20px;
+        padding: 25px 20px;
         overflow-y: auto;
+        height: auto;
     }
 
-    .form-header h3 { font-size: 1.8rem; }
+    .form-header {
+        margin-bottom: 20px;
+    }
+
+    .form-header h3 { font-size: 1.6rem; }
+
+    .ow-form-row-modern {
+        margin-bottom: 20px;
+    }
 
     .star-rating-tactical { gap: 8px; }
     .star-rating-tactical button {
@@ -1540,7 +1553,20 @@
         height: 42px;
     }
 
-    .form-actions-ow { gap: 10px; }
+    .form-actions-ow {
+        margin-top: 20px;
+        flex-direction: row;
+        justify-content: stretch;
+        gap: 10px;
+    }
+
+    .form-actions-ow .ow-btn-modern {
+        flex: 1;
+        text-align: center;
+        font-size: 1.1rem;
+        padding: 12px 10px;
+    }
+
     .ow-btn-modern {
         padding: 12px 20px;
         font-size: 1.2rem;
@@ -1696,7 +1722,7 @@
     .header-main h3 { font-size: 1.3rem; }
 }
 
-/* ===== RESTAURAR MODAL LISTAS EN DESKTOP/TABLET ===== */
+/* ===== RESTAURAR MODALES EN DESKTOP/TABLET ===== */
 @media (min-width: 769px) {
 
     .modal-overlay {
@@ -1729,5 +1755,47 @@
     .grid-scroll-area {
         max-height: none;
         flex: 1;
+    }
+
+    .ow-modal-premium {
+        grid-template-columns: 400px 1fr;
+        height: 600px;
+        max-width: 1000px;
+        margin: 0 auto;
+        border-radius: 0;
+        align-self: auto;
+        overflow-y: visible;
+    }
+
+    .modal-visual {
+        display: flex;
+    }
+
+    .modal-form {
+        padding: 50px;
+        height: auto;
+        overflow-y: auto;
+    }
+
+    .form-header {
+        margin-bottom: 35px;
+    }
+
+    .form-header h3 { font-size: 2.2rem; }
+
+    .ow-form-row-modern {
+        margin-bottom: 30px;
+    }
+
+    .form-actions-ow {
+        margin-top: auto;
+        flex-direction: row;
+        justify-content: flex-end;
+    }
+
+    .form-actions-ow .ow-btn-modern {
+        flex: none;
+        font-size: 1.4rem;
+        padding: 14px 35px;
     }
 }
