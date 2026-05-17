@@ -79,6 +79,10 @@ export class Login implements OnInit {
       if (foto) {
         localStorage.setItem('foto_url', foto);
       }
+      const banner = usuarioEncontrado.banner_url || usuarioEncontrado.bannerUrl;
+      if (banner) {
+        localStorage.setItem('banner_url', banner);
+      }
       if (usuarioEncontrado.esAdmin) {
         localStorage.setItem('esAdmin', 'true');
       } else {
