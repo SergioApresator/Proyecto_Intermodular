@@ -103,25 +103,32 @@ export class Admin implements OnInit {
   }
 
   validarResena(id: number) {
-    this.resenasServicio.getResenaPorId(id).subscribe({
-      next: (resenaData) => {
-        resenaData.revisada = true;
-        this.resenasServicio.updateResena(id, resenaData).subscribe({
-          next: () => {
-            this.resenasARevisar = this.resenasARevisar.filter(r => r.id !== id);
-            this.cdr.detectChanges();
+    this.mostrarConfirmacion(
+      'VALIDAR RESEÑA',
+      '¿Estás seguro de que deseas VALIDAR esta reseña? Se marcará como aprobada y será visible para todos los usuarios de la plataforma.',
+      'info',
+      () => {
+        this.resenasServicio.getResenaPorId(id).subscribe({
+          next: (resenaData) => {
+            resenaData.revisada = true;
+            this.resenasServicio.updateResena(id, resenaData).subscribe({
+              next: () => {
+                this.resenasARevisar = this.resenasARevisar.filter(r => r.id !== id);
+                this.cdr.detectChanges();
+              },
+              error: (err) => {
+                console.error('Error al actualizar revisión en servidor:', err);
+                this.resenasARevisar = this.resenasARevisar.filter(r => r.id !== id);
+                this.cdr.detectChanges();
+              }
+            });
           },
           error: (err) => {
-            console.error('Error al actualizar revisión en servidor:', err);
-            this.resenasARevisar = this.resenasARevisar.filter(r => r.id !== id);
-            this.cdr.detectChanges();
+            console.error('Error al obtener la reseña para validarla:', err);
           }
         });
-      },
-      error: (err) => {
-        console.error('Error al obtener la reseña para validarla:', err);
       }
-    });
+    );
   }
 
   eliminarResena(id: number) {
