@@ -1,12 +1,14 @@
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ResenasService } from '../resenas';
+import { Usuarios } from '../usuarios';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './admin.html',
   styleUrl: './admin.css',
 })
@@ -14,10 +16,18 @@ export class Admin implements OnInit {
 
   resenasARevisar: any[] = [];
 
+  // ===== USUARIOS =====
+  pestanaActiva: 'moderacion' | 'usuarios' = 'moderacion';
+  terminoBusqueda: string = '';
+  resultadosUsuarios: any[] = [];
+  buscando: boolean = false;
+  busquedaRealizada: boolean = false;
+
   private router = inject(Router);
 
   constructor(
     private resenasServicio: ResenasService,
+    private usuariosServicio: Usuarios,
     private cdr: ChangeDetectorRef
   ) { }
 
@@ -31,11 +41,17 @@ export class Admin implements OnInit {
     this.cargarResenas();
   }
 
+  cambiarPestana(pestana: 'moderacion' | 'usuarios') {
+    this.pestanaActiva = pestana;
+  }
+
+  // ===== MODERACIÓN =====
+
   cargarResenas() {
     this.resenasServicio.getResenasARevisar().subscribe({
       next: (resenas: any[]) => {
         this.resenasARevisar = resenas;
-        this.cdr.detectChanges(); // Forzar actualización de vista
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error al cargar reseñas:', err);
@@ -46,12 +62,9 @@ export class Admin implements OnInit {
 
   marcarComoSpoiler(id: number) {
     if (confirm('¿Estás seguro de marcar esta reseña como spoiler?')) {
-      // Obtenemos los datos completos de la reseña
       this.resenasServicio.getResenaPorId(id).subscribe({
         next: (resenaData) => {
-          // Cambiamos el estado del spoiler
           resenaData.tieneSpoiler = true;
-          // Actualizamos la reseña completa en base de datos
           this.resenasServicio.updateResena(id, resenaData).subscribe({
             next: () => {
               this.resenasARevisar = this.resenasARevisar.filter(r => r.id !== id);
@@ -59,7 +72,6 @@ export class Admin implements OnInit {
             },
             error: (err) => {
               console.error('Error al actualizar spoiler en servidor:', err);
-              // Fallback visual en caso de que falle
               this.resenasARevisar = this.resenasARevisar.filter(r => r.id !== id);
               this.cdr.detectChanges();
             }
@@ -73,12 +85,9 @@ export class Admin implements OnInit {
   }
 
   validarResena(id: number) {
-    // Obtenemos los datos completos de la reseña
     this.resenasServicio.getResenaPorId(id).subscribe({
       next: (resenaData) => {
-        // Cambiamos el estado de revisada a true
         resenaData.revisada = true;
-        // Actualizamos la reseña completa en base de datos
         this.resenasServicio.updateResena(id, resenaData).subscribe({
           next: () => {
             this.resenasARevisar = this.resenasARevisar.filter(r => r.id !== id);
@@ -86,7 +95,6 @@ export class Admin implements OnInit {
           },
           error: (err) => {
             console.error('Error al actualizar revisión en servidor:', err);
-            // Fallback visual
             this.resenasARevisar = this.resenasARevisar.filter(r => r.id !== id);
             this.cdr.detectChanges();
           }
@@ -112,5 +120,61 @@ export class Admin implements OnInit {
       });
     }
   }
-}
 
+  // ===== USUARIOS =====
+
+  buscarUsuarios() {
+    if (this.terminoBusqueda.trim().length === 0) {
+      this.resultadosUsuarios = [];
+      this.busquedaRealizada = false;
+      return;
+    }
+
+    this.buscando = true;
+    this.busquedaRealizada = true;
+
+    this.usuariosServicio.buscarUsuarios(this.terminoBusqueda).subscribe({
+      next: (respuesta: any) => {
+        this.resultadosUsuarios = respuesta;
+        this.buscando = false;
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        console.error('Error al buscar usuarios', err);
+        this.buscando = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  toggleBaneo(usuario: any) {
+    const accion = usuario.baneado ? 'desbanear' : 'bannear';
+    if (!confirm(`¿Estás seguro de que deseas ${accion} al usuario "${usuario.username}"?`)) {
+      return;
+    }
+
+    const nuevoBaneado = !usuario.baneado;
+
+    // Obtenemos el usuario completo y luego actualizamos solo el campo baneado
+    this.usuariosServicio.getUsuarioById(usuario.id).subscribe({
+      next: (usuarioCompleto: any) => {
+        const usuarioActualizado = { ...usuarioCompleto, baneado: nuevoBaneado };
+
+        this.usuariosServicio.actualizarUsuario(usuario.id, usuarioActualizado).subscribe({
+          next: (respuesta: any) => {
+            usuario.baneado = respuesta.baneado;
+            this.cdr.detectChanges();
+          },
+          error: (err: any) => {
+            console.error('Error al actualizar el usuario:', err);
+            alert('Hubo un error al intentar actualizar el usuario.');
+          }
+        });
+      },
+      error: (err: any) => {
+        console.error('Error al obtener el usuario:', err);
+        alert('Hubo un error al obtener los datos del usuario.');
+      }
+    });
+  }
+}

@@ -17,12 +17,12 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Entity
-@Table(name="USUARIO")
+@Table(name = "USUARIO")
 @Data
-@EqualsAndHashCode(exclude = {"listas", "resenas"})
-@ToString(exclude = {"listas", "resenas"})
+@EqualsAndHashCode(exclude = { "listas", "resenas" })
+@ToString(exclude = { "listas", "resenas" })
 public class Usuario {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
@@ -62,4 +62,7 @@ public class Usuario {
 
     @Column(name = "ES_ADMIN")
     private Boolean esAdmin;
+
+    @Column(name = "BANEADO")
+    private Boolean baneado;
 }

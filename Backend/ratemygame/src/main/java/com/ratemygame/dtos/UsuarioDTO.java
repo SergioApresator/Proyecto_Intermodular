@@ -14,4 +14,5 @@ public class UsuarioDTO {
     private String biografia;
     private String token;
     private Boolean esAdmin;
+    private Boolean baneado;
 }

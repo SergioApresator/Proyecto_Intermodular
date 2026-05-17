@@ -39,26 +39,26 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors(withDefaults())
-            .csrf(csrf -> csrf.disable())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.GET, "/api/usuarios/buscar").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/usuarios/*").permitAll()
-                .requestMatchers("/api/usuarios/login").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/listas/usuario/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/respuestas/usuario/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/respuestas/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/resenas/usuario/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/resenas/**").permitAll()
+                .cors(withDefaults())
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.GET, "/api/usuarios/buscar").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/usuarios/*").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/usuarios/*").permitAll()
+                        .requestMatchers("/api/usuarios/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/listas/usuario/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/respuestas/usuario/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/respuestas/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/resenas/usuario/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/resenas/**").permitAll()
 
-                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                .requestMatchers("/uploads/**").permitAll()
-                .anyRequest().authenticated()
-            )
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-        
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/uploads/**").permitAll()
+                        .anyRequest().authenticated())
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
@@ -67,12 +67,11 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOriginPattern("*"); 
+        config.addAllowedOriginPattern("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
         return source;
     }
 
-    
 }

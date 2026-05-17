@@ -33,12 +33,15 @@ public class UsuarioService {
     public Optional<UsuarioDTO> getUsuarioById(Long id) {
         return usuarioRepository.findById(id).map(this::convertToDTO);
     }
-    
+
     public Optional<UsuarioDTO> login(String identifier, String password) {
         Optional<Usuario> optionalUsuario = usuarioRepository.findByUsernameOrEmail(identifier, identifier);
         if (optionalUsuario.isPresent()) {
             Usuario usuario = optionalUsuario.get();
             if (passwordEncoder.matches(password, usuario.getPassword())) {
+                if (Boolean.TRUE.equals(usuario.getBaneado())) {
+                    throw new RuntimeException("USUARIO_BANEADO");
+                }
                 String token = jwtService.generateToken(new CustomUserDetails(usuario));
                 UsuarioDTO dto = convertToDTO(usuario);
                 dto.setToken(token);
@@ -59,6 +62,7 @@ public class UsuarioService {
     public UsuarioDTO createUsuario(Usuario usuario) {
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         usuario.setEsAdmin(false);
+        usuario.setBaneado(false);
         Usuario savedUsuario = usuarioRepository.save(usuario);
         String token = jwtService.generateToken(new CustomUserDetails(savedUsuario));
         UsuarioDTO dto = convertToDTO(savedUsuario);
@@ -81,6 +85,9 @@ public class UsuarioService {
             if (usuarioDetails.getBiografia() != null) {
                 usuario.setBiografia(usuarioDetails.getBiografia());
             }
+            if (usuarioDetails.getBaneado() != null) {
+                usuario.setBaneado(usuarioDetails.getBaneado());
+            }
             Usuario updatedUsuario = usuarioRepository.save(usuario);
             return convertToDTO(updatedUsuario);
         });
@@ -94,11 +101,11 @@ public class UsuarioService {
     }
 
     public Optional<UsuarioDTO> actualizarBannerUrl(Long id, String bannerUrl) {
-    return usuarioRepository.findById(id).map(usuario -> {
-        usuario.setBannerUrl(bannerUrl);
-        return convertToDTO(usuarioRepository.save(usuario));
-    });
-}
+        return usuarioRepository.findById(id).map(usuario -> {
+            usuario.setBannerUrl(bannerUrl);
+            return convertToDTO(usuarioRepository.save(usuario));
+        });
+    }
 
     public boolean deleteUsuario(Long id) {
         if (usuarioRepository.existsById(id)) {
@@ -119,20 +126,19 @@ public class UsuarioService {
         dto.setBanner_url(usuario.getBannerUrl());
         dto.setBiografia(usuario.getBiografia());
         dto.setEsAdmin(usuario.getEsAdmin() != null ? usuario.getEsAdmin() : false);
+        dto.setBaneado(usuario.getBaneado() != null ? usuario.getBaneado() : false);
         return dto;
     }
 
     public List<UsuarioDTO> buscarPorUsername(String username) {
         return usuarioRepository.findByUsernameContainingIgnoreCase(username).stream()
-            .map(this::convertToDTO)
-            .collect(Collectors.toList());
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     public List<UsuarioDTO> buscarUsuariosGeneral(String query) {
         return usuarioRepository.buscarUsuariosGeneral(query).stream()
-            .map(this::convertToDTO)
-            .collect(Collectors.toList());
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 }
-
-
