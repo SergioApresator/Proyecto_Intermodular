@@ -4,11 +4,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ResenasService } from '../resenas';
 import { Usuarios } from '../usuarios';
+import { ConfirmModal } from '../confirm-modal/confirm-modal.component';
+
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ConfirmModal],
+
   templateUrl: './admin.html',
   styleUrl: './admin.css',
 })
@@ -22,6 +25,16 @@ export class Admin implements OnInit {
   resultadosUsuarios: any[] = [];
   buscando: boolean = false;
   busquedaRealizada: boolean = false;
+  
+  // Modal de confirmación
+  modalConfirmacionVisible: boolean = false;
+  modalConfirmacionConfig = {
+    titulo: 'CONFIRMAR',
+    mensaje: '¿Estás seguro?',
+    tipo: 'warning' as 'danger' | 'warning' | 'info',
+    accion: () => { }
+  };
+
 
   private router = inject(Router);
 
@@ -107,18 +120,22 @@ export class Admin implements OnInit {
   }
 
   eliminarResena(id: number) {
-    if (confirm('¿Estás seguro de que deseas ELIMINAR esta reseña permanentemente por contenido inapropiado?')) {
-      this.resenasServicio.eliminarResena(id).subscribe({
-        next: () => {
-          this.resenasARevisar = this.resenasARevisar.filter(r => r.id !== id);
-          this.cdr.detectChanges();
-        },
-        error: (err) => {
-          console.error('Error al eliminar la reseña:', err);
-          alert('Hubo un error al intentar eliminar la reseña.');
-        }
-      });
-    }
+    this.mostrarConfirmacion(
+      'ELIMINAR RESEÑA',
+      '¿Estás seguro de que deseas ELIMINAR esta reseña permanentemente por contenido inapropiado? Esta acción no se puede deshacer.',
+      'danger',
+      () => {
+        this.resenasServicio.eliminarResena(id).subscribe({
+          next: () => {
+            this.resenasARevisar = this.resenasARevisar.filter(r => r.id !== id);
+            this.cdr.detectChanges();
+          },
+          error: (err) => {
+            console.error('Error al eliminar la reseña:', err);
+          }
+        });
+      }
+    );
   }
 
   // ===== USUARIOS =====

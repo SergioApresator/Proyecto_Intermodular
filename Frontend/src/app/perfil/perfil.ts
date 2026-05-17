@@ -387,8 +387,8 @@ export class Perfil implements OnInit {
       this.cdr.detectChanges();
       return;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      this.errorFoto = 'La imagen no puede superar los 5 MB.';
+    if (file.size > 20 * 1024 * 1024) {
+      this.errorFoto = 'La imagen no puede superar los 20 MB.';
       this.cdr.detectChanges();
       return;
     }
@@ -478,8 +478,8 @@ export class Perfil implements OnInit {
       this.cdr.detectChanges();
       return;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      this.errorBanner = 'La imagen no puede superar los 5 MB.';
+    if (file.size > 20 * 1024 * 1024) {
+      this.errorBanner = 'La imagen no puede superar los 20 MB.';
       this.cdr.detectChanges();
       return;
     }
