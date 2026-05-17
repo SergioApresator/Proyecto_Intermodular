@@ -124,4 +124,58 @@ export class Inicial implements OnInit, OnDestroy {
       this.cdr.detectChanges();
     }
   }
+
+  obtenerTiempoTranscurrido(fechaInput: any): string {
+    if (!fechaInput) return '';
+
+    let fecha: Date;
+    
+    // Si la fecha es un array (típico de Jackson LocalDateTime en Spring Boot)
+    if (Array.isArray(fechaInput)) {
+      const [year, month, day, hour = 0, minute = 0, second = 0] = fechaInput;
+      // JS Date month starts from 0
+      fecha = new Date(year, month - 1, day, hour, minute, second);
+    } else {
+      fecha = new Date(fechaInput);
+    }
+
+    if (isNaN(fecha.getTime())) {
+      return '';
+    }
+
+    const ahora = new Date();
+    const diferenciaMs = ahora.getTime() - fecha.getTime();
+
+    if (diferenciaMs < 60000) {
+      return 'Hace unos instantes';
+    }
+
+    const minutos = Math.floor(diferenciaMs / 60000);
+    if (minutos < 60) {
+      return minutos === 1 ? 'Hace 1 minuto' : `Hace ${minutos} minutos`;
+    }
+
+    const horas = Math.floor(minutos / 60);
+    if (horas < 24) {
+      return horas === 1 ? 'Hace 1 hora' : `Hace ${horas} horas`;
+    }
+
+    const dias = Math.floor(horas / 24);
+    if (dias < 7) {
+      return dias === 1 ? 'Hace 1 día' : `Hace ${dias} días`;
+    }
+
+    const semanas = Math.floor(dias / 7);
+    if (semanas < 4) {
+      return semanas === 1 ? 'Hace 1 semana' : `Hace ${semanas} semanas`;
+    }
+
+    const meses = Math.floor(dias / 30);
+    if (meses < 12) {
+      return meses === 1 ? 'Hace 1 mes' : `Hace ${meses} meses`;
+    }
+
+    const anios = Math.floor(dias / 365);
+    return anios === 1 ? 'Hace 1 año' : `Hace ${anios} años`;
+  }
 }
