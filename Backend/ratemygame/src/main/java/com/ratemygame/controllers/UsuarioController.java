@@ -30,7 +30,7 @@ public class UsuarioController {
 
     @Value("${app.upload.dir}")
     private String uploadDir;
-    
+
     @PostMapping("/login")
     public ResponseEntity<UsuarioDTO> login(@RequestBody Map<String, String> credentials) {
         String identifier = credentials.get("identifier");
@@ -41,9 +41,16 @@ public class UsuarioController {
             identifier = credentials.get("email");
         }
         String password = credentials.get("password");
-        return usuarioService.login(identifier, password)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
+        try {
+            return usuarioService.login(identifier, password)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
+        } catch (RuntimeException e) {
+            if ("USUARIO_BANEADO".equals(e.getMessage())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     @PostMapping("/login-username")
@@ -154,38 +161,38 @@ public class UsuarioController {
      */
     @PostMapping(value = "/{id}/banner", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<UsuarioDTO> subirBanner(
-        @PathVariable Long id,
-        @RequestParam("file") MultipartFile file) {
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file) {
 
-    if (file.isEmpty()) {
-        return ResponseEntity.badRequest().build();
-    }
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
 
-    String contentType = file.getContentType();
-    if (contentType == null || !contentType.startsWith("image/")) {
-        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).build();
-    }
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).build();
+        }
 
-    try {
-        Path uploadPath = Paths.get(uploadDir);
-        Files.createDirectories(uploadPath);
+        try {
+            Path uploadPath = Paths.get(uploadDir);
+            Files.createDirectories(uploadPath);
 
-        String originalFilename = file.getOriginalFilename();
-        String extension = (originalFilename != null && originalFilename.contains("."))
-                ? originalFilename.substring(originalFilename.lastIndexOf("."))
-                : ".jpg";
-        String uniqueFilename = "banner_" + id + "_" + UUID.randomUUID().toString().substring(0, 8) + extension;
+            String originalFilename = file.getOriginalFilename();
+            String extension = (originalFilename != null && originalFilename.contains("."))
+                    ? originalFilename.substring(originalFilename.lastIndexOf("."))
+                    : ".jpg";
+            String uniqueFilename = "banner_" + id + "_" + UUID.randomUUID().toString().substring(0, 8) + extension;
 
-        Path filePath = uploadPath.resolve(uniqueFilename);
-        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            Path filePath = uploadPath.resolve(uniqueFilename);
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-        String bannerUrl = "http://localhost:9999/uploads/fotos-perfil/" + uniqueFilename;
+            String bannerUrl = "http://localhost:9999/uploads/fotos-perfil/" + uniqueFilename;
 
 
 
-        return usuarioService.actualizarBannerUrl(id, bannerUrl)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+            return usuarioService.actualizarBannerUrl(id, bannerUrl)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
 
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -200,7 +207,8 @@ public class UsuarioController {
     }
 
     @GetMapping("/buscar")
-    public ResponseEntity<List<UsuarioDTO>> buscarUsuarios(@RequestParam(required = false) String username, @RequestParam(required = false) String query) {
+    public ResponseEntity<List<UsuarioDTO>> buscarUsuarios(@RequestParam(required = false) String username,
+            @RequestParam(required = false) String query) {
         if (query != null) {
             return ResponseEntity.ok(usuarioService.buscarUsuariosGeneral(query));
         }
@@ -214,4 +222,3 @@ public ResponseEntity<UsuarioDTO> resetearBanner(@PathVariable Long id) {
             .orElse(ResponseEntity.notFound().build());
 }
 }
-

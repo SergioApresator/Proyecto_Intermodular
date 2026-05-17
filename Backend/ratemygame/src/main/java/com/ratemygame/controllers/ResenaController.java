@@ -38,6 +38,11 @@ public class ResenaController {
         return ResponseEntity.ok(resenaService.getRecentReviews());
     }
 
+    @GetMapping("/aRevisar")
+    public ResponseEntity<List<ResenaDTO>> getResenasARevisar() {
+        return ResponseEntity.ok(resenaService.getResenasARevisar());
+    }
+
     @PostMapping
     public ResponseEntity<ResenaDTO> createResena(@RequestBody ResenaDTO resenaDTO) {
         return resenaService.createResena(resenaDTO)
@@ -48,6 +53,13 @@ public class ResenaController {
     @PostMapping("/{id}/votar")
     public ResponseEntity<ResenaDTO> votar(@PathVariable Long id, @RequestBody VotoRequestDTO votoRequest) {
         return resenaService.votar(id, votoRequest.getIdUsuario(), votoRequest.getEsMeGusta())
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/updateResena/{id}")
+    public ResponseEntity<ResenaDTO> updateResena(@PathVariable Long id, @RequestBody ResenaDTO resenaDTO) {
+        return resenaService.updateResena(id, resenaDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -63,7 +75,7 @@ public class ResenaController {
     @GetMapping("/{id}")
     public ResponseEntity<ResenaDTO> getResenaById(@PathVariable Long id) {
         return resenaService.getResenaById(id)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }

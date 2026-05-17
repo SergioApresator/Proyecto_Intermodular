@@ -9,6 +9,7 @@ import { Perfil } from './perfil/perfil';
 import { authGuard } from './auth.guard';
 import { AcercaDe } from './acerca-de/acerca-de';
 import { Busqueda } from './busqueda/busqueda';
+import { Admin } from './admin/admin';
 import { BuscarUsuarios } from './buscar-usuarios/buscar-usuarios';
 import { PerfilPublico } from './perfil-publico/perfil-publico';
 
@@ -18,6 +19,7 @@ export const routes: Routes = [
     { path: 'registro', component: Registro },
     { path: 'login', component: Login },
     { path: 'diario', component: Diario, canActivate: [authGuard] },
+    { path: 'admin', component: Admin },
     // Rutas públicas
     { path: 'inicial', component: Inicial },
     { path: 'busqueda', component: Busqueda },

@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 
 //Importacione que permite llamar al backend
 //permitiendo usar metodos get, post
-import { HttpClient, HttpHeaders } from '@angular/common/http'; 
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 //Importacion que permite manejar las respuestas del servidot
 import { Observable, Subject } from 'rxjs';
@@ -39,7 +39,7 @@ export class Usuarios {
   loginUsername(username: string, password: string): Observable<any> {
     return this.login(username, password);
   }
-  
+
   loginEmail(email: string, password: string): Observable<any> {
     return this.login(email, password);
   }
@@ -91,7 +91,7 @@ export class Usuarios {
         'Authorization': token ? `Bearer ${token}` : ''
       })
     });
-}
+  }
 
 resetearBanner(id: number): Observable<any> {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
@@ -126,5 +126,5 @@ resetearBanner(id: number): Observable<any> {
   eliminarDeLista(listaId: number): Observable<any> {
     return this.http.delete(`${this.urlListas}/${listaId}`, this.getHeaders());
   }
-  
+
 }

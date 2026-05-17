@@ -189,12 +189,157 @@
 }
 
 /* RESPONSIVE */
+/* RESPONSIVE */
 @media (max-width: 1024px) {
-    .bento-grid { display: flex; flex-direction: column; }
     .tech-strip { margin: 0 -20px 80px -20px; }
 }
 
 @media (max-width: 768px) {
-    .titulo { font-size: 3.5rem; }
-    .hero-about::after { font-size: 8rem; }
+
+    .contenedor {
+        padding: 40px 16px;
+        overflow-x: hidden;
+        box-sizing: border-box;
+        width: 100%;
+    }
+
+    /* HERO */
+    .hero-about {
+        margin-bottom: 40px;
+    }
+
+    .hero-about::after {
+        font-size: 5rem;
+    }
+
+    .logo-container {
+        padding: 14px;
+        margin-bottom: 20px;
+    }
+
+    .logo {
+        width: 100px;
+    }
+
+    .titulo {
+        font-size: 3rem;
+        letter-spacing: -1px;
+        margin-bottom: 12px;
+    }
+
+    .subtitulo {
+        font-size: 1.1rem;
+        padding: 0 10px;
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
+
+    /* BENTO GRID — forzar columna única */
+    .bento-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-bottom: 40px;
+    }
+
+    .item-1,
+    .item-2,
+    .item-3,
+    .item-4 {
+        grid-column: unset;
+        grid-row: unset;
+        width: 100%;
+    }
+
+    .bento-item {
+        padding: 25px 20px;
+        box-sizing: border-box;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .bento-item h3 {
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+    }
+
+    .bento-item p {
+        font-size: 1rem;
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .item-4 h3 {
+        font-size: 2.2rem;
+    }
+
+    /* TECH STRIP */
+    .tech-strip {
+        margin: 0 -16px 40px -16px;
+        padding: 40px 20px;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    .tech-content h2 {
+        font-size: 2rem;
+    }
+
+    .tech-content p {
+        font-size: 1rem;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        padding: 0 10px;
+    }
+
+    .tech-icons {
+        flex-wrap: wrap;
+        gap: 20px;
+        font-size: 1rem;
+        justify-content: center;
+    }
+
+    /* TEAM */
+    .team-section {
+        margin-bottom: 20px;
+    }
+
+    .team-section h2 {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+    }
+
+    .team-names {
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .team-tag {
+        font-size: 1.3rem;
+        padding: 10px 20px;
+        letter-spacing: 2px;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .contenedor {
+        padding: 30px 12px;
+    }
+
+    .titulo { font-size: 2.5rem; }
+
+    .subtitulo { font-size: 1rem; }
+
+    .bento-item { padding: 20px 15px; }
+
+    .bento-item h3 { font-size: 1.5rem; }
+
+    .tech-icons { gap: 15px; font-size: 0.9rem; }
+
+    .team-names { font-size: 1.1rem; }
+
+    .team-tag { font-size: 1.1rem; padding: 8px 16px; }
 }

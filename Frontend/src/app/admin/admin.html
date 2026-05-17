@@ -1,0 +1,152 @@
+<div class="admin-container">
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="admin-brand">ADMIN PANEL</div>
+      <ul class="admin-nav-list">
+        <li class="admin-nav-item" [class.active]="pestanaActiva === 'moderacion'"
+          (click)="cambiarPestana('moderacion')">
+          Moderación
+        </li>
+        <li class="admin-nav-item" [class.active]="pestanaActiva === 'usuarios'" (click)="cambiarPestana('usuarios')">
+          Usuarios
+        </li>
+        <!-- <li class="admin-nav-item" style="opacity: 0.5; cursor: not-allowed;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h.01M18 12h.01M15 10l-2 2 2 2m-6-4 2 2-2 2"/></svg>
+          Juegos
+        </li> -->
+      </ul>
+    </aside>
+
+    <main class="admin-main">
+
+      <!-- ===== PESTAÑA MODERACIÓN ===== -->
+      <ng-container *ngIf="pestanaActiva === 'moderacion'">
+        <header class="admin-header">
+          <div>
+            <h1 class="admin-title">Panel de Moderación</h1>
+            <p class="admin-subtitle">Revisión de posibles spoilers en reseñas recientes</p>
+          </div>
+        </header>
+
+        <section class="reviews-section">
+          <div class="section-title">
+            <h2>Reseñas por verificar</h2>
+            <span class="badge">{{ resenasARevisar.length }} pendientes</span>
+          </div>
+
+          <div class="reviews-grid">
+            <div *ngFor="let resena of resenasARevisar" class="review-card">
+              <div class="card-header">
+                <span class="user-info">
+                  <strong>{{ resena.nombreUsuario || 'Usuario' }}</strong> comentó en
+                </span>
+                <span class="game-tag">{{ resena.nombreVideojuego || 'Juego' }}</span>
+              </div>
+
+              <div class="card-body">
+                <p>"{{ resena.mensaje }}"</p>
+              </div>
+
+              <div class="card-footer">
+                <button class="btn btn-safe" title="Marcar como válida (sin spoiler)"
+                  (click)="validarResena(resena.id)">
+                  ✅ Validar
+                </button>
+                <button class="btn btn-warning" title="Marcar que contiene spoilers"
+                  (click)="marcarComoSpoiler(resena.id)">
+                  ⚠️ Spoiler
+                </button>
+                <button class="btn btn-danger" title="Eliminar reseña por contenido inapropiado"
+                  (click)="eliminarResena(resena.id)">
+                  🗑️ Borrar
+                </button>
+              </div>
+            </div>
+
+            <div *ngIf="resenasARevisar.length === 0" class="empty-state">
+              <div class="empty-icon">✨</div>
+              <h3>¡Todo limpio!</h3>
+              <p>No hay reseñas pendientes de revisión. ¡Buen trabajo!</p>
+            </div>
+          </div>
+        </section>
+      </ng-container>
+
+      <!-- ===== PESTAÑA USUARIOS ===== -->
+      <ng-container *ngIf="pestanaActiva === 'usuarios'">
+        <header class="admin-header">
+          <div>
+            <h1 class="admin-title">Gestión de Usuarios</h1>
+            <p class="admin-subtitle">Busca y modera los usuarios de la plataforma</p>
+          </div>
+        </header>
+
+        <section class="reviews-section">
+          <div class="section-title">
+            <h2>Buscar Usuario</h2>
+          </div>
+
+          <!-- Buscador -->
+          <div class="user-search-wrapper">
+            <input id="buscador-usuarios" type="text" class="user-search-input"
+              placeholder="Buscar por nombre de usuario o ID..." [(ngModel)]="terminoBusqueda"
+              (keyup.enter)="buscarUsuarios()" />
+            <button class="user-search-btn" (click)="buscarUsuarios()">🔍</button>
+          </div>
+
+          <!-- Spinner buscando -->
+          <div *ngIf="buscando" class="empty-state">
+            <div class="empty-icon">⏳</div>
+            <p>Buscando...</p>
+          </div>
+
+          <!-- Lista de usuarios -->
+          <div class="user-list" *ngIf="!buscando && resultadosUsuarios.length > 0">
+            <div *ngFor="let usuario of resultadosUsuarios" class="user-list-item" [class.baneado]="usuario.baneado">
+              <div class="user-list-avatar">
+                <img *ngIf="usuario.foto_url" [src]="usuario.foto_url" [alt]="usuario.username"
+                  class="user-avatar-img" />
+                <div *ngIf="!usuario.foto_url" class="user-avatar-placeholder">
+                  {{ usuario.username?.charAt(0)?.toUpperCase() }}
+                </div>
+              </div>
+
+              <div class="user-list-info">
+                <span class="user-list-username">{{ usuario.username }}</span>
+                <span class="user-list-badge" *ngIf="usuario.baneado">🚫 Baneado</span>
+                <span class="user-list-badge admin-badge" *ngIf="usuario.esAdmin">⚡ Admin</span>
+              </div>
+
+              <button class="btn btn-ban" [class.btn-unbanned]="usuario.baneado" [disabled]="usuario.esAdmin"
+                (click)="toggleBaneo(usuario)"
+                [title]="usuario.esAdmin ? 'No se puede banear a un administrador' : (usuario.baneado ? 'Desbanear usuario' : 'Bannear usuario')">
+                {{ usuario.baneado ? '✅ Desbanear' : '🚫 Bannear' }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Sin resultados -->
+          <div *ngIf="!buscando && busquedaRealizada && resultadosUsuarios.length === 0" class="empty-state">
+            <div class="empty-icon">🔎</div>
+            <h3>Sin resultados</h3>
+            <p>No se encontró ningún usuario con ese nombre.</p>
+          </div>
+
+          <!-- Estado inicial (sin búsqueda) -->
+          <div *ngIf="!buscando && !busquedaRealizada" class="empty-state">
+            <div class="empty-icon">👥</div>
+            <h3>Busca un usuario</h3>
+            <p>Escribe el nombre de usuario y pulsa 🔍 para buscarlo.</p>
+          </div>
+
+        </section>
+      </ng-container>
+
+    </main>
+  </div>
+</div>
+
+<app-confirm-modal [visible]="modalConfirmacionVisible" [title]="modalConfirmacionConfig.titulo"
+  [message]="modalConfirmacionConfig.mensaje" [type]="modalConfirmacionConfig.tipo" (onConfirm)="confirmarModal()"
+  (onCancel)="cancelarModal()">
+</app-confirm-modal>

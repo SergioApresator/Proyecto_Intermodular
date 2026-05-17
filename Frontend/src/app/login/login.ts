@@ -27,7 +27,7 @@ export class Login implements OnInit {
   loginConEmail: boolean = false;
 
   ngOnInit() {
-    
+
     this.formularioLogin.get('identity')?.valueChanges.subscribe(value => {
       const control = this.formularioLogin.get('identity');
       if (!value) return;
@@ -39,7 +39,7 @@ export class Login implements OnInit {
         // Cambia a el validador de Nombre de Usuario (solo requerido)
         control?.setValidators([Validators.required]);
       }
-      
+
       // Actualizamos el estado interno sin disparar otro evento de cambio infinito
       control?.updateValueAndValidity({ emitEvent: false });
     });
@@ -52,7 +52,13 @@ export class Login implements OnInit {
 
       this.usuariosServicio.login(identityValue, passInput).subscribe({
         next: (usuarioEncontrado) => this.guardarSesionYRedirigir(usuarioEncontrado),
-        error: () => alert('Credenciales incorrectas. Verifica tu usuario/email y contraseña.')
+        error: (err) => {
+          if (err.status === 403) {
+            alert('Tu cuenta ha sido baneada. Contacta con el administrador si crees que es un error.');
+          } else {
+            alert('Credenciales incorrectas. Verifica tu usuario/email y contraseña.');
+          }
+        }
       });
     } else {
       this.formularioLogin.markAllAsTouched();
@@ -72,6 +78,11 @@ export class Login implements OnInit {
       const foto = usuarioEncontrado.foto_url || usuarioEncontrado.fotoUrl;
       if (foto) {
         localStorage.setItem('foto_url', foto);
+      }
+      if (usuarioEncontrado.esAdmin) {
+        localStorage.setItem('esAdmin', 'true');
+      } else {
+        localStorage.removeItem('esAdmin');
       }
     }
     this.router.navigate(['/inicial']);
