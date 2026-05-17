@@ -39,6 +39,7 @@ public class ResenaController {
     }
 
     @GetMapping("/aRevisar")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ResenaDTO>> getResenasARevisar() {
         return ResponseEntity.ok(resenaService.getResenasARevisar());
     }

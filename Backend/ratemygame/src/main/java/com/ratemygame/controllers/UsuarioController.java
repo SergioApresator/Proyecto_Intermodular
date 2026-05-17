@@ -12,6 +12,8 @@ import com.ratemygame.datamodel.entities.Usuario;
 import com.ratemygame.dtos.UsuarioDTO;
 import com.ratemygame.services.UsuarioService;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -71,6 +73,7 @@ public class UsuarioController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UsuarioDTO>> getAllUsuarios() {
         return ResponseEntity.ok(usuarioService.getAllUsuarios());
     }
@@ -88,6 +91,7 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or #id == principal.usuario.id")
     public ResponseEntity<UsuarioDTO> updateUsuario(@PathVariable Long id, @RequestBody Usuario usuarioDetails) {
         return usuarioService.updateUsuario(id, usuarioDetails)
                 .map(ResponseEntity::ok)
@@ -95,6 +99,7 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or #id == principal.usuario.id")
     public ResponseEntity<Void> deleteUsuario(@PathVariable Long id) {
         if (usuarioService.deleteUsuario(id)) {
             return ResponseEntity.noContent().build();
@@ -108,6 +113,7 @@ public class UsuarioController {
      * Guarda la imagen en disco y actualiza foto_url en la BD.
      */
     @PostMapping(value = "/{id}/foto", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('ADMIN') or #id == principal.usuario.id")
     public ResponseEntity<UsuarioDTO> subirFotoPerfil(
             @PathVariable Long id,
             @RequestParam("file") MultipartFile file) {
@@ -160,6 +166,7 @@ public class UsuarioController {
      * Guarda la imagen en disco y actualiza banner_url en la BD.
      */
     @PostMapping(value = "/{id}/banner", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('ADMIN') or #id == principal.usuario.id")
     public ResponseEntity<UsuarioDTO> subirBanner(
             @PathVariable Long id,
             @RequestParam("file") MultipartFile file) {
@@ -200,6 +207,7 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{id}/foto")
+    @PreAuthorize("hasRole('ADMIN') or #id == principal.usuario.id")
     public ResponseEntity<UsuarioDTO> resetearFotoPerfil(@PathVariable Long id) {
         return usuarioService.actualizarFotoUrl(id, null)
                 .map(ResponseEntity::ok)
@@ -216,8 +224,9 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{id}/banner")
-public ResponseEntity<UsuarioDTO> resetearBanner(@PathVariable Long id) {
-    return usuarioService.actualizarBannerUrl(id, null)
+    @PreAuthorize("hasRole('ADMIN') or #id == principal.usuario.id")
+    public ResponseEntity<UsuarioDTO> resetearBanner(@PathVariable Long id) {
+        return usuarioService.actualizarBannerUrl(id, null)
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
 }
