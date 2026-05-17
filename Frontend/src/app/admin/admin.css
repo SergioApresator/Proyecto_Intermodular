@@ -355,12 +355,12 @@
     color: #1e293b;
     box-sizing: border-box;
     transition: all 0.2s;
-    box-shadow: 3px 3px 0 #cbd5e1;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .user-search-input:focus {
     border-color: #3b82f6;
-    box-shadow: 4px 4px 0 #3b82f6;
+    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.15);
     background: #ffffff;
 }
 
@@ -376,7 +376,6 @@
     font-size: 1.2rem;
     cursor: pointer;
     transition: background 0.2s;
-    border-left: 2px solid #1e293b;
 }
 
 .user-search-btn:hover {
@@ -390,7 +389,7 @@
     gap: 12px;
     max-height: 520px;
     overflow-y: auto;
-    padding-right: 4px;
+    padding: 6px;
 }
 
 .user-list-item {
@@ -400,24 +399,25 @@
     padding: 14px 18px;
     background: #f8fafc;
     border: 2px solid #e2e8f0;
-    box-shadow: 3px 3px 0 #cbd5e1;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     transition: all 0.2s;
 }
 
 .user-list-item:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 5px 5px 0 #3b82f6;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     border-color: #3b82f6;
 }
 
 .user-list-item.baneado {
     background: #fff5f5;
     border-color: #fca5a5;
-    box-shadow: 3px 3px 0 #ef4444;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.05);
 }
 
 .user-list-item.baneado:hover {
-    box-shadow: 5px 5px 0 #b91c1c;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(239, 68, 68, 0.12);
     border-color: #ef4444;
 }
 
@@ -493,27 +493,28 @@
     width: auto;
     background: #ef4444;
     color: #ffffff;
-    box-shadow: 3px 3px 0 #b91c1c;
+    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.2);
     white-space: nowrap;
 }
 
 .btn-ban:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 5px 5px 0 #b91c1c;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
 }
 
 .btn-ban.btn-unbanned {
     background: #10b981;
-    box-shadow: 3px 3px 0 #047857;
+    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.2);
 }
 
 .btn-ban.btn-unbanned:hover {
-    box-shadow: 5px 5px 0 #047857;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
 }
 
 .btn-ban:disabled {
     background: #94a3b8;
-    box-shadow: 3px 3px 0 #64748b;
+    box-shadow: none;
     cursor: not-allowed;
     transform: none;
 }
