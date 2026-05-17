@@ -100,12 +100,12 @@
   <div class="stats-ticker">
     <div class="ticker-item"><span class="ticker-val">10K+</span> JUEGOS</div>
     <div class="ticker-divider">/</div>
-    <div class="ticker-item"><span class="ticker-val">50K+</span> RESEÑAS</div>
+    <div class="ticker-item">JUEGA</div>
     <div class="ticker-divider">/</div>
-    <div class="ticker-item"><span class="ticker-val">5K+</span> GAMERS</div>
+    <div class="ticker-item">RESEÑA</div>
     <div class="ticker-divider">/</div>
-    <div class="ticker-item"><span class="ticker-val">LIVE</span> ACTIVITY</div>
-  </div>
+    <div class="ticker-item">DESCUBRE</div>
+</div>
 
   <!-- MAIN GRID + SIDEBAR -->
   <div class="content-hub container">
@@ -204,7 +204,7 @@
             <img [src]="resena.fotoUsuario || 'assets/default-avatar.png'" class="user-avatar" alt="">
             <div class="user-info">
               <span class="user-name">{{ resena.nombreUsuario }}</span>
-              <span class="activity-time">{{ resena.fechaResena | date:'shortTime' }}</span>
+              <span class="activity-time">{{ resena.fechaResena | date:'dd MMM yyyy' }}</span>
             </div>
           </div>
           <div class="activity-content">

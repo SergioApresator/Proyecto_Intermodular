@@ -35,24 +35,20 @@
 
     <!-- PLAYER CARD BAR -->
     <div class="player-card-bar">
-      <div class="player-card-bg" [style.background-image]="previewBanner ? 'url(' + previewBanner + ')' : (usuario.banner_url ? 'url(' + usuario.banner_url + ')' : '')">
-        <div class="player-card-content">
-          <div class="avatar-box">
-            <div class="avatar-grande" [class.no-photo]="!usuario.foto_url">
-              <img *ngIf="usuario.foto_url" [src]="usuario.foto_url" [alt]="usuario.username">
-              <span *ngIf="!usuario.foto_url">{{ getInitials() }}</span>
-            </div>
-          </div>
-          <div class="player-info">
-            <h1 class="player-name">{{ usuario.username }}</h1>
-          </div>
-        </div>
-        <button class="btn-overlay-banner" (click)="abrirSelectorBanner()">CAMBIAR BANNER</button>
-        <div *ngIf="errorBanner" style="position: absolute; bottom: 10px; right: 10px; background: rgba(239, 68, 68, 0.9); color: white; padding: 5px 15px; font-weight: bold; font-size: 0.9rem; clip-path: polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%);">
-          {{ errorBanner }}
+  <div class="player-card-bg" [style.background-image]="previewBanner ? 'url(' + previewBanner + ')' : (usuario.banner_url ? 'url(' + usuario.banner_url + ')' : '')">
+    <div class="player-card-content">
+      <div class="avatar-box">
+        <div class="avatar-grande" [class.no-photo]="!usuario.foto_url">
+          <img *ngIf="usuario.foto_url" [src]="usuario.foto_url" [alt]="usuario.username">
+          <span *ngIf="!usuario.foto_url">{{ getInitials() }}</span>
         </div>
       </div>
+      <div class="player-info">
+        <h1 class="player-name">{{ usuario.username }}</h1>
+      </div>
     </div>
+  </div>
+</div>
 
 
     <!-- CONTENIDO DE LA PESTAÑA -->
@@ -228,6 +224,37 @@
           </div>
 
           <hr class="ajustes-divider">
+
+          <!-- SECCION BANNER EN AJUSTES -->
+<div class="seccion-ajustes-foto">
+  <h3 class="sub-title">BANNER DE PERFIL</h3>
+  <div class="avatar-preview-box">
+    <div class="preview-circle" style="width: 200px; height: 80px; border-radius: 0;">
+      <img *ngIf="previewBanner || usuario.banner_url" 
+           [src]="previewBanner || usuario.banner_url" 
+           alt="Preview banner"
+           style="width:100%; height:100%; object-fit:cover;">
+      <span *ngIf="!previewBanner && !usuario.banner_url" style="font-size:0.8rem; color:#94a3b8;">SIN BANNER</span>
+    </div>
+    <div class="preview-actions">
+    <button type="button" class="btn-action-ow upload" (click)="abrirSelectorBanner()" [disabled]="subiendoBanner">
+        {{ (previewBanner || usuario.banner_url) ? 'CAMBIAR BANNER' : 'SUBIR BANNER' }}
+    </button>
+    <button type="button" class="btn-action-ow delete" *ngIf="usuario.banner_url && !previewBanner" (click)="resetearBanner()">
+        ELIMINAR BANNER
+    </button>
+    <button type="button" class="btn-action-ow save" *ngIf="previewBanner" (click)="subirBanner()" [disabled]="subiendoBanner">
+        CONFIRMAR BANNER
+    </button>
+    <button type="button" class="btn-action-ow cancel" *ngIf="previewBanner" (click)="cancelarBanner()">
+        CANCELAR
+    </button>
+</div>
+  </div>
+  <p class="help-text">Se recomienda una imagen horizontal de al menos 1200x300px.</p>
+</div>
+
+<hr class="ajustes-divider">
 
           <div class="ajustes-grid">
             <div class="field">

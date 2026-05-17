@@ -469,47 +469,62 @@ export class Perfil implements OnInit {
   abrirSelectorBanner() { this.bannerInput.nativeElement.click(); }
 
   onBannerSeleccionado(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (!input.files || input.files.length === 0) return;
-    const file = input.files[0];
-    this.errorBanner = '';
-    if (!file.type.startsWith('image/')) {
-      this.errorBanner = 'Solo se permiten imágenes (JPG, PNG, GIF, WebP…)';
-      this.cdr.detectChanges();
-      return;
-    }
-    if (file.size > 20 * 1024 * 1024) {
-      this.errorBanner = 'La imagen no puede superar los 20 MB.';
-      this.cdr.detectChanges();
-      return;
-    }
-    this.archivoBannerSeleccionado = file;
-    this.subirBanner();
+  const input = event.target as HTMLInputElement;
+  if (!input.files || input.files.length === 0) return;
+  const file = input.files[0];
+  this.errorBanner = '';
+  if (!file.type.startsWith('image/')) {
+    this.errorBanner = 'Solo se permiten imágenes (JPG, PNG, GIF, WebP…)';
+    this.cdr.detectChanges();
+    return;
   }
+  if (file.size > 5 * 1024 * 1024) {
+    this.errorBanner = 'La imagen no puede superar los 5 MB.';
+    this.cdr.detectChanges();
+    return;
+  }
+  this.archivoBannerSeleccionado = file;
+  const reader = new FileReader();
+  reader.onload = (e: any) => {
+    this.previewBanner = e.target.result;
+    this.cdr.detectChanges();
+  };
+  reader.readAsDataURL(file);
+}
 
-  subirBanner() {
-    if (!this.archivoBannerSeleccionado || !this.usuario?.id) return;
-    this.subiendoBanner = true;
-    this.usuariosServicio.subirBanner(this.usuario.id, this.archivoBannerSeleccionado).subscribe({
-      next: (data: any) => {
-        this.usuario = data;
-        const banner = data.banner_url || data.bannerUrl;
-        if (banner) {
-          this.usuario.banner_url = banner;
-          localStorage.setItem('banner_url', banner);
-        }
-        this.previewBanner = null;
-        this.archivoBannerSeleccionado = null;
-        this.subiendoBanner = false;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.errorBanner = 'Error al subir el banner.';
-        this.subiendoBanner = false;
-        this.cdr.detectChanges();
+subirBanner() {
+  if (!this.archivoBannerSeleccionado || !this.usuario?.id) return;
+  this.subiendoBanner = true;
+  this.usuariosServicio.subirBanner(this.usuario.id, this.archivoBannerSeleccionado).subscribe({
+    next: (data: any) => {
+      this.usuario = data;
+      const banner = data.banner_url || data.bannerUrl;
+      if (banner) {
+        this.usuario.banner_url = banner;
+        localStorage.setItem('banner_url', banner);
       }
-    });
-  }
+      this.previewBanner = null;
+      this.archivoBannerSeleccionado = null;
+      this.subiendoBanner = false;
+      this.mensajeExito = '¡Banner actualizado!';
+      this.cdr.detectChanges();
+      setTimeout(() => { this.mensajeExito = ''; this.cdr.detectChanges(); }, 3000);
+    },
+    error: () => {
+      this.errorBanner = 'Error al subir el banner.';
+      this.subiendoBanner = false;
+      this.cdr.detectChanges();
+    }
+  });
+}
+
+cancelarBanner() {
+  this.archivoBannerSeleccionado = null;
+  this.previewBanner = null;
+  this.errorBanner = '';
+  this.bannerInput.nativeElement.value = '';
+  this.cdr.detectChanges();
+}
 
   iniciarEdicion() {
     this.formEdicion = {
@@ -623,5 +638,30 @@ export class Perfil implements OnInit {
     this.modalConfirmacionVisible = false;
     this.cdr.detectChanges();
   }
+
+  resetearBanner() {
+    if (!this.usuario?.id) return;
+    this.mostrarConfirmacion(
+        'ELIMINAR BANNER',
+        '¿Estás seguro de que deseas eliminar tu banner de perfil?',
+        'danger',
+        () => {
+            this.usuariosServicio.resetearBanner(this.usuario.id).subscribe({
+                next: (data: any) => {
+                    this.usuario = data;
+                    this.usuario.banner_url = null;
+                    localStorage.removeItem('banner_url');
+                    this.mensajeExito = 'Banner eliminado.';
+                    this.cdr.detectChanges();
+                    setTimeout(() => { this.mensajeExito = ''; this.cdr.detectChanges(); }, 3000);
+                },
+                error: () => {
+                    this.errorBanner = 'Error al eliminar el banner.';
+                    this.cdr.detectChanges();
+                }
+            });
+        }
+    );
+}
 }
 
