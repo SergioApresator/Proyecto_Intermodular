@@ -78,7 +78,7 @@
 .auth-form-side {
     background: #f8fafc;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     padding: 40px;
     position: relative;
@@ -340,5 +340,299 @@
     .btn-auth-primary {
         font-size: 1.1rem;
         padding: 12px;
+    }
+}
+
+/* PROFILE PIC SETUP */
+.profile-pic-setup {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: #ffffff;
+    padding: 15px;
+    border: 2px dashed #cbd5e1;
+    border-radius: 8px;
+    margin-top: 5px;
+    transition: all 0.3s ease;
+}
+
+.profile-pic-setup:hover {
+    border-color: #f99e1a;
+}
+
+.avatar-preview-wrapper {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #f1f5f9;
+    border: 2px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.avatar-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.banner-preview-wrapper {
+    width: 120px;
+    height: 60px;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #f1f5f9;
+    border: 2px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.banner-preview-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.banner-preview-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.avatar-preview-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    font-size: 1.5rem;
+}
+
+.upload-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex-grow: 1;
+}
+
+.btn-select-file {
+    display: inline-block;
+    padding: 8px 16px;
+    background: #1e293b;
+    color: #ffffff;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s ease;
+    width: fit-content;
+}
+
+.btn-select-file:hover {
+    background: #f99e1a;
+}
+
+.file-input-hidden {
+    display: none;
+}
+
+.file-info {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #475569;
+    word-break: break-all;
+}
+
+.text-muted {
+    color: #94a3b8;
+}
+
+@media (max-width: 480px) {
+    .profile-pic-setup {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 12px;
+    }
+    
+    .btn-select-file {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+/* LIVE PREVIEW CONTAINER */
+.live-preview-container {
+    margin-top: 25px;
+    padding: 15px;
+    background: #f1f5f9;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.preview-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    color: #475569;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+.player-card-bar-mini {
+    width: 100%;
+}
+
+.player-card-bg-mini {
+    height: 100px;
+    background-color: #1e293b;
+    border: 2px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    position: relative;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.06);
+    overflow: hidden;
+    border-radius: 6px;
+}
+
+/* Blurred background derived from their uploaded avatar to look extremely premium */
+.player-card-blur-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: blur(8px) brightness(0.6);
+    z-index: 0;
+    opacity: 0.85;
+    transition: filter 0.3s ease;
+}
+
+.player-card-blur-bg.is-banner {
+    filter: brightness(0.7);
+}
+
+.player-card-bg-mini::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.1) 100%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.player-card-content-mini {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.avatar-box-mini {
+    width: 66px;
+    height: 66px;
+    background: #ffffff;
+    padding: 3px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.avatar-grande-mini {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #f1f5f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.avatar-grande-mini img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-grande-mini.no-photo {
+    background: linear-gradient(135deg, #f99e1a 0%, #d97706 100%);
+    color: #ffffff;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 800;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.player-info-mini {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.player-name-mini {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+    color: #ffffff;
+    margin: 0;
+    line-height: 1;
+}
+
+.player-sub-mini {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #f99e1a;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.player-card-badge-mini {
+    position: relative;
+    z-index: 2;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 4px 10px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+@media (max-width: 480px) {
+    .player-card-bg-mini {
+        height: auto;
+        padding: 15px;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .player-card-content-mini {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 10px;
+    }
+
+    .player-card-badge-mini {
+        width: 100%;
+        box-sizing: border-box;
+        text-align: center;
     }
 }
