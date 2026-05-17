@@ -48,6 +48,7 @@ export class App implements OnInit {
   }
 
   actualizarEstadoAuth() {
+    this.mostrarDropdown = false;
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('token');
       this.estaLogueado = !!token;
@@ -56,6 +57,16 @@ export class App implements OnInit {
       this.fotoUrl = localStorage.getItem('foto_url') || '';
       this.bannerUrl = localStorage.getItem('banner_url') || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=600&auto=format&fit=crop';
       this.esAdmin = localStorage.getItem('esAdmin') === 'true';
+    }
+  }
+
+  onAvatarClick(event: MouseEvent) {
+    if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.mostrarDropdown = !this.mostrarDropdown;
+    } else {
+      this.router.navigate(['/perfil']);
     }
   }
 

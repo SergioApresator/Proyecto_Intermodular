@@ -193,7 +193,8 @@
     overflow: hidden;
 }
 
-.user-menu-ow:hover .player-card-ow {
+.user-menu-ow:hover .player-card-ow,
+.player-card-ow.active-ow {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);

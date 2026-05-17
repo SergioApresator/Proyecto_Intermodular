@@ -42,13 +42,13 @@
   <div class="user-menu-ow" *ngIf="estaLogueado">
     
     <!-- Large Profile Picture (Clickable) -->
-    <a routerLink="/perfil" class="avatar-container-ow" [class.no-photo]="!fotoUrl">
+    <div (click)="onAvatarClick($event)" class="avatar-container-ow" [class.no-photo]="!fotoUrl" style="cursor: pointer;">
       <img *ngIf="fotoUrl" [src]="fotoUrl" alt="Foto de perfil" class="avatar-img-ow">
       <div *ngIf="!fotoUrl" class="avatar-initials-ow">{{ getInitials() }}</div>
-    </a>
+    </div>
 
-    <!-- Dropdown Player Card (Shows on Hover) -->
-    <div class="player-card-ow">
+    <!-- Dropdown Player Card (Shows on Hover / Active Class on Mobile) -->
+    <div class="player-card-ow" [class.active-ow]="mostrarDropdown">
       <div class="player-card-header">
         
         <!-- Banner Background -->
