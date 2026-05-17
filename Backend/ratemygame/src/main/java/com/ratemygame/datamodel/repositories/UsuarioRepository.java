@@ -6,8 +6,20 @@ import org.springframework.stereotype.Repository;
 import com.ratemygame.datamodel.entities.Usuario;
 
 import java.util.Optional;
+import java.util.List;
 
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
-    Optional<Usuario> findByEmailAndPassword(String email, String password);
+    
+	Optional<Usuario> findByUsername(String username);
+	Optional<Usuario> findByEmail(String email);
+	Optional<Usuario> findByUsernameOrEmail(String username, String email);
+	List<Usuario> findByUsernameContainingIgnoreCase(String username);
+
+	@org.springframework.data.jpa.repository.Query("SELECT u FROM Usuario u WHERE " +
+		"LOWER(u.username) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+		"LOWER(CONCAT(u.nombre, ' ', u.apellidos)) LIKE LOWER(CONCAT('%', :query, '%'))")
+	List<Usuario> buscarUsuariosGeneral(String query);
 }
+
+

@@ -2,6 +2,9 @@ package com.ratemygame.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import com.ratemygame.config.JwtService;
+import com.ratemygame.config.CustomUserDetails;
 
 import com.ratemygame.datamodel.entities.Usuario;
 import com.ratemygame.datamodel.repositories.UsuarioRepository;
@@ -17,6 +20,12 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtService jwtService;
+
     public List<UsuarioDTO> getAllUsuarios() {
         return usuarioRepository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
     }
@@ -25,13 +34,40 @@ public class UsuarioService {
         return usuarioRepository.findById(id).map(this::convertToDTO);
     }
 
-    public Optional<UsuarioDTO> loginUsuario(String email, String password) {
-        return usuarioRepository.findByEmailAndPassword(email, password).map(this::convertToDTO);
+    public Optional<UsuarioDTO> login(String identifier, String password) {
+        Optional<Usuario> optionalUsuario = usuarioRepository.findByUsernameOrEmail(identifier, identifier);
+        if (optionalUsuario.isPresent()) {
+            Usuario usuario = optionalUsuario.get();
+            if (passwordEncoder.matches(password, usuario.getPassword())) {
+                if (Boolean.TRUE.equals(usuario.getBaneado())) {
+                    throw new RuntimeException("USUARIO_BANEADO");
+                }
+                String token = jwtService.generateToken(new CustomUserDetails(usuario));
+                UsuarioDTO dto = convertToDTO(usuario);
+                dto.setToken(token);
+                return Optional.of(dto);
+            }
+        }
+        return Optional.empty();
+    }
+
+    public Optional<UsuarioDTO> loginUsuarioUsername(String username, String password) {
+        return login(username, password);
+    }
+
+    public Optional<UsuarioDTO> loginUsuarioEmail(String email, String password) {
+        return login(email, password);
     }
 
     public UsuarioDTO createUsuario(Usuario usuario) {
+        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+        usuario.setEsAdmin(false);
+        usuario.setBaneado(false);
         Usuario savedUsuario = usuarioRepository.save(usuario);
-        return convertToDTO(savedUsuario);
+        String token = jwtService.generateToken(new CustomUserDetails(savedUsuario));
+        UsuarioDTO dto = convertToDTO(savedUsuario);
+        dto.setToken(token);
+        return dto;
     }
 
     public Optional<UsuarioDTO> updateUsuario(Long id, Usuario usuarioDetails) {
@@ -40,10 +76,34 @@ public class UsuarioService {
             usuario.setApellidos(usuarioDetails.getApellidos());
             usuario.setUsername(usuarioDetails.getUsername());
             usuario.setEmail(usuarioDetails.getEmail());
-            usuario.setPassword(usuarioDetails.getPassword());
-            usuario.setFoto_url(usuarioDetails.getFoto_url());
+            if (usuarioDetails.getPassword() != null && !usuarioDetails.getPassword().isEmpty()) {
+                usuario.setPassword(passwordEncoder.encode(usuarioDetails.getPassword()));
+            }
+            if (usuarioDetails.getFoto_url() != null) {
+                usuario.setFoto_url(usuarioDetails.getFoto_url());
+            }
+            if (usuarioDetails.getBiografia() != null) {
+                usuario.setBiografia(usuarioDetails.getBiografia());
+            }
+            if (usuarioDetails.getBaneado() != null) {
+                usuario.setBaneado(usuarioDetails.getBaneado());
+            }
             Usuario updatedUsuario = usuarioRepository.save(usuario);
             return convertToDTO(updatedUsuario);
+        });
+    }
+
+    public Optional<UsuarioDTO> actualizarFotoUrl(Long id, String fotoUrl) {
+        return usuarioRepository.findById(id).map(usuario -> {
+            usuario.setFoto_url(fotoUrl);
+            return convertToDTO(usuarioRepository.save(usuario));
+        });
+    }
+
+    public Optional<UsuarioDTO> actualizarBannerUrl(Long id, String bannerUrl) {
+        return usuarioRepository.findById(id).map(usuario -> {
+            usuario.setBannerUrl(bannerUrl);
+            return convertToDTO(usuarioRepository.save(usuario));
         });
     }
 
@@ -63,6 +123,22 @@ public class UsuarioService {
         dto.setUsername(usuario.getUsername());
         dto.setEmail(usuario.getEmail());
         dto.setFoto_url(usuario.getFoto_url());
+        dto.setBanner_url(usuario.getBannerUrl());
+        dto.setBiografia(usuario.getBiografia());
+        dto.setEsAdmin(usuario.getEsAdmin() != null ? usuario.getEsAdmin() : false);
+        dto.setBaneado(usuario.getBaneado() != null ? usuario.getBaneado() : false);
         return dto;
+    }
+
+    public List<UsuarioDTO> buscarPorUsername(String username) {
+        return usuarioRepository.findByUsernameContainingIgnoreCase(username).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<UsuarioDTO> buscarUsuariosGeneral(String query) {
+        return usuarioRepository.buscarUsuariosGeneral(query).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 }

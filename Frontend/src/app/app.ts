@@ -1,14 +1,127 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet, RouterLink } from '@angular/router';
+import { Component, inject, OnInit, HostListener, ChangeDetectorRef, NgZone } from '@angular/core';
+import { RouterOutlet, RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Usuarios } from './usuarios';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule, FormsModule],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 
-export class App {
-  
+export class App implements OnInit {
+  private router = inject(Router);
+  private usuariosServicio = inject(Usuarios);
+  private cdr = inject(ChangeDetectorRef);
+  private ngZone = inject(NgZone);
+
+  mostrarBuscador: boolean = false;
+  terminoBusqueda: string = '';
+
+  // Auth state
+  estaLogueado: boolean = false;
+  esAdmin: boolean = false;
+  username: string = '';
+  userId: string = '';
+  fotoUrl: string = '';
+  bannerUrl: string = '';
+  mostrarDropdown: boolean = false;
+
+  ngOnInit() {
+    this.actualizarEstadoAuth();
+    // Nos suscribimos a los cambios de ruta para cerrar el menú y refrescar auth
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.actualizarEstadoAuth();
+      }
+    });
+
+    // Escucha actualizaciones reactivas de perfil (foto/banner) para refrescar el menú superior sin recargar página
+    this.usuariosServicio.perfilActualizado$.subscribe(() => {
+      this.ngZone.run(() => {
+        this.actualizarEstadoAuth();
+        this.cdr.detectChanges();
+      });
+    });
+  }
+
+  // Sincroniza las variables locales de la sesión del usuario con el almacenamiento en navegador
+  actualizarEstadoAuth() {
+    this.mostrarDropdown = false;
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('token');
+      this.estaLogueado = !!token;
+      this.username = localStorage.getItem('username') || '';
+      this.userId = localStorage.getItem('usuarioId') || '';
+      this.fotoUrl = localStorage.getItem('foto_url') || '';
+      this.bannerUrl = localStorage.getItem('banner_url') || '';
+      this.esAdmin = localStorage.getItem('esAdmin') === 'true';
+    }
+  }
+
+  // En móvil el avatar de la Navbar despliega el menú Overwatch, en escritorio va directo a la edición de perfil
+  onAvatarClick(event: MouseEvent) {
+    if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.mostrarDropdown = !this.mostrarDropdown;
+    } else {
+      this.router.navigate(['/perfil']);
+    }
+  }
+
+  toggleDropdown() {
+    this.mostrarDropdown = !this.mostrarDropdown;
+  }
+
+  // Cierra el mini menú si hacemos clic en cualquier otro elemento de la pantalla
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.user-menu-ow')) {
+      this.mostrarDropdown = false;
+    }
+  }
+
+  cerrarSesion() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('usuarioId');
+    localStorage.removeItem('username');
+    localStorage.removeItem('foto_url');
+    localStorage.removeItem('banner_url');
+    localStorage.removeItem('esAdmin');
+    this.estaLogueado = false;
+    this.esAdmin = false;
+    this.username = '';
+    this.userId = '';
+    this.fotoUrl = '';
+    this.bannerUrl = '';
+    this.mostrarDropdown = false;
+    this.router.navigate(['/inicial']);
+  }
+
+  toggleBuscador() {
+    this.mostrarBuscador = !this.mostrarBuscador;
+    if (!this.mostrarBuscador) {
+      this.terminoBusqueda = '';
+    }
+  }
+
+  buscarGlobal() {
+    if (this.terminoBusqueda.trim().length > 0) {
+      this.router.navigate(['/busqueda'], { queryParams: { q: this.terminoBusqueda } });
+      this.mostrarBuscador = false;
+      this.terminoBusqueda = '';
+    }
+  }
+
+  getInitials(): string {
+    if (this.username) {
+      return this.username.charAt(0).toUpperCase();
+    }
+    return '?';
+  }
 }

@@ -11,11 +11,20 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.ForeignKey;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.CascadeType;
+import java.time.LocalDateTime;
+import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Entity
 @Table(name = "RESPUESTA")
 @Data
+@EqualsAndHashCode(exclude = {"votos"})
+@ToString(exclude = {"votos"})
 public class Respuesta {
 
     @Id
@@ -23,8 +32,9 @@ public class Respuesta {
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "MENSAJE")
+    @Column(name = "MENSAJE", length = 1000)
     private String mensaje;
+
 
     @Column(name = "ME_GUSTAS")
     private Integer meGustas;
@@ -45,4 +55,15 @@ public class Respuesta {
     nullable = false, 
     foreignKey=@ForeignKey(value = ConstraintMode.CONSTRAINT, name = "FK_RESPUESTA_USUARIO"))
     private Usuario usuario;
+
+    @Column(name = "ID_RESPUESTA_PADRE")
+    private Long idRespuestaPadre;
+
+
+    @Column(name = "FECHA_RESPUESTA")
+    private LocalDateTime fechaRespuesta;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "respuesta", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<RespuestaVoto> votos;
 }

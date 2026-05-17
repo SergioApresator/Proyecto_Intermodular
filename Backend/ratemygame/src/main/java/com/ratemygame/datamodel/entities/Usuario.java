@@ -17,12 +17,12 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Entity
-@Table(name="USUARIO")
+@Table(name = "USUARIO")
 @Data
-@EqualsAndHashCode(exclude = {"videojuegosPendientes", "listas", "resenas"})
-@ToString(exclude = {"videojuegosPendientes", "listas", "resenas"})
+@EqualsAndHashCode(exclude = { "listas", "resenas" })
+@ToString(exclude = { "listas", "resenas" })
 public class Usuario {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
@@ -46,9 +46,11 @@ public class Usuario {
     @Column(name = "FOTO_URL")
     private String foto_url;
 
-    @JsonIgnore
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "usuario")
-    private Set<VideojuegosPendientes> videojuegosPendientes;
+    @Column(name = "BANNER_URL")
+    private String bannerUrl;
+
+    @Column(name = "BIOGRAFIA", length = 500)
+    private String biografia;
 
     @JsonIgnore
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "usuario")
@@ -57,4 +59,10 @@ public class Usuario {
     @JsonIgnore
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "usuario")
     private Set<Resena> resenas;
+
+    @Column(name = "ES_ADMIN")
+    private Boolean esAdmin;
+
+    @Column(name = "BANEADO")
+    private Boolean baneado;
 }

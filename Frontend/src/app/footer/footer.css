@@ -1,0 +1,54 @@
+footer {
+    background-color: #ffffff;
+    color: #444;
+    padding: 40px 5%;
+    border-top: 4px solid #f0f0f0;
+    text-align: center;
+    font-family: 'Rajdhani', sans-serif;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.footer-logo {
+    height: 40px;
+    margin-bottom: 10px;
+}
+
+.footer-text {
+    font-size: 1.1rem;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 2px;
+    color: #888;
+}
+
+.footer-divider {
+    width: 50px;
+    height: 4px;
+    background: #3b82f6;
+    margin: 10px auto;
+}
+
+@media (max-width: 768px) {
+    footer {
+        padding: 25px 5%;
+    }
+
+    .footer-text {
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+    }
+
+    .footer-divider {
+        margin: 6px auto;
+    }
+
+    .footer-content {
+        gap: 8px;
+    }
+}
