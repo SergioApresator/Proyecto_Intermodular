@@ -138,6 +138,20 @@ export class Admin implements OnInit {
     );
   }
 
+  mostrarConfirmacion(titulo: string, mensaje: string, tipo: 'danger' | 'warning' | 'info', accion: () => void) {
+    this.modalConfirmacionConfig = { titulo, mensaje, tipo, accion };
+    this.modalConfirmacionVisible = true;
+  }
+
+  confirmarModal() {
+    this.modalConfirmacionConfig.accion();
+    this.modalConfirmacionVisible = false;
+  }
+
+  cancelarModal() {
+    this.modalConfirmacionVisible = false;
+  }
+
   // ===== USUARIOS =====
 
   buscarUsuarios() {
