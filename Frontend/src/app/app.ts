@@ -55,7 +55,7 @@ export class App implements OnInit {
       this.username = localStorage.getItem('username') || '';
       this.userId = localStorage.getItem('usuarioId') || '';
       this.fotoUrl = localStorage.getItem('foto_url') || '';
-      this.bannerUrl = localStorage.getItem('banner_url') || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=600&auto=format&fit=crop';
+      this.bannerUrl = localStorage.getItem('banner_url') || '';
       this.esAdmin = localStorage.getItem('esAdmin') === 'true';
     }
   }

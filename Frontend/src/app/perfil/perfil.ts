@@ -507,6 +507,7 @@ subirBanner() {
       this.archivoBannerSeleccionado = null;
       this.subiendoBanner = false;
       this.mensajeExito = '¡Banner actualizado!';
+      this.usuariosServicio.notificarCambioPerfil();
       this.cdr.detectChanges();
       setTimeout(() => { this.mensajeExito = ''; this.cdr.detectChanges(); }, 3000);
     },
@@ -652,6 +653,7 @@ cancelarBanner() {
                     this.usuario.banner_url = null;
                     localStorage.removeItem('banner_url');
                     this.mensajeExito = 'Banner eliminado.';
+                    this.usuariosServicio.notificarCambioPerfil();
                     this.cdr.detectChanges();
                     setTimeout(() => { this.mensajeExito = ''; this.cdr.detectChanges(); }, 3000);
                 },

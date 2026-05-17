@@ -91,7 +91,7 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or #id == principal.usuario.id")
+    @PreAuthorize("hasRole('ADMIN') or (principal instanceof T(com.ratemygame.config.CustomUserDetails) and #id == principal.usuario.id)")
     public ResponseEntity<UsuarioDTO> updateUsuario(@PathVariable Long id, @RequestBody Usuario usuarioDetails) {
         return usuarioService.updateUsuario(id, usuarioDetails)
                 .map(ResponseEntity::ok)
@@ -99,7 +99,7 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or #id == principal.usuario.id")
+    @PreAuthorize("hasRole('ADMIN') or (principal instanceof T(com.ratemygame.config.CustomUserDetails) and #id == principal.usuario.id)")
     public ResponseEntity<Void> deleteUsuario(@PathVariable Long id) {
         if (usuarioService.deleteUsuario(id)) {
             return ResponseEntity.noContent().build();
@@ -113,7 +113,7 @@ public class UsuarioController {
      * Guarda la imagen en disco y actualiza foto_url en la BD.
      */
     @PostMapping(value = "/{id}/foto", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasRole('ADMIN') or #id == principal.usuario.id")
+    @PreAuthorize("isAnonymous() or hasRole('ADMIN') or (principal instanceof T(com.ratemygame.config.CustomUserDetails) and #id == principal.usuario.id)")
     public ResponseEntity<UsuarioDTO> subirFotoPerfil(
             @PathVariable Long id,
             @RequestParam("file") MultipartFile file) {
@@ -166,7 +166,7 @@ public class UsuarioController {
      * Guarda la imagen en disco y actualiza banner_url en la BD.
      */
     @PostMapping(value = "/{id}/banner", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasRole('ADMIN') or #id == principal.usuario.id")
+    @PreAuthorize("isAnonymous() or hasRole('ADMIN') or (principal instanceof T(com.ratemygame.config.CustomUserDetails) and #id == principal.usuario.id)")
     public ResponseEntity<UsuarioDTO> subirBanner(
             @PathVariable Long id,
             @RequestParam("file") MultipartFile file) {
@@ -207,7 +207,7 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{id}/foto")
-    @PreAuthorize("hasRole('ADMIN') or #id == principal.usuario.id")
+    @PreAuthorize("hasRole('ADMIN') or (principal instanceof T(com.ratemygame.config.CustomUserDetails) and #id == principal.usuario.id)")
     public ResponseEntity<UsuarioDTO> resetearFotoPerfil(@PathVariable Long id) {
         return usuarioService.actualizarFotoUrl(id, null)
                 .map(ResponseEntity::ok)
@@ -224,7 +224,7 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{id}/banner")
-    @PreAuthorize("hasRole('ADMIN') or #id == principal.usuario.id")
+    @PreAuthorize("hasRole('ADMIN') or (principal instanceof T(com.ratemygame.config.CustomUserDetails) and #id == principal.usuario.id)")
     public ResponseEntity<UsuarioDTO> resetearBanner(@PathVariable Long id) {
         return usuarioService.actualizarBannerUrl(id, null)
             .map(ResponseEntity::ok)

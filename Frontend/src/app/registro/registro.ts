@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectorRef } from '@angular/core';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Usuarios } from '../usuarios';
@@ -16,6 +16,7 @@ export class Registro {
 
   //Injección necesaria para viajar entre páginas
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
 
   // Inyecto el servicio
   constructor(private usuariosServicio: Usuarios) { }
@@ -88,6 +89,7 @@ export class Registro {
     const reader = new FileReader();
     reader.onload = () => {
       this.previewUrl = reader.result as string;
+      this.cdr.detectChanges();
     };
     reader.readAsDataURL(file);
   }
@@ -119,6 +121,7 @@ export class Registro {
     const reader = new FileReader();
     reader.onload = () => {
       this.previewBannerUrl = reader.result as string;
+      this.cdr.detectChanges();
     };
     reader.readAsDataURL(file);
   }

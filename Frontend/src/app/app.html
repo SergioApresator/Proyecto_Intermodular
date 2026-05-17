@@ -52,7 +52,7 @@
       <div class="player-card-header">
         
         <!-- Banner Background -->
-        <div class="card-banner-img" [style.backgroundImage]="'url(' + bannerUrl + ')'"></div>
+        <div *ngIf="bannerUrl" class="card-banner-img" [style.backgroundImage]="'url(' + bannerUrl + ')'"></div>
         <div class="card-banner-overlay"></div>
 
         <div class="card-header-content">
