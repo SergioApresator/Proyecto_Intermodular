@@ -98,10 +98,17 @@
 
       <!-- TAB: LISTAS -->
       <div class="tab-pane listas-pane" *ngIf="pestanaActual === 'listas'">
-        <div *ngIf="cargandoListas" class="loading-pane">
-          <div class="spinner-mini"></div>
-          <p>Cargando listas...</p>
-        </div>
+        
+        <!-- Skeleton listas -->
+<div *ngIf="cargandoListas" class="skeleton-perfil-listas">
+  <div class="skeleton-lista-grupo" *ngFor="let i of [1,2]">
+    <div class="skeleton-lista-titulo"></div>
+    <div class="skeleton-lista-juegos">
+      <div class="skeleton-juego-card" *ngFor="let j of [1,2,3,4,5]"></div>
+    </div>
+  </div>
+</div>
+
         <div class="listas-container" *ngIf="!cargandoListas">
           <div class="lista-group" *ngFor="let lista of listas">
             <div class="lista-header-row">
@@ -138,9 +145,20 @@
 
       <!-- TAB: RESEÑAS -->
       <div class="tab-pane resenas-pane" *ngIf="pestanaActual === 'resenas'">
-        <div *ngIf="cargandoResenas" class="loading-pane">
-          <div class="spinner-mini"></div>
+        
+        <!-- Skeleton listas -->
+<div *ngIf="cargandoListas" class="skeleton-perfil-listas">
+    <div class="skeleton-lista-grupo" *ngFor="let i of [1,2,3]">
+        <div class="skeleton-lista-header">
+            <div class="skeleton-lista-titulo"></div>
+            <div class="skeleton-lista-btn"></div>
         </div>
+        <div class="skeleton-lista-juegos">
+            <div class="skeleton-juego-card" *ngFor="let j of [1,2,3,4,5]"></div>
+        </div>
+    </div>
+</div>
+
         <div class="resenas-list" *ngIf="!cargandoResenas">
           <div class="resena-item" *ngFor="let resena of resenas">
             <div class="resena-game-box" [routerLink]="['/juego', resena.id_videojuego]">

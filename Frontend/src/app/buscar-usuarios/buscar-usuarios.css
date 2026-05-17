@@ -264,3 +264,145 @@
     .search-controls { flex-direction: column; }
     .btn-buscar-ow { transform: none; padding: 15px; }
 }
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+
+    .contenedor-busqueda-usuarios {
+        padding: 30px 16px;
+    }
+
+    .header-usuarios {
+        margin-bottom: 30px;
+    }
+
+    .header-usuarios h1 {
+        font-size: 2.8rem;
+        letter-spacing: 1px;
+    }
+
+    .header-usuarios p {
+        font-size: 1rem;
+    }
+
+    .search-hub-ow {
+        padding: 20px 16px;
+        margin-bottom: 30px;
+        box-sizing: border-box;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .search-controls {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .input-wrapper-ow {
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .input-wrapper-ow input {
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 0.85rem;
+        padding: 12px 15px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .input-wrapper-ow input::placeholder {
+        font-size: 0.85rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .btn-buscar-ow {
+        transform: none;
+        padding: 14px;
+        font-size: 1.3rem;
+        box-shadow: 3px 3px 0 #1e293b;
+        width: 100%;
+    }
+
+    .btn-buscar-ow:hover:not(:disabled) {
+        transform: none;
+        box-shadow: 3px 3px 0 #1e293b;
+    }
+
+    .usuarios-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .usuario-card-premium {
+        padding: 18px;
+        gap: 15px;
+    }
+
+    .avatar-ow-large {
+        width: 60px;
+        height: 60px;
+        flex-shrink: 0;
+    }
+
+    .avatar-initial {
+        font-size: 2rem;
+    }
+
+    .user-tag-ow {
+        font-size: 1.5rem;
+    }
+
+    .user-full-name {
+        font-size: 0.85rem;
+    }
+
+    .tactical-arrow {
+        opacity: 1;
+        transform: translateX(0);
+        margin-left: auto;
+    }
+
+    .empty-state-ow {
+        padding: 50px 20px;
+    }
+
+    .empty-state-ow p {
+        font-size: 1.4rem;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .contenedor-busqueda-usuarios {
+        padding: 20px 12px;
+    }
+
+    .header-usuarios h1 {
+        font-size: 2.2rem;
+    }
+
+    .search-hub-ow {
+        padding: 16px 12px;
+    }
+
+    .input-wrapper-ow input {
+        font-size: 0.8rem;
+        padding: 10px 12px;
+    }
+
+    .input-wrapper-ow input::placeholder {
+        font-size: 0.8rem;
+    }
+
+    .avatar-ow-large {
+        width: 50px;
+        height: 50px;
+    }
+
+    .user-tag-ow { font-size: 1.3rem; }
+}
