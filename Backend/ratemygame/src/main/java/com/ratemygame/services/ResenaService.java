@@ -51,7 +51,8 @@ public class ResenaService {
         return resenaRepository.findByIdVideojuego(idVideojuego).stream()
                 .map(resena -> {
                     ResenaDTO dto = convertToDTO(resena);
-                    Optional<ResenaVoto> voto = resenaVotoRepository.findByResena_IdAndUsuario_Id(resena.getId(), idUsuario);
+                    Optional<ResenaVoto> voto = resenaVotoRepository.findByResena_IdAndUsuario_Id(resena.getId(),
+                            idUsuario);
                     dto.setVotoUsuarioActual(voto.map(ResenaVoto::getEsMeGusta).orElse(null));
                     return dto;
                 })
@@ -74,6 +75,7 @@ public class ResenaService {
         resena.setMensaje(resenaDTO.getMensaje());
         resena.setPuntuacion(resenaDTO.getPuntuacion());
         resena.setTieneSpoiler(resenaDTO.getTieneSpoiler() != null ? resenaDTO.getTieneSpoiler() : false);
+        resena.setRevisada(resenaDTO.getRevisada() != null ? resenaDTO.getRevisada() : false);
         resena.setMeGustas(0);
         resena.setNoMeGustas(0);
         resena.setFechaResena(LocalDateTime.now(ZoneId.of("Europe/Madrid")));
@@ -145,6 +147,25 @@ public class ResenaService {
         return Optional.of(dto);
     }
 
+    public Optional<ResenaDTO> updateResena(Long id, ResenaDTO resenaDTO) {
+        return resenaRepository.findById(id).map(resena -> {
+            if (resenaDTO.getMensaje() != null) {
+                resena.setMensaje(resenaDTO.getMensaje());
+            }
+            if (resenaDTO.getPuntuacion() > 0) {
+                resena.setPuntuacion(resenaDTO.getPuntuacion());
+            }
+            if (resenaDTO.getTieneSpoiler() != null) {
+                resena.setTieneSpoiler(resenaDTO.getTieneSpoiler());
+            }
+            if (resenaDTO.getRevisada() != null) {
+                resena.setRevisada(resenaDTO.getRevisada());
+            }
+            Resena updatedResena = resenaRepository.save(resena);
+            return convertToDTO(updatedResena);
+        });
+    }
+
     @Transactional
     public boolean deleteResena(Long id) {
         if (resenaRepository.existsById(id)) {
@@ -174,6 +195,7 @@ public class ResenaService {
         dto.setMensaje(resena.getMensaje());
         dto.setPuntuacion(resena.getPuntuacion());
         dto.setTieneSpoiler(resena.getTieneSpoiler());
+        dto.setRevisada(resena.getRevisada());
         dto.setMeGustas(resena.getMeGustas());
         dto.setNoMeGustas(resena.getNoMeGustas());
         dto.setFechaResena(resena.getFechaResena());
@@ -194,6 +216,12 @@ public class ResenaService {
 
     public List<ResenaDTO> getRecentReviews() {
         return resenaRepository.findTop10ByOrderByFechaResenaDescIdDesc().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<ResenaDTO> getResenasARevisar() {
+        return resenaRepository.findResenasARevisar().stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }

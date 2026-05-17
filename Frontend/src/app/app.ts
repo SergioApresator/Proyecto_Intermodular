@@ -23,6 +23,7 @@ export class App implements OnInit {
 
   // Auth state
   estaLogueado: boolean = false;
+  esAdmin: boolean = false;
   username: string = '';
   userId: string = '';
   fotoUrl: string = '';
@@ -54,6 +55,7 @@ export class App implements OnInit {
       this.userId = localStorage.getItem('usuarioId') || '';
       this.fotoUrl = localStorage.getItem('foto_url') || '';
       this.bannerUrl = localStorage.getItem('banner_url') || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=600&auto=format&fit=crop';
+      this.esAdmin = localStorage.getItem('esAdmin') === 'true';
     }
   }
 
@@ -75,7 +77,9 @@ export class App implements OnInit {
     localStorage.removeItem('username');
     localStorage.removeItem('foto_url');
     localStorage.removeItem('banner_url');
+    localStorage.removeItem('esAdmin');
     this.estaLogueado = false;
+    this.esAdmin = false;
     this.username = '';
     this.userId = '';
     this.fotoUrl = '';

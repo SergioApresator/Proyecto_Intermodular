@@ -10,7 +10,7 @@
       <a routerLink="/registro" routerLinkActive="active-link"><span>Registrarse</span></a>
       <a routerLink="/login" routerLinkActive="active-link"><span>Iniciar Sesión</span></a>
     </ng-container>
-    <ng-container *ngIf="estaLogueado">
+    <ng-container *ngIf="estaLogueado && esAdmin">
       <a routerLink="/admin" routerLinkActive="active-link"><span>Admin</span></a>
     </ng-container>
 </div>
