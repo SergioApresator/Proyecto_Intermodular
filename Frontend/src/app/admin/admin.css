@@ -324,16 +324,139 @@
 }
 
 /* RESPONSIVE */
-@media (max-width: 1200px) {
+/* RESPONSIVE */
+@media (max-width: 1024px) {
     .admin-layout {
         grid-template-columns: 1fr;
     }
 
     .admin-sidebar {
+        padding: 20px 24px;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        border-right: none;
+        border-bottom: 1px solid #e2e8f0;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .admin-brand {
+        padding: 0;
+        font-size: 1.8rem;
+        margin-bottom: 0;
+    }
+
+    .admin-brand::after {
         display: none;
     }
+
+    .admin-nav-list {
+        display: flex;
+        gap: 12px;
+    }
+
+    .admin-nav-item {
+        padding: 10px 20px;
+        font-size: 1.05rem;
+        border-left: none;
+        border-bottom: 4px solid transparent;
+    }
+
+    .admin-nav-item:hover {
+        padding-left: 20px;
+        background: #f1f5f9;
+    }
+
+    .admin-nav-item.active {
+        border-left: none;
+        border-bottom: 4px solid #3b82f6;
+        background: rgba(59, 130, 246, 0.05);
+        clip-path: none;
+    }
+
     .admin-main {
-        padding: 40px 5%;
+        padding: 40px 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-title {
+        font-size: 3rem;
+    }
+
+    .admin-subtitle {
+        font-size: 1.1rem;
+        letter-spacing: 1px;
+    }
+
+    .admin-header {
+        margin-bottom: 30px;
+    }
+
+    .reviews-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}
+
+@media (max-width: 560px) {
+    .admin-sidebar {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px 12px;
+    }
+
+    .admin-brand {
+        font-size: 2rem;
+        text-align: center;
+    }
+
+    .admin-nav-list {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .admin-nav-item {
+        flex: 1;
+        justify-content: center;
+        text-align: center;
+        font-size: 0.95rem;
+        padding: 10px 5px;
+    }
+
+    .card-footer {
+        flex-direction: column;
+    }
+
+    .btn:not(:last-child) {
+        border-right: none;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .btn {
+        padding: 12px 10px;
+        font-size: 1.1rem;
+    }
+
+    .user-list-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 16px;
+    }
+
+    .user-list-info {
+        width: 100%;
+    }
+
+    .btn-ban {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
     }
 }
 
