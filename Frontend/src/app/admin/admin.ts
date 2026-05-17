@@ -74,27 +74,32 @@ export class Admin implements OnInit {
   }
 
   marcarComoSpoiler(id: number) {
-    if (confirm('¿Estás seguro de marcar esta reseña como spoiler?')) {
-      this.resenasServicio.getResenaPorId(id).subscribe({
-        next: (resenaData) => {
-          resenaData.tieneSpoiler = true;
-          this.resenasServicio.updateResena(id, resenaData).subscribe({
-            next: () => {
-              this.resenasARevisar = this.resenasARevisar.filter(r => r.id !== id);
-              this.cdr.detectChanges();
-            },
-            error: (err) => {
-              console.error('Error al actualizar spoiler en servidor:', err);
-              this.resenasARevisar = this.resenasARevisar.filter(r => r.id !== id);
-              this.cdr.detectChanges();
-            }
-          });
-        },
-        error: (err) => {
-          console.error('Error al obtener la reseña para actualizarla:', err);
-        }
-      });
-    }
+    this.mostrarConfirmacion(
+      'MARCAR COMO SPOILER',
+      '¿Estás seguro de que deseas marcar esta reseña como spoiler? Esto ocultará el texto del contenido por defecto para los usuarios de la plataforma.',
+      'warning',
+      () => {
+        this.resenasServicio.getResenaPorId(id).subscribe({
+          next: (resenaData) => {
+            resenaData.tieneSpoiler = true;
+            this.resenasServicio.updateResena(id, resenaData).subscribe({
+              next: () => {
+                this.resenasARevisar = this.resenasARevisar.filter(r => r.id !== id);
+                this.cdr.detectChanges();
+              },
+              error: (err) => {
+                console.error('Error al actualizar spoiler en servidor:', err);
+                this.resenasARevisar = this.resenasARevisar.filter(r => r.id !== id);
+                this.cdr.detectChanges();
+              }
+            });
+          },
+          error: (err) => {
+            console.error('Error al obtener la reseña para actualizarla:', err);
+          }
+        });
+      }
+    );
   }
 
   validarResena(id: number) {
@@ -179,33 +184,41 @@ export class Admin implements OnInit {
   }
 
   toggleBaneo(usuario: any) {
-    const accion = usuario.baneado ? 'desbanear' : 'bannear';
-    if (!confirm(`¿Estás seguro de que deseas ${accion} al usuario "${usuario.username}"?`)) {
-      return;
-    }
+    const accion = usuario.baneado ? 'DESBANEAR' : 'BANEAR';
+    const tipo = usuario.baneado ? 'info' : 'danger';
+    const mensaje = usuario.baneado 
+      ? `¿Estás seguro de que deseas desbanear al usuario "${usuario.username}"? Podrá volver a acceder al sistema y publicar contenido.` 
+      : `¿Estás seguro de que deseas BANEAR al usuario "${usuario.username}"? Se le denegará el acceso al sistema de forma inmediata.`;
 
-    const nuevoBaneado = !usuario.baneado;
+    this.mostrarConfirmacion(
+      `${accion} USUARIO`,
+      mensaje,
+      tipo,
+      () => {
+        const nuevoBaneado = !usuario.baneado;
 
-    // Obtenemos el usuario completo y luego actualizamos solo el campo baneado
-    this.usuariosServicio.getUsuarioById(usuario.id).subscribe({
-      next: (usuarioCompleto: any) => {
-        const usuarioActualizado = { ...usuarioCompleto, baneado: nuevoBaneado };
+        // Obtenemos el usuario completo y luego actualizamos solo el campo baneado
+        this.usuariosServicio.getUsuarioById(usuario.id).subscribe({
+          next: (usuarioCompleto: any) => {
+            const usuarioActualizado = { ...usuarioCompleto, baneado: nuevoBaneado };
 
-        this.usuariosServicio.actualizarUsuario(usuario.id, usuarioActualizado).subscribe({
-          next: (respuesta: any) => {
-            usuario.baneado = respuesta.baneado;
-            this.cdr.detectChanges();
+            this.usuariosServicio.actualizarUsuario(usuario.id, usuarioActualizado).subscribe({
+              next: (respuesta: any) => {
+                usuario.baneado = respuesta.baneado;
+                this.cdr.detectChanges();
+              },
+              error: (err: any) => {
+                console.error('Error al actualizar el usuario:', err);
+                alert('Hubo un error al intentar actualizar el usuario.');
+              }
+            });
           },
           error: (err: any) => {
-            console.error('Error al actualizar el usuario:', err);
-            alert('Hubo un error al intentar actualizar el usuario.');
+            console.error('Error al obtener el usuario:', err);
+            alert('Hubo un error al obtener los datos del usuario.');
           }
         });
-      },
-      error: (err: any) => {
-        console.error('Error al obtener el usuario:', err);
-        alert('Hubo un error al obtener los datos del usuario.');
       }
-    });
+    );
   }
 }
