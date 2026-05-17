@@ -492,32 +492,33 @@ export class Perfil implements OnInit {
   reader.readAsDataURL(file);
 }
 
-subirBanner() {
-  if (!this.archivoBannerSeleccionado || !this.usuario?.id) return;
-  this.subiendoBanner = true;
-  this.usuariosServicio.subirBanner(this.usuario.id, this.archivoBannerSeleccionado).subscribe({
-    next: (data: any) => {
-      this.usuario = data;
-      const banner = data.banner_url || data.bannerUrl;
-      if (banner) {
-        this.usuario.banner_url = banner;
-        localStorage.setItem('banner_url', banner);
+  // Sube el banner de portada del perfil al backend y avisa a la Navbar para actualizarla al vuelo
+  subirBanner() {
+    if (!this.archivoBannerSeleccionado || !this.usuario?.id) return;
+    this.subiendoBanner = true;
+    this.usuariosServicio.subirBanner(this.usuario.id, this.archivoBannerSeleccionado).subscribe({
+      next: (data: any) => {
+        this.usuario = data;
+        const banner = data.banner_url || data.bannerUrl;
+        if (banner) {
+          this.usuario.banner_url = banner;
+          localStorage.setItem('banner_url', banner);
+        }
+        this.previewBanner = null;
+        this.archivoBannerSeleccionado = null;
+        this.subiendoBanner = false;
+        this.mensajeExito = '¡Banner actualizado!';
+        this.usuariosServicio.notificarCambioPerfil(); // Avisa a los componentes suscritos (como app.component)
+        this.cdr.detectChanges();
+        setTimeout(() => { this.mensajeExito = ''; this.cdr.detectChanges(); }, 3000);
+      },
+      error: () => {
+        this.errorBanner = 'Error al subir el banner.';
+        this.subiendoBanner = false;
+        this.cdr.detectChanges();
       }
-      this.previewBanner = null;
-      this.archivoBannerSeleccionado = null;
-      this.subiendoBanner = false;
-      this.mensajeExito = '¡Banner actualizado!';
-      this.usuariosServicio.notificarCambioPerfil();
-      this.cdr.detectChanges();
-      setTimeout(() => { this.mensajeExito = ''; this.cdr.detectChanges(); }, 3000);
-    },
-    error: () => {
-      this.errorBanner = 'Error al subir el banner.';
-      this.subiendoBanner = false;
-      this.cdr.detectChanges();
-    }
-  });
-}
+    });
+  }
 
 cancelarBanner() {
   this.archivoBannerSeleccionado = null;

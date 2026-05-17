@@ -65,13 +65,13 @@ public class UsuarioController {
         return login(credentials);
     }
 
-    // Spring Security already validates the JWT before reaching this method.
-    // Returns 200 OK if the token is valid, 401 Unauthorized otherwise.
+    // Comprueba si el token JWT enviado en la cabecera es válido
     @GetMapping("/validar-token")
     public ResponseEntity<Void> validarToken() {
         return ResponseEntity.ok().build();
     }
 
+    // Panel de administración de usuarios. Exclusivo para ADMIN.
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UsuarioDTO>> getAllUsuarios() {
@@ -90,6 +90,8 @@ public class UsuarioController {
         return new ResponseEntity<>(usuarioService.createUsuario(usuario), HttpStatus.CREATED);
     }
 
+    // Actualiza los campos de un perfil de usuario (nombre, apellidos, biografía, etc.)
+    // Solo puede hacerlo un administrador o el propio usuario autenticado dueño del perfil.
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or (principal instanceof T(com.ratemygame.config.CustomUserDetails) and #id == principal.usuario.id)")
     public ResponseEntity<UsuarioDTO> updateUsuario(@PathVariable Long id, @RequestBody Usuario usuarioDetails) {
@@ -98,6 +100,7 @@ public class UsuarioController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // Borra un usuario. Mismas restricciones: dueño del perfil o ADMIN.
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or (principal instanceof T(com.ratemygame.config.CustomUserDetails) and #id == principal.usuario.id)")
     public ResponseEntity<Void> deleteUsuario(@PathVariable Long id) {
@@ -107,11 +110,8 @@ public class UsuarioController {
         return ResponseEntity.notFound().build();
     }
 
-    /**
-     * Endpoint para subir la foto de perfil de un usuario.
-     * Acepta multipart/form-data con el campo "file".
-     * Guarda la imagen en disco y actualiza foto_url en la BD.
-     */
+    // Sube la foto de perfil en disco y guarda la URL en la base de datos.
+    // Nota: permitimos accesos anónimos para que los usuarios puedan registrarse con foto.
     @PostMapping(value = "/{id}/foto", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("isAnonymous() or hasRole('ADMIN') or (principal instanceof T(com.ratemygame.config.CustomUserDetails) and #id == principal.usuario.id)")
     public ResponseEntity<UsuarioDTO> subirFotoPerfil(
@@ -160,11 +160,7 @@ public class UsuarioController {
         }
     }
 
-    /**
-     * Endpoint para subir la foto de banner de un usuario.
-     * Acepta multipart/form-data con el campo "file".
-     * Guarda la imagen en disco y actualiza banner_url en la BD.
-     */
+    // Sube la imagen de banner del perfil. Mismo flujo de registro/seguridad que la foto.
     @PostMapping(value = "/{id}/banner", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("isAnonymous() or hasRole('ADMIN') or (principal instanceof T(com.ratemygame.config.CustomUserDetails) and #id == principal.usuario.id)")
     public ResponseEntity<UsuarioDTO> subirBanner(
@@ -206,6 +202,7 @@ public class UsuarioController {
         }
     }
 
+    // Resetea la foto de perfil del usuario (la borra lógicamente poniendo la URL a null)
     @DeleteMapping("/{id}/foto")
     @PreAuthorize("hasRole('ADMIN') or (principal instanceof T(com.ratemygame.config.CustomUserDetails) and #id == principal.usuario.id)")
     public ResponseEntity<UsuarioDTO> resetearFotoPerfil(@PathVariable Long id) {
@@ -214,6 +211,7 @@ public class UsuarioController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // Buscador general de perfiles o por username exacto
     @GetMapping("/buscar")
     public ResponseEntity<List<UsuarioDTO>> buscarUsuarios(@RequestParam(required = false) String username,
             @RequestParam(required = false) String query) {
@@ -223,11 +221,12 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.buscarPorUsername(username != null ? username : ""));
     }
 
+    // Resetea el banner de perfil a null
     @DeleteMapping("/{id}/banner")
     @PreAuthorize("hasRole('ADMIN') or (principal instanceof T(com.ratemygame.config.CustomUserDetails) and #id == principal.usuario.id)")
     public ResponseEntity<UsuarioDTO> resetearBanner(@PathVariable Long id) {
         return usuarioService.actualizarBannerUrl(id, null)
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
-}
+    }
 }

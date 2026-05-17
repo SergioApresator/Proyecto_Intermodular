@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
+// Wrapper personalizado para que Spring Security entienda nuestro modelo de datos "Usuario"
 public class CustomUserDetails implements UserDetails {
 
     private final Usuario usuario;
@@ -16,6 +17,7 @@ public class CustomUserDetails implements UserDetails {
         this.usuario = usuario;
     }
 
+    // Mapeamos el booleano esAdmin a los roles oficiales de Spring Security (con prefijo ROLE_)
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (usuario.getEsAdmin() != null && usuario.getEsAdmin()) {
@@ -29,9 +31,10 @@ public class CustomUserDetails implements UserDetails {
         return usuario.getPassword();
     }
 
+    // IMPORTANTE: Usamos el email como identificador único de sesión/autenticación en lugar del username clásico
     @Override
     public String getUsername() {
-        return usuario.getEmail(); // Using email as the "username" for authentication
+        return usuario.getEmail();
     }
 
     @Override
@@ -54,6 +57,7 @@ public class CustomUserDetails implements UserDetails {
         return true;
     }
 
+    // Devuelve el objeto Usuario original de la base de datos (clave para sacar su id en anotaciones como @PreAuthorize)
     public Usuario getUsuario() {
         return usuario;
     }

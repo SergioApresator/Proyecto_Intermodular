@@ -62,6 +62,7 @@ export class Registro {
   previewBannerUrl: string | null = null;
   errorBanner: string | null = null;
 
+  // Gestiona la selección, validación y renderizado dinámico de la foto de perfil en el registro
   onFileSelected(event: any) {
     const file = event.target.files?.[0];
     this.errorFoto = null;
@@ -85,7 +86,7 @@ export class Registro {
 
     this.selectedFile = file;
 
-    // Generar vista previa de la imagen
+    // FileReader es asíncrono, por eso llamamos a detectChanges() para pintar la miniatura al momento
     const reader = new FileReader();
     reader.onload = () => {
       this.previewUrl = reader.result as string;
@@ -94,6 +95,7 @@ export class Registro {
     reader.readAsDataURL(file);
   }
 
+  // Idem para la selección y renderizado del banner de portada
   onBannerSelected(event: any) {
     const file = event.target.files?.[0];
     this.errorBanner = null;

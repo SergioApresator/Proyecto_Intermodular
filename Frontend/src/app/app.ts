@@ -32,13 +32,14 @@ export class App implements OnInit {
 
   ngOnInit() {
     this.actualizarEstadoAuth();
+    // Nos suscribimos a los cambios de ruta para cerrar el menú y refrescar auth
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.actualizarEstadoAuth();
       }
     });
 
-    // Escuchar actualizaciones de perfil instantáneas
+    // Escucha actualizaciones reactivas de perfil (foto/banner) para refrescar el menú superior sin recargar página
     this.usuariosServicio.perfilActualizado$.subscribe(() => {
       this.ngZone.run(() => {
         this.actualizarEstadoAuth();
@@ -47,6 +48,7 @@ export class App implements OnInit {
     });
   }
 
+  // Sincroniza las variables locales de la sesión del usuario con el almacenamiento en navegador
   actualizarEstadoAuth() {
     this.mostrarDropdown = false;
     if (typeof window !== 'undefined') {
@@ -60,6 +62,7 @@ export class App implements OnInit {
     }
   }
 
+  // En móvil el avatar de la Navbar despliega el menú Overwatch, en escritorio va directo a la edición de perfil
   onAvatarClick(event: MouseEvent) {
     if (typeof window !== 'undefined' && window.innerWidth <= 768) {
       event.preventDefault();
@@ -74,6 +77,7 @@ export class App implements OnInit {
     this.mostrarDropdown = !this.mostrarDropdown;
   }
 
+  // Cierra el mini menú si hacemos clic en cualquier otro elemento de la pantalla
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
     const target = event.target as HTMLElement;
