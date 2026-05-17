@@ -1,37 +1,31 @@
 import { Injectable, inject } from '@angular/core';
-
-//Importacione que permite llamar al backend
-//permitiendo usar metodos get, post
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-
-//Importacion que permite manejar las respuestas del servidot
 import { Observable, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
-
 export class Usuarios {
-  // Subject para notificar cambios en el perfil (como la foto) a otros componentes (navbar)
+
+  // Subject reactivo para notificar la actualización del perfil (foto y banner)
+  // Permite que componentes lejanos (ej. Navbar) refresquen la vista al momento
   private perfilActualizadoSource = new Subject<void>();
   perfilActualizado$ = this.perfilActualizadoSource.asObservable();
 
   notificarCambioPerfil() {
     this.perfilActualizadoSource.next();
   }
-  //Se inyecta HttpClient para comunicar con backend
-  //al inyectarse no hay que comfigurarla, se hace solo
+
+  // Inyección de HttpClient para la comunicación directa con nuestra API
   private http = inject(HttpClient);
   private url = 'http://localhost:9999/api/usuarios';
 
-  //Función para enviar el formulario al backend
-  //se pone 'text' as 'json' para que no de fallos al frecibir la respuesta del servidor,
-  //ya que algunos serfvidores devuelven un mensaje en vez de un objeto
+  // Guarda/Registra un nuevo usuario en la base de datos
   guardarUsuario(datos: any): Observable<any> {
     return this.http.post(this.url, datos);
   }
 
-  //Metodos para login
+  // Login unificado: admite tanto 'email' como 'username' en el campo identifier
   login(identifier: string, password: string): Observable<any> {
     return this.http.post(this.url + '/login', { identifier, password });
   }
@@ -44,27 +38,26 @@ export class Usuarios {
     return this.login(email, password);
   }
 
-  // Obtener usuario por ID
   getUsuarioById(id: number): Observable<any> {
     return this.http.get(`${this.url}/${id}`, this.getHeaders());
   }
 
-  // Buscar usuarios por username, nombre o apellidos
+  // Buscador de usuarios general (filtros de administración o búsqueda en feed)
   buscarUsuarios(query: string): Observable<any> {
     return this.http.get(`${this.url}/buscar?query=${query}`);
   }
 
-  // Actualizar usuario
   actualizarUsuario(id: number, datos: any): Observable<any> {
     return this.http.put(`${this.url}/${id}`, datos, this.getHeaders());
   }
 
-  // Subir foto de perfil (multipart)
+  // Sube la foto de perfil del usuario.
+  // IMPORTANTE: Al usar FormData, NO se debe definir el header 'Content-Type' a mano.
+  // Dejamos que el propio HttpClient/navegador ponga el boundary de multipart correcto.
   subirFotoPerfil(id: number, file: File): Observable<any> {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     const formData = new FormData();
     formData.append('file', file);
-    // No incluir 'Content-Type' manualmente — el navegador lo pone con el boundary correcto
     return this.http.post(`${this.url}/${id}/foto`, formData, {
       headers: new HttpHeaders({
         'Authorization': token ? `Bearer ${token}` : ''
@@ -72,6 +65,7 @@ export class Usuarios {
     });
   }
 
+  // Elimina la foto de perfil en el backend (poniendo su url a null)
   resetearFotoPerfil(id: number): Observable<any> {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     return this.http.delete(`${this.url}/${id}/foto`, {
@@ -81,7 +75,7 @@ export class Usuarios {
     });
   }
 
-  // Subir banner de perfil (multipart)
+  // Sube la portada/banner de perfil
   subirBanner(id: number, file: File): Observable<any> {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     const formData = new FormData();
@@ -93,18 +87,20 @@ export class Usuarios {
     });
   }
 
-resetearBanner(id: number): Observable<any> {
+  // Resetea la portada de perfil
+  resetearBanner(id: number): Observable<any> {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     return this.http.delete(`${this.url}/${id}/banner`, {
-        headers: new HttpHeaders({
-            'Authorization': token ? `Bearer ${token}` : ''
-        })
+      headers: new HttpHeaders({
+        'Authorization': token ? `Bearer ${token}` : ''
+      })
     });
-}
+  }
 
-  // --- LISTAS Y FAVORITOS ---
+  // --- MÓDULO DE LISTAS Y FAVORITOS ---
   private urlListas = 'http://localhost:9999/api/listas';
 
+  // Helper para generar las cabeceras comunes de autenticación JWT
   private getHeaders() {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     return {
@@ -115,6 +111,7 @@ resetearBanner(id: number): Observable<any> {
     };
   }
 
+  // Recupera listas personalizadas de un usuario (ej. Jugados, Pendientes, Favoritos)
   getListasUsuario(usuarioId: number): Observable<any> {
     return this.http.get(`${this.urlListas}/usuario/${usuarioId}`, this.getHeaders());
   }
@@ -126,5 +123,4 @@ resetearBanner(id: number): Observable<any> {
   eliminarDeLista(listaId: number): Observable<any> {
     return this.http.delete(`${this.urlListas}/${listaId}`, this.getHeaders());
   }
-
 }

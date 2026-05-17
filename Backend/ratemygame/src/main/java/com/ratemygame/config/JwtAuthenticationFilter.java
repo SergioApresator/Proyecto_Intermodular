@@ -15,6 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+// Interceptor de peticiones HTTP. Valida el token JWT en cada llamada que requiera estar autenticado.
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -24,6 +25,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
+    // Filtra las peticiones entrantes. Valida si la cabecera 'Authorization' lleva un token Bearer válido.
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
@@ -34,18 +36,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String jwt;
         final String userEmail;
 
+        // Si no viene cabecera de autenticación o no empieza por "Bearer ", pasamos el filtro de largo
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
         try {
+            // Saltamos el prefijo "Bearer " (7 posiciones) para quedarnos con el string del token
             jwt = authHeader.substring(7);
-            userEmail = jwtService.extractUsername(jwt);
+            userEmail = jwtService.extractUsername(jwt); // Recuerda: en nuestro JwtService esto extrae el EMAIL
 
+            // Si el token es válido y no hay ya una autenticación previa guardada en el contexto actual
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
                 
+                // Si la firma del token coincide y no está caducado, autorizamos la petición
                 if (jwtService.isTokenValid(jwt, userDetails)) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,
@@ -53,6 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             userDetails.getAuthorities()
                     );
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    // Guardamos al usuario autenticado en el contexto de seguridad para esta llamada
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 } else {
                     System.out.println("JWT Token invalid for user: " + userEmail);
