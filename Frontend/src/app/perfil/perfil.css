@@ -1167,3 +1167,395 @@
     z-index: 2000;
 }
 
+/* ===== SKELETON PERFIL ===== */
+@keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+}
+
+.skeleton-perfil-listas {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.skeleton-lista-grupo {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.skeleton-lista-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 8px;
+    border-bottom: 2px solid rgba(0,0,0,0.1);
+}
+
+.skeleton-lista-titulo {
+    width: 200px;
+    height: 25px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, rgba(0,0,0,0.08) 25%, rgba(0,0,0,0.04) 50%, rgba(0,0,0,0.08) 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeleton-lista-btn {
+    width: 70px;
+    height: 28px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, rgba(0,0,0,0.08) 25%, rgba(0,0,0,0.04) 50%, rgba(0,0,0,0.08) 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeleton-lista-juegos {
+    display: flex;
+    gap: 15px;
+    overflow: hidden;
+}
+
+.skeleton-juego-card {
+    width: 150px;
+    aspect-ratio: 2/3;
+    flex-shrink: 0;
+    border-radius: 4px;
+    background: linear-gradient(90deg, rgba(0,0,0,0.08) 25%, rgba(0,0,0,0.04) 50%, rgba(0,0,0,0.08) 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeleton-perfil-resenas {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.skeleton-resena-item {
+    display: flex;
+    gap: 20px;
+    padding: 15px;
+    background: rgba(255,255,255,0.4);
+    border-left: 5px solid rgba(0,0,0,0.08);
+}
+
+.skeleton-resena-img {
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+    background: linear-gradient(90deg, rgba(0,0,0,0.08) 25%, rgba(0,0,0,0.04) 50%, rgba(0,0,0,0.08) 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeleton-resena-cuerpo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.skeleton-resena-titulo {
+    width: 40%;
+    height: 20px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, rgba(0,0,0,0.08) 25%, rgba(0,0,0,0.04) 50%, rgba(0,0,0,0.08) 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeleton-resena-estrellas {
+    width: 100px;
+    height: 16px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, rgba(0,0,0,0.08) 25%, rgba(0,0,0,0.04) 50%, rgba(0,0,0,0.08) 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeleton-resena-linea {
+    height: 14px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, rgba(0,0,0,0.08) 25%, rgba(0,0,0,0.04) 50%, rgba(0,0,0,0.08) 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.skeleton-resena-linea.corta {
+    width: 50%;
+}
+
+
+
+@media (max-width: 768px) {
+
+    .perfil-viewport {
+        height: auto;
+        min-height: calc(100vh - 64px);
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .perfil-layout {
+        padding: 0 12px;
+        height: auto;
+    }
+
+    /* NAV */
+    .perfil-nav {
+        padding: 12px 0;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .nav-tabs {
+        gap: 10px;
+        order: 3;
+        width: 100%;
+        border-top: 1px solid rgba(0,0,0,0.08);
+        padding-top: 10px;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+
+    .nav-tabs::-webkit-scrollbar { display: none; }
+
+    .nav-tab {
+        font-size: 0.85rem;
+        white-space: nowrap;
+        padding: 8px 4px;
+        flex-shrink: 0;
+    }
+
+    .nav-tab.active::after {
+        bottom: -12px;
+    }
+
+    /* PLAYER CARD */
+    .player-card-bar {
+        margin: 15px 0;
+    }
+
+    .player-card-bg {
+        height: 120px;
+        padding: 0 15px;
+    }
+
+    .avatar-box {
+        width: 75px;
+        height: 75px;
+    }
+
+    .player-name {
+        font-size: 1.4rem;
+        letter-spacing: -0.5px;
+    }
+
+    .player-card-content {
+        gap: 12px;
+    }
+
+    .btn-overlay-banner {
+        font-size: 0.7rem;
+        padding: 6px 10px;
+    }
+
+    /* CONTENIDO */
+    .tab-content-area {
+        overflow-y: visible;
+        padding-right: 0;
+        margin-bottom: 30px;
+    }
+
+    .resumen-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .big-stats {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .big-stat .stat-value {
+        font-size: 2rem;
+    }
+
+    /* RESEÑAS — grid 2 columnas */
+    .resenas-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .resena-item {
+        flex-direction: column;
+        gap: 6px;
+        padding: 8px;
+        border-left-width: 3px;
+    }
+
+    .resena-game-box {
+        width: 100%;
+        height: 90px;
+        flex-shrink: 0;
+    }
+
+    .resena-game-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .resena-header {
+        flex-direction: column;
+        gap: 2px;
+        align-items: flex-start;
+    }
+
+    .resena-header .game-name {
+        font-size: 0.85rem;
+        line-height: 1.2;
+    }
+
+    .header-right {
+        gap: 8px;
+    }
+
+    .resena-header .date {
+        font-size: 0.7rem;
+    }
+
+    .stars {
+        font-size: 0.75rem;
+        margin-bottom: 4px;
+    }
+
+    .resena-body .message {
+        font-size: 0.8rem;
+        -webkit-line-clamp: 2;
+        line-height: 1.3;
+    }
+
+    /* LISTAS */
+    .juego-card {
+        width: 90px;
+    }
+
+    .juego-title {
+        font-size: 0.75rem;
+        margin-top: 5px;
+    }
+
+    .rating-tag {
+        font-size: 0.65rem;
+        padding: 2px 4px;
+    }
+
+    .lista-group {
+        margin-bottom: 25px;
+    }
+
+    /* AJUSTES */
+    .ajustes-container {
+        padding: 10px 0;
+    }
+
+    .ajustes-grid {
+        grid-template-columns: 1fr;
+        padding: 15px;
+        gap: 15px;
+    }
+
+    .ajustes-grid .field.full {
+        grid-column: 1;
+    }
+
+    .avatar-preview-box {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+
+    .preview-circle {
+        width: 90px;
+        height: 90px;
+    }
+
+    .preview-actions {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .btn-action-ow {
+        padding: 8px 14px;
+        font-size: 0.75rem;
+    }
+
+    .ajustes-actions {
+        flex-wrap: wrap;
+    }
+
+    .btn-primary {
+        width: 100%;
+        padding: 12px;
+        text-align: center;
+    }
+
+    /* MODAL BÚSQUEDA */
+    .modal-content.search-list-modal {
+        width: calc(100% - 20px);
+        margin: 0 10px;
+    }
+
+    .search-list-modal .modal-body {
+        padding: 15px;
+    }
+
+    .result-thumb {
+        width: 60px;
+        height: 38px;
+    }
+
+    .result-name {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .perfil-layout { padding: 0 8px; }
+
+    .player-card-bg {
+        height: 100px;
+        padding: 0 12px;
+    }
+
+    .avatar-box {
+        width: 60px;
+        height: 60px;
+    }
+
+    .player-name { font-size: 1.2rem; }
+
+    .nav-tab { font-size: 0.8rem; }
+
+    .big-stat .stat-value { font-size: 1.8rem; }
+
+    .resenas-list {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .resena-game-box { height: 75px; }
+
+    .resena-header .game-name { font-size: 0.8rem; }
+
+    .resena-body .message { font-size: 0.75rem; }
+
+    .juego-card { width: 80px; }
+
+    .juego-title { font-size: 0.7rem; }
+}

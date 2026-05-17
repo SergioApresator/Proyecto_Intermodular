@@ -33,3 +33,22 @@ footer {
     background: #3b82f6;
     margin: 10px auto;
 }
+
+@media (max-width: 768px) {
+    footer {
+        padding: 25px 5%;
+    }
+
+    .footer-text {
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+    }
+
+    .footer-divider {
+        margin: 6px auto;
+    }
+
+    .footer-content {
+        gap: 8px;
+    }
+}
