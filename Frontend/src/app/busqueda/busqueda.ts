@@ -30,6 +30,7 @@ export class Busqueda implements OnInit {
   bufferJuegos: any[] = []; // Juegos que ya pasaron el filtro pero no se han mostrado
   hayPaginaSiguiente: boolean = true;
   intentosExtra: number = 0;
+  totalPaginas: number = 1;
 
   private searchSubscription?: Subscription;
   private searchSubject = new Subject<void>();
@@ -164,7 +165,8 @@ export class Busqueda implements OnInit {
       bufferJuegos: [...this.bufferJuegos],
       paginaActual: this.paginaActual,
       paginaApi: this.paginaApi,
-      hayPaginaSiguiente: this.hayPaginaSiguiente
+      hayPaginaSiguiente: this.hayPaginaSiguiente,
+      totalPaginas: this.totalPaginas
     };
   }
 
@@ -177,6 +179,7 @@ export class Busqueda implements OnInit {
     this.paginaActual = estado.paginaActual;
     this.paginaApi = estado.paginaApi || estado.paginaActual;
     this.hayPaginaSiguiente = estado.hayPaginaSiguiente;
+    this.totalPaginas = estado.totalPaginas || 1;
     this.cargando = false;
     this.cdr.detectChanges();
   }
@@ -254,6 +257,7 @@ export class Busqueda implements OnInit {
     this.paginaActual = 1;
     this.paginaApi = 1;
     this.hayPaginaSiguiente = true;
+    this.totalPaginas = 1;
     this.cargando = true;
     this.intentosExtra = 0; // Resetear intentos extra
     this.ejecutarBusqueda();
@@ -291,6 +295,10 @@ export class Busqueda implements OnInit {
         this.bufferJuegos = [...this.bufferJuegos, ...filtrados];
         this.hayPaginaSiguiente = respuesta.next !== null;
         this.paginaApi++;
+
+        if (respuesta.count) {
+          this.totalPaginas = Math.ceil(respuesta.count / 20);
+        }
 
         // 3. ¿Tenemos ya 20 para mostrar? 
         // O ¿se acabaron las páginas de la API?

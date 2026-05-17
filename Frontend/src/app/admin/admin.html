@@ -50,21 +50,26 @@
               <div class="card-footer">
                 <button class="btn btn-safe" title="Marcar como válida (sin spoiler)"
                   (click)="validarResena(resena.id)">
-                  ✅ Validar
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="btn-icon"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Validar</span>
                 </button>
                 <button class="btn btn-warning" title="Marcar que contiene spoilers"
                   (click)="marcarComoSpoiler(resena.id)">
-                  ⚠️ Spoiler
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="btn-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                  <span>Spoiler</span>
                 </button>
                 <button class="btn btn-danger" title="Eliminar reseña por contenido inapropiado"
                   (click)="eliminarResena(resena.id)">
-                  🗑️ Borrar
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="btn-icon"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                  <span>Borrar</span>
                 </button>
               </div>
             </div>
 
             <div *ngIf="resenasARevisar.length === 0" class="empty-state">
-              <div class="empty-icon">✨</div>
+              <div class="empty-icon-svg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+              </div>
               <h3>¡Todo limpio!</h3>
               <p>No hay reseñas pendientes de revisión. ¡Buen trabajo!</p>
             </div>
@@ -91,18 +96,22 @@
             <input id="buscador-usuarios" type="text" class="user-search-input"
               placeholder="Buscar por nombre de usuario o ID..." [(ngModel)]="terminoBusqueda"
               (keyup.enter)="buscarUsuarios()" />
-            <button class="user-search-btn" (click)="buscarUsuarios()">🔍</button>
+            <button class="user-search-btn" (click)="buscarUsuarios()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </button>
           </div>
 
           <!-- Spinner buscando -->
           <div *ngIf="buscando" class="empty-state">
-            <div class="empty-icon">⏳</div>
+            <div class="empty-icon-svg spinner-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="spin-animation"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg>
+            </div>
             <p>Buscando...</p>
           </div>
 
           <!-- Lista de usuarios -->
           <div class="user-list" *ngIf="!buscando && resultadosUsuarios.length > 0">
-            <div *ngFor="let usuario of resultadosUsuarios" class="user-list-item" [class.baneado]="usuario.baneado">
+            <div *ngFor="let usuario of usuariosPaginados" class="user-list-item" [class.baneado]="usuario.baneado">
               <div class="user-list-avatar">
                 <img *ngIf="usuario.foto_url" [src]="usuario.foto_url" [alt]="usuario.username"
                   class="user-avatar-img" />
@@ -113,30 +122,57 @@
 
               <div class="user-list-info">
                 <span class="user-list-username">{{ usuario.username }}</span>
-                <span class="user-list-badge" *ngIf="usuario.baneado">🚫 Baneado</span>
-                <span class="user-list-badge admin-badge" *ngIf="usuario.esAdmin">⚡ Admin</span>
+                <span class="user-list-badge badged-baneado" *ngIf="usuario.baneado">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="badge-icon"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
+                  Baneado
+                </span>
+                <span class="user-list-badge admin-badge" *ngIf="usuario.esAdmin">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="badge-icon"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                  Admin
+                </span>
               </div>
 
               <button class="btn btn-ban" [class.btn-unbanned]="usuario.baneado" [disabled]="usuario.esAdmin"
                 (click)="toggleBaneo(usuario)"
                 [title]="usuario.esAdmin ? 'No se puede banear a un administrador' : (usuario.baneado ? 'Desbanear usuario' : 'Bannear usuario')">
-                {{ usuario.baneado ? '✅ Desbanear' : '🚫 Bannear' }}
+                <svg *ngIf="usuario.baneado" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="btn-icon"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <svg *ngIf="!usuario.baneado" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="btn-icon"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
+                <span>{{ usuario.baneado ? 'Desbanear' : 'Banear' }}</span>
               </button>
             </div>
           </div>
 
+          <!-- PAGINATION CONTROLS (Matching busqueda.html) -->
+          <div class="pagination-hub" *ngIf="!buscando && resultadosUsuarios.length > elementosPorPagina">
+            <button class="btn-pagination-ow" (click)="anteriorPagina()" [disabled]="paginaActual === 1">
+              <span class="btn-arrow">⇠</span> ANTERIOR
+            </button>
+            
+            <div class="page-indicator">
+              <span class="page-number">PÁGINA {{ paginaActual }} DE {{ totalPaginas }}</span>
+            </div>
+
+            <button class="btn-pagination-ow" (click)="siguientePagina()" [disabled]="paginaActual === totalPaginas">
+              SIGUIENTE <span class="btn-arrow">⇢</span>
+            </button>
+          </div>
+
           <!-- Sin resultados -->
           <div *ngIf="!buscando && busquedaRealizada && resultadosUsuarios.length === 0" class="empty-state">
-            <div class="empty-icon">🔎</div>
+            <div class="empty-icon-svg">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </div>
             <h3>Sin resultados</h3>
             <p>No se encontró ningún usuario con ese nombre.</p>
           </div>
 
           <!-- Estado inicial (sin búsqueda) -->
           <div *ngIf="!buscando && !busquedaRealizada" class="empty-state">
-            <div class="empty-icon">👥</div>
+            <div class="empty-icon-svg">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            </div>
             <h3>Busca un usuario</h3>
-            <p>Escribe el nombre de usuario y pulsa 🔍 para buscarlo.</p>
+            <p>Escribe el nombre de usuario y pulsa el botón para buscarlo.</p>
           </div>
 
         </section>

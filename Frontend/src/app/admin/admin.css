@@ -642,3 +642,115 @@
     transform: none;
 }
 
+/* ===== SVG ICON UTILITIES ===== */
+.btn-icon {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 6px;
+    flex-shrink: 0;
+}
+
+.badge-icon {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 4px;
+    flex-shrink: 0;
+}
+
+.empty-icon-svg {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.spinner-icon {
+    margin-bottom: 10px;
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.spin-animation {
+    animation: spin 1.2s linear infinite;
+    transform-origin: center;
+}
+
+.badged-baneado {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.btn-ban {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ===== PAGINACIÓN PREMIUM OVERWATCH STYLE (Matching busqueda.css) ===== */
+.pagination-hub {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    width: 100%;
+}
+
+.btn-pagination-ow {
+    background: #1e293b;
+    border: 1px solid #3b82f6;
+    color: #ffffff;
+    padding: 12px 30px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    transform: skewX(-12deg);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-pagination-ow:hover:not(:disabled) {
+    background: #3b82f6;
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+}
+
+.btn-pagination-ow:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    border-color: #475569;
+}
+
+.page-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 120px;
+}
+
+.page-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    color: #1e293b;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.btn-arrow {
+    font-size: 1.3rem;
+    line-height: 1;
+}
+

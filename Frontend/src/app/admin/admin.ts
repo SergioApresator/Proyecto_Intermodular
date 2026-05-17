@@ -25,6 +25,8 @@ export class Admin implements OnInit {
   resultadosUsuarios: any[] = [];
   buscando: boolean = false;
   busquedaRealizada: boolean = false;
+  paginaActual: number = 1;
+  elementosPorPagina: number = 5;
   
   // Modal de confirmación
   modalConfirmacionVisible: boolean = false;
@@ -175,6 +177,7 @@ export class Admin implements OnInit {
 
     this.buscando = true;
     this.busquedaRealizada = true;
+    this.paginaActual = 1;
 
     this.usuariosServicio.buscarUsuarios(this.terminoBusqueda).subscribe({
       next: (respuesta: any) => {
@@ -227,5 +230,36 @@ export class Admin implements OnInit {
         });
       }
     );
+  }
+
+  get usuariosPaginados(): any[] {
+    const inicio = (this.paginaActual - 1) * this.elementosPorPagina;
+    const fin = inicio + this.elementosPorPagina;
+    return this.resultadosUsuarios.slice(inicio, fin);
+  }
+
+  get totalPaginas(): number {
+    return Math.ceil(this.resultadosUsuarios.length / this.elementosPorPagina);
+  }
+
+  siguientePagina() {
+    if (this.paginaActual < this.totalPaginas) {
+      this.paginaActual++;
+      this.cdr.detectChanges();
+    }
+  }
+
+  anteriorPagina() {
+    if (this.paginaActual > 1) {
+      this.paginaActual--;
+      this.cdr.detectChanges();
+    }
+  }
+
+  irAPagina(pagina: number) {
+    if (pagina >= 1 && pagina <= this.totalPaginas) {
+      this.paginaActual = pagina;
+      this.cdr.detectChanges();
+    }
   }
 }
