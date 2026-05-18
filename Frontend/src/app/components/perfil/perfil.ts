@@ -2,9 +2,9 @@ import { Component, OnInit, inject, ChangeDetectorRef, ElementRef, ViewChild } f
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { Usuarios } from '../usuarios';
-import { ResenasService } from '../resenas';
-import { Videojuegos } from '../videojuegos';
+import { Usuarios } from '../../services/usuarios';
+import { ResenasService } from '../../services/resenas';
+import { Videojuegos } from '../../services/videojuegos';
 import { Footer } from '../footer/footer';
 import { ConfirmModal } from '../confirm-modal/confirm-modal.component';
 

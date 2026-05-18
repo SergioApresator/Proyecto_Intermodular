@@ -2,7 +2,7 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Usuarios } from '../usuarios';
+import { Usuarios } from '../../services/usuarios';
 
 @Component({
   selector: 'app-buscar-usuarios',

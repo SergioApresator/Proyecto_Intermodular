@@ -2,7 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef, HostListener, OnDestroy }
 
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { Videojuegos } from '../videojuegos';
+import { Videojuegos } from '../../services/videojuegos';
 import { FormsModule } from '@angular/forms';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';

@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { Videojuegos } from '../videojuegos';
+import { Videojuegos } from '../../services/videojuegos';
 
 import { Footer } from '../footer/footer';
 

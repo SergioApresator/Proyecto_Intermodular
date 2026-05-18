@@ -2,7 +2,7 @@ import { Component, inject, OnInit, HostListener, ChangeDetectorRef, NgZone } fr
 import { RouterOutlet, RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Usuarios } from './usuarios';
+import { Usuarios } from './services/usuarios';
 
 @Component({
   selector: 'app-root',

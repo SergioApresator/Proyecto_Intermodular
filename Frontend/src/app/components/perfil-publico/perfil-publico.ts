@@ -1,9 +1,9 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { Usuarios } from '../usuarios';
-import { ResenasService } from '../resenas';
-import { Videojuegos } from '../videojuegos';
+import { Usuarios } from '../../services/usuarios';
+import { ResenasService } from '../../services/resenas';
+import { Videojuegos } from '../../services/videojuegos';
 import { forkJoin, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 

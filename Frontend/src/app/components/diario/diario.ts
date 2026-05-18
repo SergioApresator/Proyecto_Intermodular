@@ -1,8 +1,8 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { ResenasService } from '../resenas';
-import { Videojuegos } from '../videojuegos';
+import { ResenasService } from '../../services/resenas';
+import { Videojuegos } from '../../services/videojuegos';
 import { Footer } from '../footer/footer';
 
 

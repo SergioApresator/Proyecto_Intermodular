@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { Usuarios } from '../usuarios';
+import { Usuarios } from '../../services/usuarios';
 
 @Component({
   selector: 'app-login',

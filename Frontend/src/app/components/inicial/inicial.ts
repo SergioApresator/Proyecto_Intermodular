@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router, ActivatedRoute } from '@angular/router';
-import { Videojuegos } from '../videojuegos';
-import { ResenasService } from '../resenas';
+import { Videojuegos } from '../../services/videojuegos';
+import { ResenasService } from '../../services/resenas';
 import { FormsModule } from '@angular/forms';
 import { Footer } from '../footer/footer';
 

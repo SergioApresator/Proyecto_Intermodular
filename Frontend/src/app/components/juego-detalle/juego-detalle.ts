@@ -5,10 +5,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
-import { Videojuegos } from '../videojuegos';
-import { Usuarios } from '../usuarios';
-import { ResenasService } from '../resenas';
-import { RespuestasService } from '../respuestas';
+import { Videojuegos } from '../../services/videojuegos';
+import { Usuarios } from '../../services/usuarios';
+import { ResenasService } from '../../services/resenas';
+import { RespuestasService } from '../../services/respuestas';
 import { ConfirmModal } from '../confirm-modal/confirm-modal.component';
 import { Footer } from '../footer/footer';
 

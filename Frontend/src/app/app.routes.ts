@@ -1,17 +1,17 @@
 import { Routes } from '@angular/router';
-import { Registro } from './registro/registro';
-import { Inicial } from './inicial/inicial';
-import { Login } from './login/login';
-import { VerTodos } from './ver-todos/ver-todos';
-import { Diario } from './diario/diario';
-import { JuegoDetalle } from './juego-detalle/juego-detalle';
-import { Perfil } from './perfil/perfil';
+import { Registro } from './components/registro/registro';
+import { Inicial } from './components/inicial/inicial';
+import { Login } from './components/login/login';
+import { VerTodos } from './components/ver-todos/ver-todos';
+import { Diario } from './components/diario/diario';
+import { JuegoDetalle } from './components/juego-detalle/juego-detalle';
+import { Perfil } from './components/perfil/perfil';
 import { authGuard } from './auth.guard';
-import { AcercaDe } from './acerca-de/acerca-de';
-import { Busqueda } from './busqueda/busqueda';
-import { Admin } from './admin/admin';
-import { BuscarUsuarios } from './buscar-usuarios/buscar-usuarios';
-import { PerfilPublico } from './perfil-publico/perfil-publico';
+import { AcercaDe } from './components/acerca-de/acerca-de';
+import { Busqueda } from './components/busqueda/busqueda';
+import { Admin } from './components/admin/admin';
+import { BuscarUsuarios } from './components/buscar-usuarios/buscar-usuarios';
+import { PerfilPublico } from './components/perfil-publico/perfil-publico';
 
 export const routes: Routes = [
     //La ruta raiz redirige directamente a inicial

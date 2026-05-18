@@ -1,7 +1,7 @@
 import { Component, inject, ChangeDetectorRef } from '@angular/core';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { Usuarios } from '../usuarios';
+import { Usuarios } from '../../services/usuarios';
 import { CommonModule } from '@angular/common';
 
 @Component({

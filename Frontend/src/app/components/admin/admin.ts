@@ -2,8 +2,8 @@ import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ResenasService } from '../resenas';
-import { Usuarios } from '../usuarios';
+import { ResenasService } from '../../services/resenas';
+import { Usuarios } from '../../services/usuarios';
 import { ConfirmModal } from '../confirm-modal/confirm-modal.component';
 
 
