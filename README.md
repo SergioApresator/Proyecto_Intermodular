@@ -14,7 +14,7 @@ El backend incluye un archivo de configuración de Docker que inicializará la b
 2. Dirígete a la carpeta del backend:
 
    ```bash
-   cd Backend/ratemygame
+   cd Backend
    ```
 3. Ejecuta el siguiente comando para levantar los contenedores en segundo plano:
 
