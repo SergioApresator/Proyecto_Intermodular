@@ -1,7 +1,7 @@
 <div class="search-page-wrapper">
     <div class="noise-overlay"></div>
 
-    <!-- HERO HEADER -->
+    <!-- CABECERA HERO -->
     <header class="search-hero">
         <div class="hero-content">
             <div class="tech-tag">ARCHIVE // EXPLORE</div>
@@ -10,8 +10,8 @@
         </div>
     </header>
 
-    <!-- LOADING STATE -->
-    <!-- SKELETON LOADING -->
+    <!-- ESTADO DE CARGA -->
+    <!-- CARGANDO SKELETON -->
 <div *ngIf="cargando" class="skeleton-ver-todos">
     <div class="skeleton-results-meta"></div>
     <div class="skeleton-results-grid">
@@ -37,7 +37,7 @@
     </div>
 </div>
 
-    <!-- RESULTS GRID -->
+    <!-- REJILLA DE RESULTADOS -->
     <div *ngIf="!cargando" class="results-container">
 
         <div class="results-meta">
@@ -65,7 +65,7 @@
             </div>
         </div>
 
-        <!-- EMPTY STATE -->
+        <!-- ESTADO VACÍO -->
         <div class="empty-results" *ngIf="juegos.length === 0">
             <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -78,7 +78,7 @@
             <p>Asegúrate de que los términos de búsqueda sean correctos o prueba con otra categoría.</p>
         </div>
 
-        <!-- PAGINATION CONTROLS -->
+        <!-- CONTROLES DE PAGINACIÓN -->
         <div class="pagination-hub">
             <button class="btn-pagination-ow" (click)="paginaAnterior()" [disabled]="paginaActual === 1">
                 <span class="btn-arrow">⇠</span> ANTERIOR
@@ -94,7 +94,7 @@
             </button>
         </div>
 
-        <!-- BACK ACTION -->
+        <!-- ACCIÓN DE VOLVER -->
         <div class="search-footer-actions">
             <button class="btn-back-home" routerLink="/inicial">
                 VOLVER AL INICIO

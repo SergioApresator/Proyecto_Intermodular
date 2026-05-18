@@ -128,7 +128,7 @@ public class RespuestaService {
         Respuesta savedRespuesta = respuestaRepository.save(respuesta);
         RespuestaDTO dto = convertToDTO(savedRespuesta);
         
-        // Final state
+        // Estado final
         Optional<RespuestaVoto> votoFinal = respuestaVotoRepository.findByRespuesta_IdAndUsuario_Id(idRespuesta, idUsuario);
         dto.setVotoUsuarioActual(votoFinal.map(RespuestaVoto::getEsMeGusta).orElse(null));
 

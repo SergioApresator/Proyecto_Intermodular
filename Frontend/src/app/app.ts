@@ -21,7 +21,7 @@ export class App implements OnInit {
   mostrarBuscador: boolean = false;
   terminoBusqueda: string = '';
 
-  // Auth state
+  // Estado de autenticación
   estaLogueado: boolean = false;
   esAdmin: boolean = false;
   username: string = '';
@@ -62,7 +62,7 @@ export class App implements OnInit {
     }
   }
 
-  // En móvil el avatar de la Navbar despliega el menú Overwatch, en escritorio va directo a la edición de perfil
+  // En móvil el avatar de la Navbar despliega el menú de usuario, en escritorio va directo a la edición de perfil
   onAvatarClick(event: MouseEvent) {
     if (typeof window !== 'undefined' && window.innerWidth <= 768) {
       event.preventDefault();

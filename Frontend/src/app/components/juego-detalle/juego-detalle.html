@@ -55,7 +55,7 @@
 
 <div *ngIf="!cargando && juego" class="detalle-contenedor">
   
-  <!-- HERO BANNER -->
+  <!-- BANNER HERO -->
   <div class="juego-hero">
     <div class="hero-bg-wrapper">
       <img *ngIf="juego.background_image && !juego['imgError']" [src]="juego.background_image" class="hero-bg-img" alt="Background" (error)="juego['imgError'] = true">
@@ -97,7 +97,7 @@
     </div>
   </div>
 
-  <!-- FLOATING ACTION BAR -->
+  <!-- BARRA DE ACCIÓN FLOTANTE -->
   <div class="action-bar-container">
     <div class="action-bar-ow">
       <button class="ow-action-btn fav" 
@@ -153,7 +153,7 @@
   <div class="layout-main full-width">
     <div class="layout-content">
       
-      <!-- MEDIA SECTION (WIDER) -->
+      <!-- SECCIÓN MULTIMEDIA (MÁS ANCHA) -->
       <div class="content-card media-section">
         <div class="card-header-ow">
           <div class="accent"></div>
@@ -191,7 +191,7 @@
         </div>
       </div>
 
-      <!-- DESCRIPTION SECTION -->
+      <!-- SECCIÓN DE DESCRIPCIÓN -->
       <div class="content-card info-section">
         <div class="card-header-ow">
           <div class="accent"></div>
@@ -200,7 +200,7 @@
         <div class="ow-text-content" [innerHTML]="descripcionSegura"></div>
       </div>
 
-      <!-- TECHNICAL DETAILS (MOVED BELOW) -->
+      <!-- DETALLES TÉCNICOS (MOVIDO ABAJO) -->
       <div class="content-card tech-details-bottom">
         <div class="card-header-ow tech">
           <div class="accent"></div>
@@ -233,7 +233,7 @@
           </div>
         </div>
 
-        <!-- TAGS FULL WIDTH AT BOTTOM -->
+        <!-- ETIQUETAS A ANCHO COMPLETO AL FINAL -->
         <div class="tags-full-width">
           <span class="t-label">ETIQUETAS DEL SISTEMA</span>
           <div class="t-tags sm">
@@ -242,7 +242,7 @@
         </div>
       </div>
 
-      <!-- REVIEWS SECTION -->
+      <!-- SECCIÓN DE RESEÑAS -->
       <div class="content-card reviews-section">
         <div class="card-header-ow">
           <div class="accent"></div>
@@ -320,7 +320,7 @@
                 </button>
               </div>
 
-              <!-- REPLIES SECTION -->
+              <!-- SECCIÓN DE RESPUESTAS -->
               <div class="replies-container-ow" *ngIf="resena.mostrarRespuestas">
                 <div class="reply-card-ow" *ngFor="let resp of resena.respuestas">
                   <div class="reply-header">
@@ -354,7 +354,7 @@
                   </div>
                 </div>
 
-                <!-- ADD REPLY FORM -->
+                <!-- FORMULARIO DE AÑADIR RESPUESTA -->
                 <div class="add-reply-form-premium" *ngIf="usuarioId">
                   <div class="reply-input-wrapper">
                     <div class="user-avatar-current">
@@ -384,7 +384,7 @@
   </div>
 </div>
 
-<!-- MODALS -->
+<!-- MODALES -->
 <div class="modal-overlay" *ngIf="mostrarModalResena" (click)="cerrarModalResena()">
   <div class="ow-modal-premium" (click)="$event.stopPropagation()">
     
@@ -450,7 +450,7 @@
 <div class="modal-overlay" *ngIf="mostrarModalListas" (click)="cerrarModalListas()">
   <div class="ow-modal-lists-ultra" (click)="$event.stopPropagation()">
     
-    <!-- LEFT: THEMATIC VISUAL -->
+    <!-- IZQUIERDA: DISEÑO TEMÁTICO VISUAL -->
     <div class="lists-visual" [style.backgroundImage]="juego.background_image ? 'url(' + juego.background_image + ')' : 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'">
       <div class="lists-visual-overlay"></div>
       <div class="lists-visual-content">
@@ -459,7 +459,7 @@
       </div>
     </div>
 
-    <!-- RIGHT: BENTO GRID OF SLOTS -->
+    <!-- DERECHA: REJILLA BENTO DE HUECOS -->
     <div class="lists-grid-container">
       <header class="grid-header">
         <div class="header-main">

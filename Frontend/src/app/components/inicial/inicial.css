@@ -10,7 +10,7 @@
     width: 100%;
 }
 
-/* Overwatch Skew Utility */
+/* Inclinación de estilo */
 .ow-skew {
     transform: skewX(-12deg);
 }

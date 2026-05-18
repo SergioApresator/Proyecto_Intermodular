@@ -425,7 +425,7 @@
 }
 
 .btn-accion:hover {
-    background: #f99e1a; /* Overwatch Orange - Matches ratings and primary actions */
+    background: #f99e1a; /* Naranja destacado - Combina con valoraciones y acciones principales */
     color: white;
     transform: skewX(-15deg) translate(-4px, -4px);
     box-shadow: 8px 8px 0 #1e293b;

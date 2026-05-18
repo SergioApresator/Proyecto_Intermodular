@@ -30,7 +30,7 @@
       </div>
     </header>
 
-    <!-- PLAYER CARD BAR -->
+    <!-- BARRA DE TARJETA DE JUGADOR -->
     <div class="player-card-bar">
       <div class="player-card-bg" [style.background-image]="usuario.banner_url ? 'url(' + usuario.banner_url + ')' : ''">
         <div class="player-card-content">
@@ -50,7 +50,7 @@
     <!-- CONTENIDO DE LA PESTAÑA -->
     <main class="tab-content-area">
       
-      <!-- TAB: RESUMEN -->
+      <!-- PESTAÑA: RESUMEN -->
       <div class="tab-pane resumen-pane" *ngIf="pestanaActual === 'resumen'">
         <div class="resumen-grid">
           <div class="resumen-col info-col">
@@ -84,7 +84,7 @@
         </div>
       </div>
 
-      <!-- TAB: LISTAS -->
+      <!-- PESTAÑA: LISTAS -->
       <div class="tab-pane listas-pane" *ngIf="pestanaActual === 'listas'">
         <div *ngIf="cargandoListas" class="loading-pane">
           <div class="spinner-mini"></div>
@@ -113,7 +113,7 @@
         </div>
       </div>
 
-      <!-- TAB: RESEÑAS -->
+      <!-- PESTAÑA: RESEÑAS -->
       <div class="tab-pane resenas-pane" *ngIf="pestanaActual === 'resenas'">
         <div *ngIf="cargandoResenas" class="loading-pane">
           <div class="spinner-mini"></div>

@@ -140,7 +140,7 @@ public class ResenaService {
         Resena savedResena = resenaRepository.save(resena);
         ResenaDTO dto = convertToDTO(savedResena);
 
-        // Determine the user's current vote state after operation
+        // Determina el estado de voto actual del usuario tras la operación
         Optional<ResenaVoto> votoFinal = resenaVotoRepository.findByResena_IdAndUsuario_Id(idResena, idUsuario);
         dto.setVotoUsuarioActual(votoFinal.map(ResenaVoto::getEsMeGusta).orElse(null));
 
