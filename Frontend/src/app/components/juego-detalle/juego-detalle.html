@@ -257,9 +257,9 @@
           <div class="ow-review-card" *ngFor="let resena of resenas">
             <div class="review-side">
               <div class="user-id-box">
-                <div class="avatar-mini-ow">
-                  <img *ngIf="resena.fotoUsuario" [src]="resena.fotoUsuario" class="avatar-img">
-                  <span *ngIf="!resena.fotoUsuario">{{ resena.nombreUsuario?.charAt(0) || '?' }}</span>
+                <div class="avatar-mini-ow" [class.no-photo]="!resena.fotoUsuario || resena['avatarError']">
+                  <img *ngIf="resena.fotoUsuario && !resena['avatarError']" [src]="resena.fotoUsuario" (error)="resena['avatarError'] = true" class="avatar-img">
+                  <span *ngIf="!resena.fotoUsuario || resena['avatarError']">{{ resena.nombreUsuario?.charAt(0) || '?' }}</span>
                 </div>
                 <div class="user-name">{{ resena.nombreUsuario || 'ANÓNIMO' }}</div>
               </div>
@@ -324,9 +324,9 @@
               <div class="replies-container-ow" *ngIf="resena.mostrarRespuestas">
                 <div class="reply-card-ow" *ngFor="let resp of resena.respuestas">
                   <div class="reply-header">
-                    <div class="avatar-tiny-ow">
-                      <img *ngIf="resp.foto_usuario || resp.fotoUsuario" [src]="resp.foto_usuario || resp.fotoUsuario" class="avatar-img">
-                      <span *ngIf="!resp.foto_usuario && !resp.fotoUsuario">{{ (resp.nombre_usuario || resp.nombreUsuario)?.charAt(0) }}</span>
+                    <div class="avatar-tiny-ow" [class.no-photo]="(!resp.foto_usuario && !resp.fotoUsuario) || resp['avatarError']">
+                      <img *ngIf="(resp.foto_usuario || resp.fotoUsuario) && !resp['avatarError']" [src]="resp.foto_usuario || resp.fotoUsuario" (error)="resp['avatarError'] = true" class="avatar-img">
+                      <span *ngIf="(!resp.foto_usuario && !resp.fotoUsuario) || resp['avatarError']">{{ (resp.nombre_usuario || resp.nombreUsuario)?.charAt(0) }}</span>
                     </div>
                     <div class="reply-user-info">
                       <span class="reply-user">{{ resp.nombre_usuario || resp.nombreUsuario }}</span>

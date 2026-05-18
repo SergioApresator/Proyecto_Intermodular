@@ -184,4 +184,8 @@ export class Inicial implements OnInit, OnDestroy {
     const anios = Math.floor(dias / 365);
     return anios === 1 ? 'Hace 1 año' : `Hace ${anios} años`;
   }
+
+  obtenerInicial(nombre: string): string {
+    return nombre ? nombre.charAt(0).toUpperCase() : '?';
+  }
 }
