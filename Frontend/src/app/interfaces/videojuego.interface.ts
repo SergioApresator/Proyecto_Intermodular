@@ -1,5 +1,5 @@
-// Modelos de la API externa RAWG (https://rawg.io/api)
-// Sólo se incluyen los campos que realmente se usan en la aplicación
+// Modelos de la API RAWG (https://rawg.io/api)
+
 
 export interface Genero {
   id: number;
