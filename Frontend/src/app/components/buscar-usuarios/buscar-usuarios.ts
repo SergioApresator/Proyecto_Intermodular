@@ -19,6 +19,7 @@ export class BuscarUsuarios {
   buscando: boolean = false;
   busquedaRealizada: boolean = false;
 
+  // Método para buscar usuarios por nombre o alias y mostrar los resultados excluyendo al usuario autenticado.
   buscar() {
     if (this.terminoBusqueda.trim().length === 0) return;
 

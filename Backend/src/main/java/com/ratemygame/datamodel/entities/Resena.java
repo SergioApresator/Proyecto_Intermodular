@@ -21,6 +21,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+// Entidad JPA que representa una reseña escrita por un usuario sobre un videojuego.
 @Entity
 @Table(name="RESENA")
 @Data

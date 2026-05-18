@@ -124,6 +124,7 @@ export class Busqueda implements OnInit {
 
   errorAnio: boolean = false;
 
+  // Método para inicializar el componente, configurar el debounce y restaurar el estado previo si existe.
   ngOnInit() {
     // Configurar debounce para la búsqueda
     this.searchSubject.pipe(
@@ -151,12 +152,14 @@ export class Busqueda implements OnInit {
     });
   }
 
+  // Método para limpiar las suscripciones activas al destruir el componente.
   ngOnDestroy() {
     if (this.searchSubscription) this.searchSubscription.unsubscribe();
     this.searchSubject.complete();
   }
 
 
+  // Método para persistir el estado actual de búsqueda en el servicio para restaurarlo al volver.
   guardarEstado() {
     this.videojuegosServicio.ultimoEstadoBusqueda = {
       termino: this.termino,
@@ -170,6 +173,7 @@ export class Busqueda implements OnInit {
     };
   }
 
+  // Método para recuperar el estado previo de búsqueda guardado en el servicio.
   restaurarEstado() {
     const estado = this.videojuegosServicio.ultimoEstadoBusqueda;
     this.termino = estado.termino;
@@ -186,6 +190,7 @@ export class Busqueda implements OnInit {
 
 
 
+  // Método para abrir o cerrar el dropdown de filtros seleccionado, cerrando los demás.
   toggleDropdown(nombre: string, event: Event) {
     event.stopPropagation();
     // Cerrar los demás
@@ -196,12 +201,14 @@ export class Busqueda implements OnInit {
   }
 
   @HostListener('document:click')
+  // Método para cerrar todos los dropdowns de filtros al hacer clic fuera de ellos.
   cerrarDropdowns() {
     for (let key in this.dropdownsAbiertos) {
       this.dropdownsAbiertos[key] = false;
     }
   }
 
+  // Método para activar o desactivar un valor de filtro y lanzar una nueva búsqueda.
   seleccionarFiltro(campo: string, valor: any) {
     if (campo === 'orden' || campo === 'anio') {
       this.filtros[campo] = valor;
@@ -220,6 +227,7 @@ export class Busqueda implements OnInit {
     this.reiniciarBusqueda();
   }
 
+  // Método para comprobar si un valor de filtro está actualmente seleccionado.
   esSeleccionado(campo: string, valor: any): boolean {
     if (campo === 'orden' || campo === 'anio') {
       return this.filtros[campo] === valor;
@@ -228,6 +236,7 @@ export class Busqueda implements OnInit {
     return this.filtros[campo].indexOf(valor) > -1;
   }
 
+  // Método para obtener el texto a mostrar en el botón del filtro según las opciones seleccionadas.
   getNombreFiltro(campo: string, lista: any[]): string {
     if (campo === 'orden' || campo === 'anio') {
       const item = lista.find(i => i.id === this.filtros[campo]);
@@ -246,6 +255,7 @@ export class Busqueda implements OnInit {
   }
 
 
+  // Método para resetear el estado de paginación y lanzar una búsqueda desde el principio.
   reiniciarBusqueda() {
     // Cancelar cualquier búsqueda en curso
     if (this.searchSubscription) {
@@ -270,6 +280,7 @@ export class Busqueda implements OnInit {
 
 
 
+  // Método para ejecutar la búsqueda con paginación usando un buffer interno para garantizar 20 resultados por página.
   ejecutarBusqueda() {
     this.cargando = true;
     this.cdr.detectChanges();
@@ -326,6 +337,7 @@ export class Busqueda implements OnInit {
     this.cdr.detectChanges();
   }
 
+  // Método para validar que el filtro de año tiene formato correcto (año simple o rango).
   validarAnio(): boolean {
     const dates = this.filtros.anio.trim();
     if (!dates) {
@@ -343,6 +355,7 @@ export class Busqueda implements OnInit {
     }
   }
 
+  // Método para aplicar los filtros actuales lanzando una búsqueda con debounce.
   aplicarFiltros() {
     if (this.validarAnio()) {
       this.searchSubject.next();
@@ -350,6 +363,7 @@ export class Busqueda implements OnInit {
   }
 
 
+  // Método para restablecer todos los filtros a su estado por defecto y relanzar la búsqueda.
   limpiarFiltros() {
     this.filtros = {
       genero: [],
@@ -364,6 +378,7 @@ export class Busqueda implements OnInit {
     this.guardarEstado();
   }
 
+  // Método para retroceder a la página anterior de resultados recargando desde la API.
   paginaAnterior() {
     if (this.paginaActual > 1) {
       this.paginaActual--;
@@ -372,6 +387,7 @@ export class Busqueda implements OnInit {
     }
   }
 
+  // Método para avanzar a la página siguiente de resultados de búsqueda.
   paginaSiguiente() {
     if (this.hayPaginaSiguiente || this.bufferJuegos.length > 0) {
       this.paginaActual++;

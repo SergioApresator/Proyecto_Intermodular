@@ -26,6 +26,7 @@ export class Login implements OnInit {
   // Variable para controlar qué modo de login se está mostrando (Por defecto: Username)
   loginConEmail: boolean = false;
 
+  // Método para inicializar el componente y configurar los validadores dinámicos del campo de identidad.
   ngOnInit() {
 
     this.formularioLogin.get('identity')?.valueChanges.subscribe(value => {
@@ -45,6 +46,7 @@ export class Login implements OnInit {
     });
   }
 
+  // Método para enviar el formulario de login y autenticar al usuario.
   submit() {
     if (this.formularioLogin.valid) {
       const identityValue = this.formularioLogin.value.identity?.trim()!;

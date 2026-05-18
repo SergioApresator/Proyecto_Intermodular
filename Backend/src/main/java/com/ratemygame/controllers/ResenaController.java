@@ -18,8 +18,7 @@ public class ResenaController {
     @Autowired
     private ResenaService resenaService;
 
-    // Recupera reseñas de un juego. Si idUsuario viene informado, nos devuelve
-    // el estado de si este usuario en concreto ha votado a favor o en contra.
+    // Recupera reseñas de un juego
     @GetMapping("/videojuego/{idVideojuego}")
     public ResponseEntity<List<ResenaDTO>> getResenasByVideojuego(
             @PathVariable Long idVideojuego,

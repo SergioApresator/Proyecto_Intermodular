@@ -16,6 +16,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+// Entidad JPA que representa a un usuario registrado en la plataforma.
 @Entity
 @Table(name = "USUARIO")
 @Data

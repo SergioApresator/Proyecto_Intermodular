@@ -19,10 +19,12 @@ export class ConfirmModal {
   @Output() onConfirm = new EventEmitter<void>();
   @Output() onCancel = new EventEmitter<void>();
 
+  // Método para emitir el evento de confirmación al componente padre.
   confirm() {
     this.onConfirm.emit();
   }
 
+  // Método para emitir el evento de cancelación al componente padre.
   cancel() {
     this.onCancel.emit();
   }

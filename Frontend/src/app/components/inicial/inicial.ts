@@ -32,16 +32,19 @@ export class Inicial implements OnInit, OnDestroy {
   juegoSpotlight: any = null;
   anioActual: number = new Date().getFullYear();
 
+  // Método para inicializar el componente y lanzar la carga de datos de la página principal.
   ngOnInit() {
     this.cargarDatosIniciales();
   }
 
+  // Método para limpiar el intervalo del carrusel al destruir el componente y evitar fugas de memoria.
   ngOnDestroy() {
     if (this.intervaloCarrusel) {
       clearInterval(this.intervaloCarrusel);
     }
   }
 
+  // Método para cargar en paralelo los juegos en tendencia, mejores del año, próximos lanzamientos y reseñas recientes.
   cargarDatosIniciales() {
     this.cargando = true;
 
@@ -89,6 +92,7 @@ export class Inicial implements OnInit, OnDestroy {
   }
 
   private seccionesCargadas = 0;
+  // Método para comprobar si todas las secciones han terminado de cargar y desactivar el indicador de carga.
   verificarCargaCompleta() {
     this.seccionesCargadas++;
     if (this.seccionesCargadas >= 4) {
@@ -110,6 +114,7 @@ export class Inicial implements OnInit, OnDestroy {
     });
   }
 
+  // Método para cambiar manualmente al slide seleccionado y reiniciar el temporizador del carrusel.
   seleccionarSlide(idx: number) {
     this.indiceCarrusel = idx;
     this.juegoSpotlight = this.juegosDestacados[idx];
@@ -117,6 +122,7 @@ export class Inicial implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
+  // Método para avanzar al siguiente slide del carrusel de forma circular.
   siguienteSlide() {
     if (this.juegosDestacados.length > 0) {
       this.indiceCarrusel = (this.indiceCarrusel + 1) % this.juegosDestacados.length;
@@ -125,15 +131,15 @@ export class Inicial implements OnInit, OnDestroy {
     }
   }
 
+  // Método para convertir una fecha en un texto relativo legible como "Hace 2 horas" o "Hace 3 días".
   obtenerTiempoTranscurrido(fechaInput: any): string {
     if (!fechaInput) return '';
 
     let fecha: Date;
     
-    // Si la fecha es un array (típico de Jackson LocalDateTime en Spring Boot)
+    // Si la fecha es un array
     if (Array.isArray(fechaInput)) {
       const [year, month, day, hour = 0, minute = 0, second = 0] = fechaInput;
-      // JS Date month starts from 0
       fecha = new Date(year, month - 1, day, hour, minute, second);
     } else {
       fecha = new Date(fechaInput);

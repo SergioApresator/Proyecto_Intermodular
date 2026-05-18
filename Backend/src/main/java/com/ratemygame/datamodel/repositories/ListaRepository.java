@@ -8,5 +8,6 @@ import com.ratemygame.datamodel.entities.Lista;
 
 @Repository
 public interface ListaRepository extends JpaRepository<Lista, Long> {
+    // Consulta para obtener todas las entradas de lista de un usuario concreto.
     List<Lista> findByUsuario_Id(Long usuarioId);
 }

@@ -13,6 +13,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.ForeignKey;
 import lombok.Data;
 
+// Entidad JPA que representa una entrada de la lista de un usuario (Favoritos, Jugados, Pendientes, etc.).
 @Entity
 @Table(name = "LISTA")
 @Data

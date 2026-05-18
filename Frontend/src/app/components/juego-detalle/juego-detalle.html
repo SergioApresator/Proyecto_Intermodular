@@ -1,17 +1,17 @@
 <div *ngIf="cargando" class="skeleton-juego-wrapper">
 
-  <!-- Skeleton Hero -->
+  <!-- Esqueleto del hero del juego -->
   <div class="skeleton-juego-hero"></div>
 
-  <!-- Skeleton Action Bar -->
+  <!-- Esqueleto de la barra de acciones -->
   <div class="skeleton-action-bar">
     <div class="skeleton-action-btn" *ngFor="let i of [1,2,3,4]"></div>
   </div>
 
-  <!-- Skeleton Contenido -->
+  <!-- Esqueleto del contenido -->
   <div class="skeleton-juego-content">
 
-    <!-- Skeleton Galeria -->
+    <!-- Esqueleto de la galería multimedia -->
     <div class="skeleton-juego-card">
       <div class="skeleton-juego-titulo"></div>
       <div class="skeleton-galeria"></div>
@@ -20,13 +20,13 @@
       </div>
     </div>
 
-    <!-- Skeleton Descripcion -->
+    <!-- Esqueleto de la descripción -->
     <div class="skeleton-juego-card">
       <div class="skeleton-juego-titulo"></div>
       <div class="skeleton-linea" *ngFor="let i of [1,2,3,4,5]"></div>
     </div>
 
-    <!-- Skeleton Detalles tecnicos -->
+    <!-- Esqueleto de los detalles técnicos -->
     <div class="skeleton-juego-card">
       <div class="skeleton-juego-titulo"></div>
       <div class="skeleton-tech-grid">
@@ -34,7 +34,7 @@
       </div>
     </div>
 
-    <!-- Skeleton Resenas -->
+    <!-- Esqueleto de las reseñas -->
     <div class="skeleton-juego-card">
       <div class="skeleton-juego-titulo"></div>
       <div class="skeleton-resena" *ngFor="let i of [1,2,3]">
@@ -276,7 +276,7 @@
               </button>
               <div class="review-date">{{ resena.fechaResena | date:'dd.MM.yyyy HH:mm' }}</div>
               <div class="review-body">
-                <!-- Diseño de Spoiler mas Simple y Neutro -->
+                <!-- Diseño del indicador de spoiler -->
                 <div *ngIf="resena.tieneSpoiler && !resena.mostrarSpoiler" class="spoiler-advice-bar">
                   <svg viewBox="0 0 24 24" class="advice-icon"><path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
                   <span>Esta reseña contiene spoilers.</span>
@@ -484,12 +484,12 @@
             </div>
           </div>
 
-          <!-- NEW LIST TILE -->
+          <!-- TARJETA PARA CREAR NUEVA LISTA -->
           <div class="bento-tile new-list-tile" 
                [class.expanded]="mostrarFormNuevaLista"
                (click)="mostrarFormNuevaLista = true; $event.stopPropagation()">
             
-            <!-- IDLE STATE -->
+            <!-- ESTADO EN REPOSO: vista del botón para crear lista -->
             <div class="tile-idle-view" *ngIf="!mostrarFormNuevaLista">
               <div class="tile-status">NUEVA ENTRADA</div>
               <div class="tile-name">CREAR LISTA</div>
@@ -498,7 +498,7 @@
               </div>
             </div>
 
-            <!-- ACTIVE FORM STATE -->
+            <!-- ESTADO ACTIVO: formulario expandido para introducir el nombre de la nueva lista -->
             <div class="tile-content-expanded" *ngIf="mostrarFormNuevaLista" (click)="$event.stopPropagation()">
               <input #inputNueva 
                      type="text" 

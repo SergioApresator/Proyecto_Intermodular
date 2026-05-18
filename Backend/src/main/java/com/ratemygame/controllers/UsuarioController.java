@@ -33,6 +33,7 @@ public class UsuarioController {
     @Value("${app.upload.dir}")
     private String uploadDir;
 
+    // Método para autenticar al usuario aceptando email, username o cualquier identificador válido.
     @PostMapping("/login")
     public ResponseEntity<UsuarioDTO> login(@RequestBody Map<String, String> credentials) {
         String identifier = credentials.get("identifier");
@@ -55,11 +56,13 @@ public class UsuarioController {
         }
     }
 
+    // Método para iniciar sesión usando el nombre de usuario como identificador.
     @PostMapping("/login-username")
     public ResponseEntity<UsuarioDTO> loginUsuarioUsername(@RequestBody Map<String, String> credentials) {
         return login(credentials);
     }
 
+    // Método para iniciar sesión usando el correo electrónico como identificador.
     @PostMapping("/login-email")
     public ResponseEntity<UsuarioDTO> loginUsuarioEmail(@RequestBody Map<String, String> credentials) {
         return login(credentials);
@@ -78,6 +81,7 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.getAllUsuarios());
     }
 
+    // Método para obtener los datos de un usuario concreto por su ID.
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioDTO> getUsuarioById(@PathVariable Long id) {
         return usuarioService.getUsuarioById(id)
@@ -85,6 +89,7 @@ public class UsuarioController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // Método para registrar un nuevo usuario en la base de datos.
     @PostMapping
     public ResponseEntity<UsuarioDTO> createUsuario(@RequestBody Usuario usuario) {
         return new ResponseEntity<>(usuarioService.createUsuario(usuario), HttpStatus.CREATED);
@@ -111,7 +116,6 @@ public class UsuarioController {
     }
 
     // Sube la foto de perfil en disco y guarda la URL en la base de datos.
-    // Nota: permitimos accesos anónimos para que los usuarios puedan registrarse con foto.
     @PostMapping(value = "/{id}/foto", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("isAnonymous() or hasRole('ADMIN') or (principal instanceof T(com.ratemygame.config.CustomUserDetails) and #id == principal.usuario.id)")
     public ResponseEntity<UsuarioDTO> subirFotoPerfil(

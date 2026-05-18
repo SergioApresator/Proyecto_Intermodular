@@ -17,11 +17,13 @@ public class ListaController {
     @Autowired
     private ListaService listaService;
 
+    // Método para obtener todas las entradas de las listas de un usuario.
     @GetMapping("/usuario/{usuarioId}")
     public ResponseEntity<List<ListaDTO>> getListasByUsuario(@PathVariable Long usuarioId) {
         return ResponseEntity.ok(listaService.getListasByUsuario(usuarioId));
     }
 
+    // Método para añadir un videojuego a una lista del usuario.
     @PostMapping
     public ResponseEntity<ListaDTO> createListaItem(@RequestBody ListaDTO listaDTO) {
         return listaService.createListaItem(listaDTO)
@@ -29,6 +31,7 @@ public class ListaController {
                 .orElse(ResponseEntity.badRequest().build());
     }
 
+    // Método para eliminar una entrada de lista por su ID.
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteListaItem(@PathVariable Long id) {
         if (listaService.deleteListaItem(id)) {

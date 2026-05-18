@@ -33,6 +33,7 @@ export class Diario implements OnInit {
 
 
 
+  // Método para inicializar el componente y cargar las reseñas y respuestas del usuario autenticado.
   ngOnInit() {
     const uid = localStorage.getItem('usuarioId');
     if (uid) {
@@ -42,6 +43,7 @@ export class Diario implements OnInit {
     }
   }
 
+  // Método para cargar las reseñas del usuario y enriquecerlas con el nombre e imagen del juego correspondiente.
   cargarResenas() {
     if (!this.usuarioId) return;
 
@@ -73,6 +75,7 @@ export class Diario implements OnInit {
     });
   }
 
+  // Método para cargar las respuestas del usuario y enriquecerlas con el mensaje y autor de la reseña original.
   cargarRespuestas() {
     if (!this.usuarioId) return;
 
@@ -105,6 +108,7 @@ export class Diario implements OnInit {
     });
   }
 
+  // Método para agrupar una lista de elementos por su fecha y ordenarlos de más reciente a más antiguo.
   agruparPorFecha(items: any[], campoFecha: string): any[] {
     const grupos: { [key: string]: any[] } = {};
 
@@ -132,19 +136,23 @@ export class Diario implements OnInit {
   }
 
 
+  // Método para cambiar la vista del diario para mostrar la pestaña de reseñas.
   mostrarResenas() {
     this.mostrandoResenas = true;
   }
 
+  // Método para cambiar la vista del diario para mostrar la pestaña de respuestas.
   mostrarRespuestas() {
     this.mostrandoResenas = false;
   }
 
+  // Método para abrir el modal de detalle con la reseña seleccionada.
   abrirModal(resena: any) {
     this.resenaSeleccionada = resena;
     this.mostrarModalDetalle = true;
   }
 
+  // Método para cerrar el modal de detalle y limpiar la reseña seleccionada.
   cerrarModal() {
     this.mostrarModalDetalle = false;
     this.resenaSeleccionada = null;

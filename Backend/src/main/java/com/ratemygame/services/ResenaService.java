@@ -41,12 +41,14 @@ public class ResenaService {
     private RespuestaVotoRepository respuestaVotoRepository;
 
 
+    // Método para obtener todas las reseñas de un videojuego concreto.
     public List<ResenaDTO> getResenasByVideojuego(Long idVideojuego) {
         return resenaRepository.findByIdVideojuego(idVideojuego).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
+    // Método para obtener las reseñas de un juego enriquecidas con el voto del usuario autenticado.
     public List<ResenaDTO> getResenasByVideojuegoWithVoto(Long idVideojuego, Long idUsuario) {
         return resenaRepository.findByIdVideojuego(idVideojuego).stream()
                 .map(resena -> {
@@ -59,12 +61,14 @@ public class ResenaService {
                 .collect(Collectors.toList());
     }
 
+    // Método para obtener todas las reseñas escritas por un usuario concreto.
     public List<ResenaDTO> getResenasByUsuario(Long idUsuario) {
         return resenaRepository.findByUsuario_Id(idUsuario).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
+    // Método para crear y persistir una nueva reseña con la fecha actual en hora de Madrid.
     public Optional<ResenaDTO> createResena(ResenaDTO resenaDTO) {
         Optional<Usuario> usuarioOpt = usuarioRepository.findById(resenaDTO.getId_usuario());
         if (!usuarioOpt.isPresent()) {
@@ -104,7 +108,7 @@ public class ResenaService {
         if (votoExistente.isPresent()) {
             ResenaVoto voto = votoExistente.get();
             if (voto.getEsMeGusta() == esMeGusta) {
-                // Mismo voto: retirar voto (toggle off)
+                // Mismo voto: retirar voto (desactivar)
                 resenaVotoRepository.delete(voto);
                 if (esMeGusta) {
                     resena.setMeGustas(Math.max(0, resena.getMeGustas() - 1));
@@ -147,6 +151,7 @@ public class ResenaService {
         return Optional.of(dto);
     }
 
+    // Método para actualizar el mensaje, puntuación, spoiler o estado de revisión de una reseña.
     public Optional<ResenaDTO> updateResena(Long id, ResenaDTO resenaDTO) {
         return resenaRepository.findById(id).map(resena -> {
             if (resenaDTO.getMensaje() != null) {
@@ -189,6 +194,7 @@ public class ResenaService {
     }
 
 
+    // Método para convertir una entidad Resena en su DTO de transferencia de datos.
     private ResenaDTO convertToDTO(Resena resena) {
         ResenaDTO dto = new ResenaDTO();
         dto.setId(resena.getId());
@@ -210,16 +216,19 @@ public class ResenaService {
         return dto;
     }
 
+    // Método para obtener una reseña concreta por su ID.
     public Optional<ResenaDTO> getResenaById(Long id) {
         return resenaRepository.findById(id).map(this::convertToDTO);
     }
 
+    // Método para obtener las 10 reseñas más recientes para el feed de la página principal.
     public List<ResenaDTO> getRecentReviews() {
         return resenaRepository.findTop10ByOrderByFechaResenaDescIdDesc().stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
+    // Método para obtener las reseñas pendientes de revisión por el administrador.
     public List<ResenaDTO> getResenasARevisar() {
         return resenaRepository.findResenasARevisar().stream()
                 .map(this::convertToDTO)

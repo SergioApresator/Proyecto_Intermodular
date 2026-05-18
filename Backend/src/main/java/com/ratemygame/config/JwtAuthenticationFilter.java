@@ -62,7 +62,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     // Guardamos al usuario autenticado en el contexto de seguridad para esta llamada
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 } else {
-                    System.out.println("JWT Token invalid for user: " + userEmail);
+                    System.out.println("Token JWT inválido para el usuario: " + userEmail);
                 }
             }
         } catch (Exception e) {

@@ -24,6 +24,7 @@ export class VerTodos implements OnInit {
   paginaActual: number = 1;
   hayPaginaSiguiente: boolean = true;
 
+  // Método para inicializar el componente leyendo el género de la URL y cargando la primera página de juegos.
   ngOnInit() {
     this.genero = this.ruta.snapshot.paramMap.get('genero') || '';
 
@@ -41,6 +42,7 @@ export class VerTodos implements OnInit {
     this.cargarJuegos();
   }
 
+  // Método para cargar los juegos de la página actual según el género o categoría seleccionada.
   cargarJuegos() {
     this.cargando = true; this.cdr.detectChanges();
     if (this.genero === 'popular') {
@@ -87,6 +89,7 @@ export class VerTodos implements OnInit {
     }
   }
 
+  // Método para retroceder a la página anterior de juegos y desplazar la vista al inicio.
   paginaAnterior() {
     if (this.paginaActual > 1) {
       this.paginaActual--;
@@ -95,6 +98,7 @@ export class VerTodos implements OnInit {
     }
   }
 
+  // Método para avanzar a la siguiente página de juegos y desplazar la vista al inicio.
   paginaSiguiente() {
     if (this.hayPaginaSiguiente) {
       this.paginaActual++;

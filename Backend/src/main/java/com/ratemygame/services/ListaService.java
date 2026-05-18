@@ -22,12 +22,14 @@ public class ListaService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    // Método para obtener todas las entradas de listas de un usuario.
     public List<ListaDTO> getListasByUsuario(Long usuarioId) {
         return listaRepository.findByUsuario_Id(usuarioId).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
+    // Método para añadir un videojuego a una lista del usuario y persistirlo en la base de datos.
     public Optional<ListaDTO> createListaItem(ListaDTO listaDTO) {
         Optional<Usuario> usuarioOpt = usuarioRepository.findById(listaDTO.getId_usuario());
         if (!usuarioOpt.isPresent()) {
@@ -43,6 +45,7 @@ public class ListaService {
         return Optional.of(convertToDTO(savedLista));
     }
 
+    // Método para eliminar una entrada de lista por su ID.
     public boolean deleteListaItem(Long id) {
         if (listaRepository.existsById(id)) {
             listaRepository.deleteById(id);
@@ -51,6 +54,7 @@ public class ListaService {
         return false;
     }
 
+    // Método para convertir una entidad Lista en su DTO de transferencia de datos.
     private ListaDTO convertToDTO(Lista lista) {
         ListaDTO dto = new ListaDTO();
         dto.setId(lista.getId());

@@ -3,6 +3,7 @@ package com.ratemygame.dtos;
 import java.time.LocalDateTime;
 import lombok.Data;
 
+// DTO de transferencia de datos de una respuesta, incluyendo info del autor, del padre y el voto del usuario actual.
 @Data
 public class RespuestaDTO {
     private Long id;

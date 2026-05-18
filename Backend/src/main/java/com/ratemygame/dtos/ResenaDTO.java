@@ -3,6 +3,7 @@ package com.ratemygame.dtos;
 import java.time.LocalDateTime;
 import lombok.Data;
 
+// DTO de transferencia de datos de una reseña, incluyendo info del autor y el estado de voto del usuario actual.
 @Data
 public class ResenaDTO {
     private Long id;

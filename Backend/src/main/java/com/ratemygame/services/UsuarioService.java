@@ -26,14 +26,17 @@ public class UsuarioService {
     @Autowired
     private JwtService jwtService;
 
+    // Método para obtener la lista completa de usuarios registrados en el sistema.
     public List<UsuarioDTO> getAllUsuarios() {
         return usuarioRepository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    // Método para obtener los datos de un usuario por su ID.
     public Optional<UsuarioDTO> getUsuarioById(Long id) {
         return usuarioRepository.findById(id).map(this::convertToDTO);
     }
 
+    // Método para autenticar al usuario verificando sus credenciales y generando el token JWT.
     public Optional<UsuarioDTO> login(String identifier, String password) {
         Optional<Usuario> optionalUsuario = usuarioRepository.findByUsernameOrEmail(identifier, identifier);
         if (optionalUsuario.isPresent()) {
@@ -51,14 +54,17 @@ public class UsuarioService {
         return Optional.empty();
     }
 
+    // Método para iniciar sesión usando el nombre de usuario como identificador.
     public Optional<UsuarioDTO> loginUsuarioUsername(String username, String password) {
         return login(username, password);
     }
 
+    // Método para iniciar sesión usando el correo electrónico como identificador.
     public Optional<UsuarioDTO> loginUsuarioEmail(String email, String password) {
         return login(email, password);
     }
 
+    // Método para registrar un nuevo usuario encriptando su contraseña y generando su token JWT inicial.
     public UsuarioDTO createUsuario(Usuario usuario) {
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         usuario.setEsAdmin(false);
@@ -70,6 +76,7 @@ public class UsuarioService {
         return dto;
     }
 
+    // Método para actualizar los datos del perfil de un usuario existente.
     public Optional<UsuarioDTO> updateUsuario(Long id, Usuario usuarioDetails) {
         return usuarioRepository.findById(id).map(usuario -> {
             usuario.setNombre(usuarioDetails.getNombre());
@@ -93,6 +100,7 @@ public class UsuarioService {
         });
     }
 
+    // Método para actualizar la URL de la foto de perfil del usuario en la base de datos.
     public Optional<UsuarioDTO> actualizarFotoUrl(Long id, String fotoUrl) {
         return usuarioRepository.findById(id).map(usuario -> {
             usuario.setFoto_url(fotoUrl);
@@ -100,6 +108,7 @@ public class UsuarioService {
         });
     }
 
+    // Método para actualizar la URL del banner de portada del usuario en la base de datos.
     public Optional<UsuarioDTO> actualizarBannerUrl(Long id, String bannerUrl) {
         return usuarioRepository.findById(id).map(usuario -> {
             usuario.setBannerUrl(bannerUrl);
@@ -107,6 +116,7 @@ public class UsuarioService {
         });
     }
 
+    // Método para eliminar un usuario de la base de datos por su ID.
     public boolean deleteUsuario(Long id) {
         if (usuarioRepository.existsById(id)) {
             usuarioRepository.deleteById(id);
@@ -115,6 +125,7 @@ public class UsuarioService {
         return false;
     }
 
+    // Método para convertir una entidad Usuario en su DTO de transferencia de datos.
     private UsuarioDTO convertToDTO(Usuario usuario) {
         UsuarioDTO dto = new UsuarioDTO();
         dto.setId(usuario.getId());
@@ -130,12 +141,14 @@ public class UsuarioService {
         return dto;
     }
 
+    // Método para buscar usuarios cuyo username contenga el texto indicado (búsqueda parcial).
     public List<UsuarioDTO> buscarPorUsername(String username) {
         return usuarioRepository.findByUsernameContainingIgnoreCase(username).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
+    // Método para buscar usuarios por username o nombre completo de forma insensible a mayúsculas.
     public List<UsuarioDTO> buscarUsuariosGeneral(String query) {
         return usuarioRepository.buscarUsuariosGeneral(query).stream()
                 .map(this::convertToDTO)

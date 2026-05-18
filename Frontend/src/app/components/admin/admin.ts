@@ -46,6 +46,7 @@ export class Admin implements OnInit {
     private cdr: ChangeDetectorRef
   ) { }
 
+  // Método para inicializar el componente verificando que el usuario es administrador antes de cargar las reseñas.
   ngOnInit() {
     // Protección de la ruta para usuarios no administradores
     if (typeof window !== 'undefined' && localStorage.getItem('esAdmin') !== 'true') {
@@ -56,12 +57,14 @@ export class Admin implements OnInit {
     this.cargarResenas();
   }
 
+  // Método para cambiar entre las pestañas de moderación y gestión de usuarios del panel de administración.
   cambiarPestana(pestana: 'moderacion' | 'usuarios') {
     this.pestanaActiva = pestana;
   }
 
   // ===== MODERACIÓN =====
 
+  // Método para cargar todas las reseñas pendientes de revisión desde el backend.
   cargarResenas() {
     this.resenasServicio.getResenasARevisar().subscribe({
       next: (resenas: any[]) => {
@@ -75,6 +78,7 @@ export class Admin implements OnInit {
     });
   }
 
+  // Método para alternar el marcado de spoiler de una reseña previa confirmación del administrador.
   marcarComoSpoiler(id: number) {
     const resena = this.resenasARevisar.find(r => r.id === id);
     if (!resena) return;
@@ -111,6 +115,7 @@ export class Admin implements OnInit {
     );
   }
 
+  // Método para marcar una reseña como revisada y aprobada, haciéndola visible en la plataforma.
   validarResena(id: number) {
     this.mostrarConfirmacion(
       'VALIDAR RESEÑA',
@@ -140,6 +145,7 @@ export class Admin implements OnInit {
     );
   }
 
+  // Método para eliminar permanentemente una reseña inapropiada previa confirmación del administrador.
   eliminarResena(id: number) {
     this.mostrarConfirmacion(
       'ELIMINAR RESEÑA',
@@ -159,22 +165,26 @@ export class Admin implements OnInit {
     );
   }
 
+  // Método para mostrar el modal de confirmación con el título, mensaje, tipo y acción a ejecutar.
   mostrarConfirmacion(titulo: string, mensaje: string, tipo: 'danger' | 'warning' | 'info', accion: () => void) {
     this.modalConfirmacionConfig = { titulo, mensaje, tipo, accion };
     this.modalConfirmacionVisible = true;
   }
 
+  // Método para ejecutar la acción confirmada y cerrar el modal de confirmación.
   confirmarModal() {
     this.modalConfirmacionConfig.accion();
     this.modalConfirmacionVisible = false;
   }
 
+  // Método para cerrar el modal de confirmación sin ejecutar ninguna acción.
   cancelarModal() {
     this.modalConfirmacionVisible = false;
   }
 
   // ===== USUARIOS =====
 
+  // Método para buscar usuarios por término e iniciar la paginación de resultados.
   buscarUsuarios() {
     if (this.terminoBusqueda.trim().length === 0) {
       this.resultadosUsuarios = [];
@@ -200,6 +210,7 @@ export class Admin implements OnInit {
     });
   }
 
+  // Método para banear o desbanear a un usuario previa confirmación del administrador.
   toggleBaneo(usuario: any) {
     const accion = usuario.baneado ? 'DESBANEAR' : 'BANEAR';
     const tipo = usuario.baneado ? 'info' : 'danger';
@@ -239,16 +250,19 @@ export class Admin implements OnInit {
     );
   }
 
+  // Getter para obtener el subconjunto de usuarios correspondiente a la página actual.
   get usuariosPaginados(): any[] {
     const inicio = (this.paginaActual - 1) * this.elementosPorPagina;
     const fin = inicio + this.elementosPorPagina;
     return this.resultadosUsuarios.slice(inicio, fin);
   }
 
+  // Getter para calcular el número total de páginas según los resultados encontrados.
   get totalPaginas(): number {
     return Math.ceil(this.resultadosUsuarios.length / this.elementosPorPagina);
   }
 
+  // Método para avanzar a la siguiente página de resultados de usuarios.
   siguientePagina() {
     if (this.paginaActual < this.totalPaginas) {
       this.paginaActual++;
@@ -256,6 +270,7 @@ export class Admin implements OnInit {
     }
   }
 
+  // Método para retroceder a la página anterior de resultados de usuarios.
   anteriorPagina() {
     if (this.paginaActual > 1) {
       this.paginaActual--;
@@ -263,6 +278,7 @@ export class Admin implements OnInit {
     }
   }
 
+  // Método para saltar directamente a una página concreta de resultados de usuarios.
   irAPagina(pagina: number) {
     if (pagina >= 1 && pagina <= this.totalPaginas) {
       this.paginaActual = pagina;

@@ -8,12 +8,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+// Configuración MVC para servir archivos estáticos subidos por los usuarios (fotos y banners).
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
     @Value("${app.upload.dir}")
     private String uploadDir;
 
+    // Método para registrar el handler que expone la carpeta de uploads bajo la URL /uploads/**.
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // Sirve los archivos subidos desde la URL /uploads/**

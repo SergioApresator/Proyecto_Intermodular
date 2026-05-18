@@ -1,7 +1,10 @@
+<!-- OVERLAY: fondo oscuro del modal de confirmación, se cierra al hacer clic fuera -->
 <div class="confirm-overlay" *ngIf="visible" (click)="cancel()">
+  <!-- CONTENEDOR DEL MODAL: bloque central con tipo dinámico (danger, warning, info) -->
   <div class="confirm-modal" (click)="$event.stopPropagation()" [ngClass]="type">
     <div class="modal-border-top"></div>
-    
+
+    <!-- CONTENIDO DEL MODAL: icono, título, mensaje y botones de acción -->
     <div class="modal-content">
       <div class="modal-icon">
         <!-- SVG DANGER -->
@@ -28,6 +31,7 @@
       <h3 class="modal-title">{{ title | uppercase }}</h3>
       <p class="modal-message">{{ message }}</p>
 
+      <!-- BOTONES DE ACCIÓN: cancelar y confirmar -->
       <div class="modal-actions">
         <button class="btn-modal cancel" (click)="cancel()">
           <span>{{ cancelText | uppercase }}</span>

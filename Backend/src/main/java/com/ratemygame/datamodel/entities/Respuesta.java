@@ -20,6 +20,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+// Entidad JPA que representa un comentario de un usuario en respuesta a una reseña.
 @Entity
 @Table(name = "RESPUESTA")
 @Data

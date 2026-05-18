@@ -30,14 +30,17 @@ export class Usuarios {
     return this.http.post(this.url + '/login', { identifier, password });
   }
 
+  // Método para iniciar sesión usando el nombre de usuario como identificador.
   loginUsername(username: string, password: string): Observable<any> {
     return this.login(username, password);
   }
 
+  // Método para iniciar sesión usando el correo electrónico como identificador.
   loginEmail(email: string, password: string): Observable<any> {
     return this.login(email, password);
   }
 
+  // Método para obtener los datos completos de un usuario por su ID.
   getUsuarioById(id: number): Observable<any> {
     return this.http.get(`${this.url}/${id}`, this.getHeaders());
   }
@@ -47,13 +50,12 @@ export class Usuarios {
     return this.http.get(`${this.url}/buscar?query=${query}`);
   }
 
+  // Método para actualizar los datos del perfil de un usuario.
   actualizarUsuario(id: number, datos: any): Observable<any> {
     return this.http.put(`${this.url}/${id}`, datos, this.getHeaders());
   }
 
   // Sube la foto de perfil del usuario.
-  // IMPORTANTE: Al usar FormData, NO se debe definir el header 'Content-Type' a mano.
-  // Dejamos que el propio HttpClient/navegador ponga el boundary de multipart correcto.
   subirFotoPerfil(id: number, file: File): Observable<any> {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     const formData = new FormData();
@@ -116,10 +118,12 @@ export class Usuarios {
     return this.http.get(`${this.urlListas}/usuario/${usuarioId}`, this.getHeaders());
   }
 
+  // Método para añadir un videojuego a una lista del usuario.
   agregarALista(datos: any): Observable<any> {
     return this.http.post(this.urlListas, datos, this.getHeaders());
   }
 
+  // Método para eliminar un videojuego de una lista del usuario.
   eliminarDeLista(listaId: number): Observable<any> {
     return this.http.delete(`${this.urlListas}/${listaId}`, this.getHeaders());
   }

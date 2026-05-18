@@ -35,12 +35,14 @@ public class RespuestaService {
     @Autowired
     private RespuestaVotoRepository respuestaVotoRepository;
 
+    // Método para obtener todas las respuestas asociadas a una reseña concreta.
     public List<RespuestaDTO> getRespuestasByResena(Long idResena) {
         return respuestaRepository.findByResena_Id(idResena).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
+    // Método para obtener las respuestas de una reseña enriquecidas con el voto del usuario autenticado.
     public List<RespuestaDTO> getRespuestasByResenaWithVoto(Long idResena, Long idUsuario) {
         return respuestaRepository.findByResena_Id(idResena).stream()
                 .map(resp -> {
@@ -54,6 +56,7 @@ public class RespuestaService {
                 .collect(Collectors.toList());
     }
 
+    // Método para crear y persistir una nueva respuesta vinculada a su reseña y usuario.
     public Optional<RespuestaDTO> createRespuesta(RespuestaDTO respuestaDTO) {
         Optional<Usuario> usuarioOpt = usuarioRepository.findById(respuestaDTO.getId_usuario());
         Optional<Resena> resenaOpt = resenaRepository.findById(respuestaDTO.getId_resena());
@@ -156,6 +159,7 @@ public class RespuestaService {
     }
 
 
+    // Método para convertir una entidad Respuesta en su DTO incluyendo los datos del autor y del padre.
     private RespuestaDTO convertToDTO(Respuesta respuesta) {
         RespuestaDTO dto = new RespuestaDTO();
         dto.setId(respuesta.getId());
@@ -183,6 +187,7 @@ public class RespuestaService {
         return dto;
     }
 
+    // Método para obtener todas las respuestas publicadas por un usuario concreto.
     public List<RespuestaDTO> getRespuestasByUsuario(Long idUsuario) {
         return respuestaRepository.findByUsuario_Id(idUsuario).stream()
             .map(this::convertToDTO)

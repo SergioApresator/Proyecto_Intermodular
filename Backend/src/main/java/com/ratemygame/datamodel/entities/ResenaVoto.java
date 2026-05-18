@@ -13,6 +13,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 
+// Entidad JPA que registra el voto (me gusta / no me gusta) de un usuario sobre una reseña.
 @Entity
 @Table(name="RESENA_VOTO")
 @Data

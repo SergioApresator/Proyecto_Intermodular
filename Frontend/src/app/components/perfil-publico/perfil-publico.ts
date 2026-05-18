@@ -34,6 +34,7 @@ export class PerfilPublico implements OnInit {
   listas: any[] = [];
   cargandoListas: boolean = true;
 
+  // Método para inicializar el componente leyendo el ID del usuario de la URL y cargando sus datos.
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       const idStr = params.get('id');
@@ -43,15 +44,18 @@ export class PerfilPublico implements OnInit {
     });
   }
 
+  // Método para cambiar la pestaña activa del perfil público (resumen, reseñas, listas).
   cambiarPestana(id: string) {
     this.pestanaActual = id;
     this.cdr.detectChanges();
   }
 
+  // Método para volver a la página de búsqueda de usuarios.
   volver() {
     this.router.navigate(['/buscar-usuarios']);
   }
 
+  // Método para cargar los datos del usuario y lanzar la carga de sus reseñas y listas.
   cargarDatos(id: number) {
     this.cargando = true;
     this.usuariosServicio.getUsuarioById(id).subscribe({
@@ -70,6 +74,7 @@ export class PerfilPublico implements OnInit {
     });
   }
 
+  // Método para cargar las reseñas del usuario y enriquecerlas con el nombre e imagen del juego.
   cargarResenas(id: number) {
     this.cargandoResenas = true;
     this.resenasServicio.getResenasPorUsuario(id).subscribe({
@@ -104,6 +109,7 @@ export class PerfilPublico implements OnInit {
     });
   }
 
+  // Método para cargar las listas del usuario agrupadas por nombre y con los detalles de cada juego.
   cargarListas(id: number) {
     this.cargandoListas = true;
     this.usuariosServicio.getListasUsuario(id).subscribe({
@@ -165,16 +171,20 @@ export class PerfilPublico implements OnInit {
 
 
 
+  // Getter para obtener el número de juegos en la lista de Favoritos del usuario público.
   get favoritosCount(): number {
     const favList = this.listas.find(l => l.nombre === 'Favoritos');
     return favList ? favList.juegos.length : 0;
   }
 
+  // Método para obtener la inicial del username del usuario para su avatar.
   getInitials(): string {
     if (!this.usuario || !this.usuario.username) return '?';
     return this.usuario.username.charAt(0).toUpperCase();
   }
 
+  // Método para generar un array de la longitud de la puntuación para renderizar las estrellas llenas.
   getStars(p: number) { return Array(p).fill(0); }
+  // Método para generar un array con las estrellas vacías restantes hasta completar 5.
   getEmptyStars(p: number) { return Array(5 - p).fill(0); }
 }

@@ -2,6 +2,7 @@ package com.ratemygame.dtos;
 
 import lombok.Data;
 
+// DTO de transferencia de datos del usuario, incluyendo el token JWT tras el login.
 @Data
 public class UsuarioDTO {
     private Long id;

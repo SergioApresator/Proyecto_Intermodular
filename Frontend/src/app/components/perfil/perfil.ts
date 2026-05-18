@@ -65,6 +65,7 @@ export class Perfil implements OnInit {
   };
 
 
+  // Getter para obtener el número de juegos en la lista de Favoritos del usuario.
   get favoritosCount(): number {
     const favList = this.listas.find(l => l.nombre === 'Favoritos');
     return favList ? favList.juegos.length : 0;
@@ -72,6 +73,7 @@ export class Perfil implements OnInit {
 
   pestanaActual: string = 'resumen';
 
+  // Método para cambiar la pestaña activa del perfil (resumen, listas, ajustes).
   cambiarPestana(id: string) {
     this.pestanaActual = id;
     this.listaEnEdicion = null;
@@ -81,6 +83,7 @@ export class Perfil implements OnInit {
     this.cdr.detectChanges();
   }
 
+  // Método para navegar de vuelta a la página inicial.
   volver() {
     this.router.navigate(['/']);
   }
@@ -105,6 +108,7 @@ export class Perfil implements OnInit {
   private readonly USERNAME_PATTERN = /^[a-zA-Z0-9_]+$/;
   private readonly NAME_PATTERN = /^[a-zA-ZÀ-ÿ\s]{2,40}$/;
 
+  // Método para inicializar el perfil cargando datos del usuario, reseñas, listas y configurando la búsqueda reactiva.
   ngOnInit() {
     const id = typeof window !== 'undefined' ? localStorage.getItem('usuarioId') : null;
     if (!id) {
@@ -145,6 +149,7 @@ export class Perfil implements OnInit {
     });
   }
 
+  // Método para cargar los datos del perfil del usuario desde el backend y actualizar el localStorage con las imágenes.
   cargarPerfil(id: number) {
     this.cargando = true;
     this.usuariosServicio.getUsuarioById(id).subscribe({
@@ -165,6 +170,7 @@ export class Perfil implements OnInit {
     });
   }
 
+  // Método para cargar las reseñas del usuario y enriquecerlas con el nombre e imagen del juego mediante forkJoin.
   cargarResenas(id: number) {
     this.cargandoResenas = true;
     this.resenasServicio.getResenasPorUsuario(id).subscribe({
@@ -213,6 +219,7 @@ export class Perfil implements OnInit {
     });
   }
 
+  // Método para eliminar una reseña del usuario previa confirmación.
   eliminarResena(idResena: number) {
     this.mostrarConfirmacion(
       'ELIMINAR RESEÑA',
@@ -236,6 +243,7 @@ export class Perfil implements OnInit {
   }
 
 
+  // Método para cargar todas las listas del usuario agrupadas por nombre y enriquecidas con los detalles de cada juego.
   cargarTodasLasListas(id: number) {
     this.cargandoListas = true;
     this.usuariosServicio.getListasUsuario(id).subscribe({
@@ -294,6 +302,7 @@ export class Perfil implements OnInit {
     });
   }
 
+  // Método para activar o desactivar el modo de edición de una lista concreta.
   toggleEditarLista(nombre: string) {
     if (this.listaEnEdicion === nombre) {
       this.listaEnEdicion = null;
@@ -303,6 +312,7 @@ export class Perfil implements OnInit {
     this.cdr.detectChanges();
   }
 
+  // Método para eliminar un juego de una lista del usuario y actualizarla en la vista.
   eliminarDeLista(entryId: number, nombreLista: string) {
     this.usuariosServicio.eliminarDeLista(entryId).subscribe({
       next: () => {
@@ -323,6 +333,7 @@ export class Perfil implements OnInit {
   }
 
   // --- BUSQUEDA Y ADICION ---
+  // Método para abrir el modal de búsqueda de juegos para añadir a una lista concreta.
   abrirModalBusqueda(nombreLista: string) {
     this.listaDestino = nombreLista;
     this.mostrarModalBusqueda = true;
@@ -332,16 +343,19 @@ export class Perfil implements OnInit {
     this.cdr.detectChanges();
   }
 
+  // Método para cerrar el modal de búsqueda y limpiar el destino de lista seleccionado.
   cerrarModalBusqueda() {
     this.mostrarModalBusqueda = false;
     this.listaDestino = null;
     this.cdr.detectChanges();
   }
 
+  // Método para emitir el término de búsqueda al Subject reactivo que aplica debounce.
   onSearchChange() {
     this.searchSubject.next(this.queryBusqueda);
   }
 
+  // Método para añadir un juego seleccionado a la lista destino y actualizar la vista al vuelo.
   agregarJuegoALista(juego: any) {
     const id = typeof window !== 'undefined' ? localStorage.getItem('usuarioId') : null;
     if (!this.listaDestino || !id) return;
@@ -375,8 +389,10 @@ export class Perfil implements OnInit {
     });
   }
 
+  // Método para abrir el selector de archivos de la foto de perfil.
   abrirSelectorFoto() { this.fileInput.nativeElement.click(); }
 
+  // Método para validar y previsualizar la foto de perfil seleccionada por el usuario.
   onArchivoSeleccionado(event: Event) {
     const input = event.target as HTMLInputElement;
     if (!input.files || input.files.length === 0) return;
@@ -401,6 +417,7 @@ export class Perfil implements OnInit {
     reader.readAsDataURL(file);
   }
 
+  // Método para subir la foto de perfil seleccionada al backend y notificar a la navbar.
   subirFoto() {
     if (!this.archivoSeleccionado || !this.usuario?.id) return;
     this.subiendoFoto = true;
@@ -428,6 +445,7 @@ export class Perfil implements OnInit {
     });
   }
 
+  // Método para eliminar la foto de perfil del usuario previa confirmación.
   resetearFoto() {
     if (!this.usuario?.id) return;
 
@@ -458,6 +476,7 @@ export class Perfil implements OnInit {
   }
 
 
+  // Método para cancelar la selección de foto de perfil y limpiar la previsualización.
   cancelarFoto() {
     this.archivoSeleccionado = null;
     this.previewFoto = null;
@@ -466,8 +485,10 @@ export class Perfil implements OnInit {
     this.cdr.detectChanges();
   }
 
+  // Método para abrir el selector de archivos del banner de perfil.
   abrirSelectorBanner() { this.bannerInput.nativeElement.click(); }
 
+  // Método para validar y previsualizar el banner de portada seleccionado por el usuario.
   onBannerSeleccionado(event: Event) {
   const input = event.target as HTMLInputElement;
   if (!input.files || input.files.length === 0) return;
@@ -520,6 +541,7 @@ export class Perfil implements OnInit {
     });
   }
 
+// Método para cancelar la selección de banner de portada y limpiar la previsualización.
 cancelarBanner() {
   this.archivoBannerSeleccionado = null;
   this.previewBanner = null;
@@ -528,6 +550,7 @@ cancelarBanner() {
   this.cdr.detectChanges();
 }
 
+  // Método para iniciar el modo de edición del perfil rellenando el formulario con los datos actuales del usuario.
   iniciarEdicion() {
     this.formEdicion = {
       nombre: this.usuario.nombre || '',
@@ -544,6 +567,7 @@ cancelarBanner() {
     this.cdr.detectChanges();
   }
 
+  // Método para validar y guardar los cambios del formulario de edición del perfil en el backend.
   guardarCambios() {
     this.fieldErrors = {};
     this.error = '';
@@ -620,7 +644,9 @@ cancelarBanner() {
     });
   }
 
+  // Método para generar un array de la longitud de la puntuación para renderizar las estrellas.
   getStars(puntuacion: number): number[] { return Array(puntuacion).fill(0); }
+  // Método para obtener la inicial del username del usuario para el avatar.
   getInitials(): string { return this.usuario?.username ? this.usuario.username.charAt(0).toUpperCase() : '?'; }
 
   // Helpers para el modal de confirmación
@@ -630,17 +656,20 @@ cancelarBanner() {
     this.cdr.detectChanges();
   }
 
+  // Método para ejecutar la acción del modal de confirmación y cerrarlo.
   ejecutarConfirmacion() {
     this.modalConfirmacionConfig.accion();
     this.modalConfirmacionVisible = false;
     this.cdr.detectChanges();
   }
 
+  // Método para cerrar el modal de confirmación sin ejecutar ninguna acción.
   cancelarConfirmacion() {
     this.modalConfirmacionVisible = false;
     this.cdr.detectChanges();
   }
 
+  // Método para eliminar el banner de portada del perfil previa confirmación.
   resetearBanner() {
     if (!this.usuario?.id) return;
     this.mostrarConfirmacion(

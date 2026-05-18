@@ -9,6 +9,7 @@ export class ResenasService {
   private http = inject(HttpClient);
   private urlResenas = 'http://localhost:9999/api/resenas';
 
+  // Método para generar las cabeceras HTTP con el token JWT del usuario autenticado.
   private getHeaders() {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     return {
@@ -40,10 +41,12 @@ export class ResenasService {
     return this.http.get(`http://localhost:9999/api/respuestas/usuario/${idUsuario}`, this.getHeaders());
   }
 
+  // Método para obtener las reseñas más recientes de toda la plataforma.
   getResenasRecientes(): Observable<any> {
     return this.http.get(`${this.urlResenas}/recientes`, this.getHeaders());
   }
 
+  // Método para obtener las reseñas pendientes de revisión por el administrador.
   getResenasARevisar(): Observable<any> {
     return this.http.get(`${this.urlResenas}/aRevisar`, this.getHeaders());
   }

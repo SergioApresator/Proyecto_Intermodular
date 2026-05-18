@@ -128,6 +128,7 @@ export class Registro {
     reader.readAsDataURL(file);
   }
 
+  // Método para enviar el formulario de registro, crear el usuario y subir las imágenes de forma secuencial.
   submit() {
     if (this.formularioRegistro.valid) {
       const rawData = this.formularioRegistro.value;
@@ -197,11 +198,13 @@ export class Registro {
     }
   }
 
+  // Getter para mostrar en tiempo real el nombre de usuario en la vista previa del perfil.
   get previewUsername(): string {
     const val = this.formularioRegistro.get('username')?.value;
     return val && val.trim() ? val.trim() : 'ALIAS_DE_JUGADOR';
   }
 
+  // Getter para mostrar en tiempo real el nombre completo en la vista previa del perfil.
   get previewFullName(): string {
     const nom = this.formularioRegistro.get('nombre')?.value;
     const ape = this.formularioRegistro.get('apellidos')?.value;
@@ -211,6 +214,7 @@ export class Registro {
     return parts.length > 0 ? parts.join(' ').toUpperCase() : '';
   }
 
+  // Método para obtener las iniciales del usuario a partir de nombre y apellidos para el avatar de vista previa.
   getInitials(): string {
     const nom = this.formularioRegistro.get('nombre')?.value;
     const ape = this.formularioRegistro.get('apellidos')?.value;

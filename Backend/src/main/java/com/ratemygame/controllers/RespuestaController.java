@@ -18,6 +18,7 @@ public class RespuestaController {
     @Autowired
     private RespuestaService respuestaService;
 
+    // Método para obtener las respuestas de una reseña, incluyendo el voto del usuario si se indica su ID.
     @GetMapping("/resena/{idResena}")
     public ResponseEntity<List<RespuestaDTO>> getRespuestasByResena(
             @PathVariable Long idResena,
@@ -28,6 +29,7 @@ public class RespuestaController {
         return ResponseEntity.ok(respuestaService.getRespuestasByResena(idResena));
     }
 
+    // Método para publicar una nueva respuesta a una reseña, con soporte para respuestas anidadas.
     @PostMapping
     public ResponseEntity<RespuestaDTO> createRespuesta(@RequestBody RespuestaDTO respuestaDTO) {
         return respuestaService.createRespuesta(respuestaDTO)
@@ -35,6 +37,7 @@ public class RespuestaController {
                 .orElse(ResponseEntity.badRequest().build());
     }
 
+    // Método para registrar o cambiar el voto de un usuario sobre una respuesta concreta.
     @PostMapping("/{id}/votar")
     public ResponseEntity<RespuestaDTO> votar(
             @PathVariable Long id,
@@ -47,6 +50,7 @@ public class RespuestaController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // Método para eliminar una respuesta por su ID.
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRespuesta(@PathVariable Long id) {
         if (respuestaService.deleteRespuesta(id)) {
@@ -55,6 +59,7 @@ public class RespuestaController {
         return ResponseEntity.notFound().build();
     }
 
+    // Método para obtener todas las respuestas publicadas por un usuario concreto.
     @GetMapping("/usuario/{idUsuario}")
     public ResponseEntity<List<RespuestaDTO>> getRespuestasByUsuario(@PathVariable Long idUsuario) {
         return ResponseEntity.ok(respuestaService.getRespuestasByUsuario(idUsuario));

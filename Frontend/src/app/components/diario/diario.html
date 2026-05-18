@@ -1,6 +1,6 @@
 <div *ngIf="cargando" class="skeleton-diario">
 
-  <!-- Skeleton Header -->
+  <!-- Esqueleto de cabecera -->
   <div class="skeleton-diario-header">
     <div class="skeleton-titulo-bloque">
       <div class="skeleton-subtitulo"></div>
@@ -12,13 +12,13 @@
     </div>
   </div>
 
-  <!-- Skeleton Tabs -->
+  <!-- Esqueleto de pestañas -->
   <div class="skeleton-diario-tabs">
     <div class="skeleton-tab"></div>
     <div class="skeleton-tab"></div>
   </div>
 
-  <!-- Skeleton Entradas -->
+  <!-- Esqueleto de entradas -->
   <div class="skeleton-diario-feed">
     <div class="skeleton-log-entry" *ngFor="let i of [1,2,3]">
       <div class="skeleton-date-col">
@@ -156,7 +156,7 @@
                 <div class="footer-item down">
                   <span>{{ resena.noMeGustas }} NEGATIVOS</span>
                 </div>
-                <!-- Spoiler Icon in Footer -->
+                <!-- Icono de spoiler en el pie de la reseña -->
                 <div class="spoiler-indicator footer" *ngIf="resena.tieneSpoiler" title="Contiene spoilers">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
