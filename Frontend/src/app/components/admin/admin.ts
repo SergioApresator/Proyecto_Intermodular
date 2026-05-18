@@ -76,23 +76,30 @@ export class Admin implements OnInit {
   }
 
   marcarComoSpoiler(id: number) {
+    const resena = this.resenasARevisar.find(r => r.id === id);
+    if (!resena) return;
+
+    const nuevoEstadoSpoiler = !resena.tieneSpoiler;
+    const titulo = nuevoEstadoSpoiler ? 'MARCAR COMO SPOILER' : 'QUITAR SPOILER';
+    const mensaje = nuevoEstadoSpoiler 
+      ? '¿Estás seguro de que deseas marcar esta reseña como spoiler? Esto ocultará el texto del contenido por defecto para los usuarios de la plataforma.'
+      : '¿Estás seguro de que deseas quitar el marcado de spoiler a esta reseña?';
+
     this.mostrarConfirmacion(
-      'MARCAR COMO SPOILER',
-      '¿Estás seguro de que deseas marcar esta reseña como spoiler? Esto ocultará el texto del contenido por defecto para los usuarios de la plataforma.',
+      titulo,
+      mensaje,
       'warning',
       () => {
         this.resenasServicio.getResenaPorId(id).subscribe({
           next: (resenaData) => {
-            resenaData.tieneSpoiler = true;
+            resenaData.tieneSpoiler = nuevoEstadoSpoiler;
             this.resenasServicio.updateResena(id, resenaData).subscribe({
               next: () => {
-                this.resenasARevisar = this.resenasARevisar.filter(r => r.id !== id);
+                resena.tieneSpoiler = nuevoEstadoSpoiler;
                 this.cdr.detectChanges();
               },
               error: (err) => {
                 console.error('Error al actualizar spoiler en servidor:', err);
-                this.resenasARevisar = this.resenasARevisar.filter(r => r.id !== id);
-                this.cdr.detectChanges();
               }
             });
           },

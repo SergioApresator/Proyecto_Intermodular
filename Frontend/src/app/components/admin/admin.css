@@ -202,6 +202,14 @@
     font-size: 1rem;
     color: #64748b;
     font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.card-header-main {
+    display: flex;
+    flex-direction: column;
 }
 
 .user-info strong {
@@ -231,6 +239,19 @@
     font-family: 'Rajdhani', sans-serif;
     letter-spacing: 1px;
     clip-path: polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%);
+}
+
+.badge-spoiler-active {
+    display: inline-block;
+    background: #f99e1a;
+    color: #ffffff;
+    padding: 4px 12px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 1px;
+    transform: skewX(-12deg);
+    box-shadow: 0 0 10px rgba(249, 158, 26, 0.3);
 }
 
 
@@ -287,6 +308,15 @@
 .btn-warning:hover {
     background: #f99e1a;
     color: #ffffff;
+}
+
+.btn-warning.active {
+    background: #f99e1a;
+    color: #ffffff;
+}
+
+.btn-warning.active:hover {
+    background: #d97706;
 }
 
 .btn-danger:hover {
