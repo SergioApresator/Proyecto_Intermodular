@@ -201,7 +201,10 @@
         <div *ngFor="let resena of resenasRecientes" class="activity-item" [routerLink]="['/juego', resena.id_videojuego]" style="cursor: pointer;">
 
           <div class="activity-user">
-            <img [src]="resena.fotoUsuario || 'assets/default-avatar.png'" class="user-avatar" alt="">
+            <div class="user-avatar" [class.no-photo]="!resena.fotoUsuario || resena['avatarError']">
+              <img *ngIf="resena.fotoUsuario && !resena['avatarError']" [src]="resena.fotoUsuario" (error)="resena['avatarError'] = true" alt="">
+              <span *ngIf="!resena.fotoUsuario || resena['avatarError']">{{ obtenerInicial(resena.nombreUsuario) }}</span>
+            </div>
             <div class="user-info">
               <span class="user-name">{{ resena.nombreUsuario }}</span>
               <span class="activity-time">{{ obtenerTiempoTranscurrido(resena.fechaResena) }}</span>
