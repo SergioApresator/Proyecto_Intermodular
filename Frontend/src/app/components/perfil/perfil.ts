@@ -132,7 +132,7 @@ export class Perfil implements OnInit {
         if (query.length < 2) {
           this.buscando = false;
           this.cdr.detectChanges();
-          return of({ results: [] });
+          return of({ content: [] });
         }
         return this.videojuegosServicio.buscarJuegos(query);
       })
