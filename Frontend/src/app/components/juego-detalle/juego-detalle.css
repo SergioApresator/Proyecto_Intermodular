@@ -417,6 +417,38 @@
 
 .reply-user-info { display: flex; flex-direction: column; }
 .reply-parent { font-size: 0.75rem; color: #94a3b8; }
+
+/* Profile link styles for reviews and replies */
+.user-profile-link,
+.user-name-link {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.user-profile-link .avatar-mini-ow {
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+.user-profile-link:hover .avatar-mini-ow {
+    border-color: #f99e1a;
+    transform: scale(1.08);
+    box-shadow: 0 8px 20px rgba(249, 158, 26, 0.25);
+}
+
+.user-profile-link .avatar-tiny-ow {
+    transition: background 0.2s, transform 0.2s;
+}
+
+.user-profile-link:hover .avatar-tiny-ow {
+    background: #f99e1a;
+    transform: scale(1.1);
+}
+
+.user-name-link:hover .user-name,
+.user-name-link:hover .reply-user {
+    color: #3b82f6;
+}
 /* PREMIUM REPLY FORM */
 .add-reply-form-premium {
     margin-top: 30px;
