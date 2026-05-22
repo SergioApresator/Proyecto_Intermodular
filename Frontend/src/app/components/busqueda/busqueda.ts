@@ -79,16 +79,16 @@ export class Busqueda implements OnInit {
 
   tagsDisponibles = [
     { id: '', nombre: 'Todas las etiquetas' },
-    { id: 'singleplayer', nombre: 'Singleplayer' },
-    { id: 'multiplayer', nombre: 'Multiplayer' },
-    { id: 'open-world', nombre: 'Open World' },
-    { id: 'sci-fi', nombre: 'Sci-fi' },
-    { id: 'fantasy', nombre: 'Fantasy' },
+    { id: 'singleplayer', nombre: 'Un jugador' },
+    { id: 'multiplayer', nombre: 'Multijugador' },
+    { id: 'open-world', nombre: 'Mundo abierto' },
+    { id: 'sci-fi', nombre: 'Ciencia ficción' },
+    { id: 'fantasy', nombre: 'Fantasía' },
     { id: 'horror', nombre: 'Terror' },
-    { id: 'story-rich', nombre: 'Story Rich' },
-    { id: 'atmospheric', nombre: 'Atmospheric' },
-    { id: 'exploration', nombre: 'Exploration' },
-    { id: 'dark-fantasy', nombre: 'Dark Fantasy' },
+    { id: 'story-rich', nombre: 'Historia profunda' },
+    { id: 'atmospheric', nombre: 'Atmosférico' },
+    { id: 'exploration', nombre: 'Exploración' },
+    { id: 'dark-fantasy', nombre: 'Fantasía oscura' },
   ];
   metacriticDisponibles = [
     { id: '', nombre: 'Cualquier nota' },
