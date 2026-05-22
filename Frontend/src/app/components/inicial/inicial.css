@@ -549,6 +549,27 @@
     color: #64748b;
 }
 
+/* Profile link styles for activity sidebar */
+.user-profile-link,
+.user-name-link {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.user-profile-link .user-avatar {
+    transition: border-color 0.2s, transform 0.2s;
+}
+
+.user-profile-link:hover .user-avatar {
+    border-color: #f99e1a;
+    transform: scale(1.1);
+}
+
+.user-name-link:hover .user-name {
+    color: #3b82f6;
+}
+
 .activity-content {
     font-size: 1rem;
     line-height: 1.5;
