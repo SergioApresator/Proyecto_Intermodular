@@ -138,7 +138,7 @@ export class Perfil implements OnInit {
       })
     ).subscribe({
       next: (res: any) => {
-        this.resultadosBusqueda = res.results || [];
+        this.resultadosBusqueda = res.content || [];
         this.buscando = false;
         this.cdr.detectChanges();
       },
@@ -696,4 +696,3 @@ cancelarBanner() {
     );
 }
 }
-

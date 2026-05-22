@@ -49,9 +49,9 @@ export class VerTodos implements OnInit {
       this.videojuegosServicio.getPopularesPaginados(this.paginaActual).subscribe({
         next: (respuesta: any) => {
           //Añade los juegos nuevos a la lista existente
-          this.juegos = respuesta.results
+          this.juegos = respuesta.content || [];
           //Si no hay siguiente pagina desactiva el boton
-          this.hayPaginaSiguiente = respuesta.next !== null;
+          this.hayPaginaSiguiente = !respuesta.last;
           this.cargando = false;
           this.cdr.detectChanges();
         },
@@ -63,8 +63,8 @@ export class VerTodos implements OnInit {
     } else if (this.genero === 'proximos') {
       this.videojuegosServicio.getProximosPaginados(this.paginaActual).subscribe({
         next: (respuesta: any) => {
-          this.juegos = respuesta.results
-          this.hayPaginaSiguiente = respuesta.next !== null;
+          this.juegos = respuesta.content || [];
+          this.hayPaginaSiguiente = !respuesta.last;
           this.cargando = false;
           this.cdr.detectChanges();
         },
@@ -76,8 +76,8 @@ export class VerTodos implements OnInit {
     } else {
       this.videojuegosServicio.getJuegosPaginados(this.genero, this.paginaActual).subscribe({
         next: (respuesta: any) => {
-          this.juegos = respuesta.results
-          this.hayPaginaSiguiente = respuesta.next !== null;
+          this.juegos = respuesta.content || [];
+          this.hayPaginaSiguiente = !respuesta.last;
           this.cargando = false;
           this.cdr.detectChanges();
         },
