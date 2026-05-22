@@ -37,6 +37,7 @@ export class VerTodos implements OnInit {
     else if (this.genero === 'adventure') this.titulo = 'Aventura';
     else if (this.genero === 'sports') this.titulo = 'Deportes';
     else if (this.genero === 'indie') this.titulo = 'Indie';
+    else if (this.genero === 'platformer') this.titulo = 'Plataformas';
 
     //Carga la primera pagina
     this.cargarJuegos();
