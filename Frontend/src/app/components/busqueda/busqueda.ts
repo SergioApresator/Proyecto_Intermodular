@@ -296,15 +296,15 @@ export class Busqueda implements OnInit {
     this.searchSubscription = this.videojuegosServicio.buscarJuegosPaginados(this.termino, this.paginaApi, this.filtros).subscribe({
       next: (respuesta: any) => {
 
-        const rawResults = respuesta.results || [];
-        
+        const rawResults = respuesta.content || [];
+
         // Filtrar con lógica AND (Intersección) + Metacritic (OR)
         const filtrados = rawResults.filter((juego: any) => this.cumpleFiltros(juego));
 
 
         // Añadir los nuevos juegos filtrados al buffer
         this.bufferJuegos = [...this.bufferJuegos, ...filtrados];
-        this.hayPaginaSiguiente = respuesta.next !== null;
+        this.hayPaginaSiguiente = !respuesta.last;
         this.paginaApi++;
 
         if (respuesta.count) {
@@ -415,13 +415,13 @@ export class Busqueda implements OnInit {
     
     this.videojuegosServicio.buscarJuegosPaginados(this.termino, this.paginaApi, this.filtros).subscribe({
       next: (respuesta: any) => {
-        const rawResults = respuesta.results || [];
+        const rawResults = respuesta.content || [];
         const filtrados = rawResults.filter((juego: any) => this.cumpleFiltros(juego));
 
 
         this.bufferJuegos = [...this.bufferJuegos, ...filtrados];
         this.paginaApi++;
-        this.hayPaginaSiguiente = respuesta.next !== null;
+        this.hayPaginaSiguiente = !respuesta.last;
 
         if (this.bufferJuegos.length >= 20) {
           // Descartamos esta página y seguimos si no es el target
