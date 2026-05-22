@@ -8,7 +8,7 @@ import { Observable, of, tap, map } from 'rxjs';
 export class Videojuegos {
   private http = inject(HttpClient);
   private url = 'http://localhost:9999/api/games';
-
+  
   private tagsProhibidos = ['nudity', 'sexual-content', 'nsfw', 'erotica', 'hentai', 'adult'];
 
   private cache = new Map<string, any>();
@@ -16,27 +16,30 @@ export class Videojuegos {
   public ultimoEstadoBusqueda: any = {
     termino: '',
     filtros: {
-      genero: '',
-      plataforma: '',
-      orden: 'rating,desc',
-      tags: '',
-      metacritic: '',
+      genero: [],
+      plataforma: [],
+      orden: 'relevance',
+      tags: [],
+      metacritic: [],
       anio: ''
     },
     juegos: [],
-    paginaActual: 0,
-    hayMas: true
+    bufferJuegos: [],
+    paginaActual: 1,
+    paginaApi: 1,
+    hayPaginaSiguiente: true,
+    totalPaginas: 1
   };
 
   private filtrarSeguro() {
     return map((res: any) => {
       let games = res.content ? res.content : (Array.isArray(res) ? res : []);
-
+      
       games = games.filter((juego: any) => {
         if (!juego.tags) return true;
         return !juego.tags.some((t: any) => this.tagsProhibidos.includes(t.slug));
       });
-
+      
       if (res.content) {
         res.content = games;
       } else {
@@ -107,7 +110,7 @@ export class Videojuegos {
   buscarJuegosPaginados(termino: string, pagina: number, filtros: any = {}): Observable<any> {
     const springPage = Math.max(0, pagina - 1);
     const cacheKey = `search-${termino}-${springPage}-${JSON.stringify(filtros)}`;
-
+    
     if (this.cache.has(cacheKey)) {
       return of(this.cache.get(cacheKey));
     }
@@ -130,24 +133,38 @@ export class Videojuegos {
     }
     params = params.set('sort', sort);
 
-    if (filtros.genero) {
-        let g = Array.isArray(filtros.genero) ? filtros.genero.join(',') : filtros.genero;
-        if (g === 'horror') {
-            params = params.set('tags', 'horror');
-        } else {
-            params = params.set('genres', g);
-        }
+    // Build genre and tag params, handling 'horror' as a tag
+    let genreSlugs: string[] = [];
+    let tagSlugs: string[] = [];
+
+    if (filtros.genero && Array.isArray(filtros.genero) && filtros.genero.length > 0) {
+        filtros.genero.forEach((g: string) => {
+            if (g === 'horror') {
+                tagSlugs.push('horror');
+            } else {
+                genreSlugs.push(g);
+            }
+        });
     }
 
-    if (filtros.tags) {
-        params = params.set('tags', Array.isArray(filtros.tags) ? filtros.tags.join(',') : filtros.tags);
+    if (filtros.tags && Array.isArray(filtros.tags) && filtros.tags.length > 0) {
+        filtros.tags.forEach((t: string) => {
+            if (!tagSlugs.includes(t)) tagSlugs.push(t);
+        });
     }
 
-    if (filtros.plataforma) {
+    if (genreSlugs.length > 0) {
+        params = params.set('genres', genreSlugs.join(','));
+    }
+    if (tagSlugs.length > 0) {
+        params = params.set('tags', tagSlugs.join(','));
+    }
+
+    if (filtros.plataforma && (Array.isArray(filtros.plataforma) ? filtros.plataforma.length > 0 : filtros.plataforma)) {
         params = params.set('platforms', Array.isArray(filtros.plataforma) ? filtros.plataforma.join(',') : filtros.plataforma);
     }
 
-    if (filtros.metacritic) {
+    if (filtros.metacritic && (Array.isArray(filtros.metacritic) ? filtros.metacritic.length > 0 : filtros.metacritic)) {
         let minGlobal = 100;
         let maxGlobal = 0;
         let ranges = Array.isArray(filtros.metacritic) ? filtros.metacritic : [filtros.metacritic];

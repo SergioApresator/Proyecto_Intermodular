@@ -696,4 +696,3 @@ cancelarBanner() {
     );
 }
 }
-

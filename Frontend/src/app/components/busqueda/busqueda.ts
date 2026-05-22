@@ -56,39 +56,39 @@ export class Busqueda implements OnInit {
 
   generosDisponibles = [
     { id: '', nombre: 'Todos los géneros' },
-    { id: '4', nombre: 'Acción' },
-    { id: '51', nombre: 'Indie' },
-    { id: '3', nombre: 'Aventura' },
-    { id: '5', nombre: 'RPG' },
-    { id: '10', nombre: 'Estrategia' },
-    { id: '2', nombre: 'Shooter' },
-    { id: '1', nombre: 'Carreras' },
-    { id: '15', nombre: 'Deportes' },
-    { id: '14', nombre: 'Simulación' },
-    { id: '7', nombre: 'Puzzle' },
+    { id: 'action', nombre: 'Acción' },
+    { id: 'indie', nombre: 'Indie' },
+    { id: 'adventure', nombre: 'Aventura' },
+    { id: 'role-playing-games-rpg', nombre: 'RPG' },
+    { id: 'shooter', nombre: 'Shooter' },
+    { id: 'racing', nombre: 'Carreras' },
+    { id: 'sports', nombre: 'Deportes' },
+    { id: 'puzzle', nombre: 'Puzzle' },
+    { id: 'platformer', nombre: 'Plataformas' },
     { id: 'horror', nombre: 'Terror' },
   ];
 
 
   plataformasDisponibles = [
     { id: '', nombre: 'Todas las plataformas' },
-    { id: '1', nombre: 'PC' },
-    { id: '2', nombre: 'PlayStation' },
-    { id: '3', nombre: 'Xbox' },
-    { id: '7', nombre: 'Nintendo' },
-    { id: '4', nombre: 'iOS' },
-    { id: '8', nombre: 'Android' },
+    { id: 'pc', nombre: 'PC' },
+    { id: 'playstation', nombre: 'PlayStation' },
+    { id: 'xbox', nombre: 'Xbox' },
+    { id: 'nintendo', nombre: 'Nintendo' },
   ];
 
   tagsDisponibles = [
     { id: '', nombre: 'Todas las etiquetas' },
-    { id: '31', nombre: 'Singleplayer' },
-    { id: '7', nombre: 'Multiplayer' },
-    { id: '18', nombre: 'Co-op' },
-    { id: '36', nombre: 'Open World' },
-    { id: '149', nombre: 'Third Person' },
-    { id: '118', nombre: 'Story Rich' },
-    { id: '411', nombre: 'Cooperative' },
+    { id: 'singleplayer', nombre: 'Singleplayer' },
+    { id: 'multiplayer', nombre: 'Multiplayer' },
+    { id: 'open-world', nombre: 'Open World' },
+    { id: 'sci-fi', nombre: 'Sci-fi' },
+    { id: 'fantasy', nombre: 'Fantasy' },
+    { id: 'horror', nombre: 'Terror' },
+    { id: 'story-rich', nombre: 'Story Rich' },
+    { id: 'atmospheric', nombre: 'Atmospheric' },
+    { id: 'exploration', nombre: 'Exploration' },
+    { id: 'dark-fantasy', nombre: 'Dark Fantasy' },
   ];
   metacriticDisponibles = [
     { id: '', nombre: 'Cualquier nota' },
@@ -297,7 +297,7 @@ export class Busqueda implements OnInit {
       next: (respuesta: any) => {
 
         const rawResults = respuesta.content || [];
-
+        
         // Filtrar con lógica AND (Intersección) + Metacritic (OR)
         const filtrados = rawResults.filter((juego: any) => this.cumpleFiltros(juego));
 
@@ -307,8 +307,8 @@ export class Busqueda implements OnInit {
         this.hayPaginaSiguiente = !respuesta.last;
         this.paginaApi++;
 
-        if (respuesta.count) {
-          this.totalPaginas = Math.ceil(respuesta.count / 20);
+        if (respuesta.totalElements) {
+          this.totalPaginas = Math.ceil(respuesta.totalElements / 20);
         }
 
         // 3. ¿Tenemos ya 20 para mostrar? 
@@ -450,28 +450,28 @@ export class Busqueda implements OnInit {
       if (!coincideTodo) return false;
     }
 
-    // 1. Verificar Géneros (AND)
+    // 1. Verificar Géneros (AND) - comparar por slug
 
     if (this.filtros.genero.length > 0) {
-      const matchGenres = this.filtros.genero.every((gId: string) => {
-        if (gId === 'horror') return juego.tags?.some((t: any) => t.slug === 'horror');
-        return juego.genres?.some((g: any) => g.id.toString() === gId);
+      const matchGenres = this.filtros.genero.every((gSlug: string) => {
+        if (gSlug === 'horror') return juego.tags?.some((t: any) => t.slug === 'horror');
+        return juego.genres?.some((g: any) => g.slug === gSlug);
       });
       if (!matchGenres) return false;
     }
 
-    // 2. Verificar Plataformas (AND)
+    // 2. Verificar Plataformas (AND) - comparar por slug
     if (this.filtros.plataforma.length > 0) {
-      const matchPlatforms = this.filtros.plataforma.every((pId: string) => {
-        return juego.parent_platforms?.some((p: any) => p.platform.id.toString() === pId);
+      const matchPlatforms = this.filtros.plataforma.every((pSlug: string) => {
+        return juego.parent_platforms?.some((p: any) => p.platform?.slug === pSlug);
       });
       if (!matchPlatforms) return false;
     }
 
-    // 3. Verificar Tags (AND)
+    // 3. Verificar Tags (AND) - comparar por slug
     if (this.filtros.tags.length > 0) {
-      const matchTags = this.filtros.tags.every((tId: string) => {
-        return juego.tags?.some((t: any) => t.id.toString() === tId);
+      const matchTags = this.filtros.tags.every((tSlug: string) => {
+        return juego.tags?.some((t: any) => t.slug === tSlug);
       });
       if (!matchTags) return false;
     }
@@ -488,5 +488,4 @@ export class Busqueda implements OnInit {
     return true;
   }
 }
-
 
