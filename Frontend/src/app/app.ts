@@ -2,7 +2,7 @@ import { Component, inject, OnInit, HostListener, ChangeDetectorRef, NgZone } fr
 import { RouterOutlet, RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Usuarios } from './usuarios';
+import { Usuarios } from './services/usuarios';
 
 @Component({
   selector: 'app-root',
@@ -21,7 +21,7 @@ export class App implements OnInit {
   mostrarBuscador: boolean = false;
   terminoBusqueda: string = '';
 
-  // Auth state
+  // Estado de autenticación
   estaLogueado: boolean = false;
   esAdmin: boolean = false;
   username: string = '';
@@ -30,6 +30,7 @@ export class App implements OnInit {
   bannerUrl: string = '';
   mostrarDropdown: boolean = false;
 
+  // Método para inicializar el componente, cargar el estado de autenticación y suscribirse a cambios de ruta y perfil.
   ngOnInit() {
     this.actualizarEstadoAuth();
     // Nos suscribimos a los cambios de ruta para cerrar el menú y refrescar auth
@@ -62,7 +63,7 @@ export class App implements OnInit {
     }
   }
 
-  // En móvil el avatar de la Navbar despliega el menú Overwatch, en escritorio va directo a la edición de perfil
+  // En móvil el avatar de la Navbar despliega el menú de usuario, en escritorio va directo a la edición de perfil
   onAvatarClick(event: MouseEvent) {
     if (typeof window !== 'undefined' && window.innerWidth <= 768) {
       event.preventDefault();
@@ -73,6 +74,7 @@ export class App implements OnInit {
     }
   }
 
+  // Método para alternar la visibilidad del menú desplegable del usuario.
   toggleDropdown() {
     this.mostrarDropdown = !this.mostrarDropdown;
   }
@@ -86,6 +88,7 @@ export class App implements OnInit {
     }
   }
 
+  // Método para cerrar la sesión del usuario eliminando sus datos del localStorage y redirigiendo a la página inicial.
   cerrarSesion() {
     localStorage.removeItem('token');
     localStorage.removeItem('usuarioId');
@@ -103,6 +106,7 @@ export class App implements OnInit {
     this.router.navigate(['/inicial']);
   }
 
+  // Método para mostrar u ocultar el buscador global de la barra de navegación.
   toggleBuscador() {
     this.mostrarBuscador = !this.mostrarBuscador;
     if (!this.mostrarBuscador) {
@@ -110,6 +114,7 @@ export class App implements OnInit {
     }
   }
 
+  // Método para redirigir a la página de búsqueda con el término introducido en la barra de navegación.
   buscarGlobal() {
     if (this.terminoBusqueda.trim().length > 0) {
       this.router.navigate(['/busqueda'], { queryParams: { q: this.terminoBusqueda } });
@@ -118,6 +123,7 @@ export class App implements OnInit {
     }
   }
 
+  // Método para obtener la inicial del nombre de usuario para mostrarla en el avatar de la navbar.
   getInitials(): string {
     if (this.username) {
       return this.username.charAt(0).toUpperCase();

@@ -1,53 +1,51 @@
-# RateMyGame
+# RateMyGame 🎮
 
-Este proyecto está dividido en dos partes principales: el **Backend** construido con Java (Spring Boot) y base de datos MySQL, y el **Frontend** construido con Angular.
-
-A continuación, se detallan las instrucciones para levantar el proyecto completo de manera sencilla usando Docker.
-
-## Instrucciones de Instalación y Arranque
-
-### 1. Levantar el Backend y la Base de Datos
-
-El backend incluye un archivo de configuración de Docker que inicializará la base de datos MySQL y construirá la aplicación Java automáticamente.
-
-1. Abre una terminal.
-2. Dirígete a la carpeta del backend:
-
-   ```bash
-   cd Backend/ratemygame
-   ```
-3. Ejecuta el siguiente comando para levantar los contenedores en segundo plano:
-
-   ```bash
-   docker-compose up -d --build
-   ```
-> Esto inicializará la base de datos (puerto `3306`), la interfaz de phpMyAdmin (puerto `8080`) y la API de Spring Boot (puerto `9999`).
+Este proyecto es una plataforma interactiva de descubrimiento y análisis de videojuegos. Está dividido en dos partes principales:
+- **Backend**: Construido con **Java (Spring Boot)** y base de datos **MySQL**.
+- **Frontend**: Construido con **Angular** y optimizado con **Server-Side Rendering (SSR)**.
 
 ---
 
-### 2. Levantar el Frontend
+## 🚀 Despliegue Rápido con Docker
 
-Para interactuar con el proyecto, necesitas levantar el servidor de desarrollo de Angular.
+La forma más sencilla de ejecutar la aplicación completa (Base de datos, Backend, Frontend y phpMyAdmin) en cualquier sistema operativo (Windows, Linux, macOS) es utilizando Docker.
 
-1. Abre una **nueva** terminal.
-2. Dirígete a la carpeta del frontend:
+### Requisitos Previos
+- Tener instalado **Docker** y **Docker Compose**. ¡No necesitas Node.js, Java ni MySQL localmente!
 
-   ```bash
-   cd Frontend
-   ```
-3. Instala las dependencias necesarias (sólo la primera vez):
+### Instrucciones de Arranque
 
-   ```bash
-   npm install
-   ```
-4. Inicia la aplicación de Angular:
+1. Abre una terminal en la **carpeta raíz** del proyecto.
+2. Ejecuta el siguiente comando para construir y levantar todo el ecosistema en segundo plano:
 
    ```bash
-   npm start
+   docker compose up --build -d
    ```
-> La aplicación estará disponible y corriendo en tu navegador en `http://localhost:4200`.
 
-## Accesos Rápidos
-- **Aplicación Frontend**: [http://localhost:4200](http://localhost:4200)
-- **API Backend**: [http://localhost:9999/api/usuarios](http://localhost:9999/api/usuarios)
-- **Gestión de Base de Datos (phpMyAdmin)**: [http://localhost:8080](http://localhost:8080)
+3. **¡Y listo!** La primera vez que el backend se inicie, detectará de forma inteligente que la base de datos está vacía y la poblará automáticamente con un conjunto de **datos premium de prueba** (usuarios ficticios, listas, reseñas detalladas con spoilers, hilos de comentarios y calificaciones). En reinicios posteriores, el sistema conservará tus datos sin duplicarlos ni borrarlos.
+
+---
+
+## 🔗 Accesos Rápidos
+
+Una vez levantado el entorno, podrás acceder a los siguientes servicios desde tu navegador:
+
+- 💻 **Aplicación Frontend**: [http://localhost:4200](http://localhost:4200)
+- ⚙️ **API del Backend**: [http://localhost:9999/api/usuarios](http://localhost:9999/api/usuarios)
+- 🗄️ **Gestión de Base de Datos (phpMyAdmin)**: [http://localhost:8080](http://localhost:8080)
+
+---
+
+## 🛠️ Apagado y Limpieza
+
+Para detener los contenedores y mantener los datos persistidos en el volumen, ejecuta:
+
+```bash
+docker compose down
+```
+
+Si deseas reiniciar el entorno desde cero borrando todos los datos de la base de datos para volver a sembrar los datos originales:
+
+```bash
+docker compose down -v
+```

@@ -1,0 +1,45 @@
+<!-- OVERLAY: fondo oscuro del modal de confirmación, se cierra al hacer clic fuera -->
+<div class="confirm-overlay" *ngIf="visible" (click)="cancel()">
+  <!-- CONTENEDOR DEL MODAL: bloque central con tipo dinámico (danger, warning, info) -->
+  <div class="confirm-modal" (click)="$event.stopPropagation()" [ngClass]="type">
+    <div class="modal-border-top"></div>
+
+    <!-- CONTENIDO DEL MODAL: icono, título, mensaje y botones de acción -->
+    <div class="modal-content">
+      <div class="modal-icon">
+        <!-- SVG DANGER -->
+        <svg *ngIf="type === 'danger'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <!-- SVG WARNING -->
+        <svg *ngIf="type === 'warning'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+          <line x1="12" y1="9" x2="12" y2="13"></line>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+        <!-- SVG INFO -->
+        <svg *ngIf="type === 'info'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="12" x2="12" y2="16"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+      </div>
+
+
+      <h3 class="modal-title">{{ title | uppercase }}</h3>
+      <p class="modal-message">{{ message }}</p>
+
+      <!-- BOTONES DE ACCIÓN: cancelar y confirmar -->
+      <div class="modal-actions">
+        <button class="btn-modal cancel" (click)="cancel()">
+          <span>{{ cancelText | uppercase }}</span>
+        </button>
+        <button class="btn-modal confirm" (click)="confirm()">
+          <span>{{ confirmText | uppercase }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

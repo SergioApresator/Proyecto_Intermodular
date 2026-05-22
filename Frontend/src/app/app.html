@@ -1,6 +1,9 @@
+<!-- BARRA DE NAVEGACIÓN PRINCIPAL -->
 <div class="navbar">
+  <!-- Logo de la aplicación -->
   <img src="assets/logo-clean.png" alt="Logo Gaming" class="navbar-logo">
 
+  <!-- Enlaces de navegación -->
   <div class="nav-links">
     <a routerLink="/inicial" routerLinkActive="active-link"><span>Página Inicial</span></a>
     <a routerLink="/busqueda" routerLinkActive="active-link"><span>Explorar</span></a>
@@ -26,6 +29,7 @@
     </svg>
 </a>
 
+  <!-- Buscador global de juegos -->
   <div class="buscador-global">
     <input *ngIf="mostrarBuscador" type="text" class="input-global" placeholder="Buscar..."
       [(ngModel)]="terminoBusqueda" (keyup.enter)="buscarGlobal()">
@@ -38,20 +42,20 @@
     </button>
   </div>
 
-  <!-- Overwatch Style User Menu -->
+  <!-- Menú de usuario estilo tarjeta de jugador -->
   <div class="user-menu-ow" *ngIf="estaLogueado">
     
-    <!-- Large Profile Picture (Clickable) -->
+    <!-- Foto de perfil grande (hacer clic) -->
     <div (click)="onAvatarClick($event)" class="avatar-container-ow" [class.no-photo]="!fotoUrl" style="cursor: pointer;">
       <img *ngIf="fotoUrl" [src]="fotoUrl" alt="Foto de perfil" class="avatar-img-ow">
       <div *ngIf="!fotoUrl" class="avatar-initials-ow">{{ getInitials() }}</div>
     </div>
-
-    <!-- Dropdown Player Card (Shows on Hover / Active Class on Mobile) -->
+ 
+    <!-- Desplegable Player Card (se muestra al hacer hover / clase activa en móvil) -->
     <div class="player-card-ow" [class.active-ow]="mostrarDropdown">
       <div class="player-card-header">
         
-        <!-- Banner Background -->
+        <!-- Fondo del banner -->
         <div *ngIf="bannerUrl" class="card-banner-img" [style.backgroundImage]="'url(' + bannerUrl + ')'"></div>
         <div class="card-banner-overlay"></div>
 
@@ -73,6 +77,7 @@
           </div>
         </div>
       </div>
+      <!-- Opciones de navegación del jugador -->
       <div class="player-card-options">
         <div class="options-label">OPCIONES DE JUGADOR</div>
         <a class="card-item" routerLink="/perfil">
