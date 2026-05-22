@@ -46,7 +46,6 @@ public class VideojuegoService {
         dto.setName(entity.getName());
         dto.setBackground_image(entity.getBackgroundImage());
         dto.setDescription(entity.getDescription());
-        dto.setDescription_raw(entity.getDescriptionRaw());
         dto.setReleased(entity.getReleased());
         dto.setRating(entity.getRating());
         dto.setMetacritic(entity.getMetacritic());
