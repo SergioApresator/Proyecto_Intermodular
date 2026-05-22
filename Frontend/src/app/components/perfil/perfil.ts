@@ -61,6 +61,8 @@ export class Perfil implements OnInit {
     titulo: 'CONFIRMAR',
     mensaje: '¿Estás seguro?',
     tipo: 'warning' as 'danger' | 'warning' | 'info',
+    confirmText: 'CONFIRMAR',
+    cancelText: 'CANCELAR',
     accion: () => { }
   };
 
@@ -363,7 +365,14 @@ export class Perfil implements OnInit {
 
     const lista = this.listas.find(l => l.nombre === this.listaDestino);
     if (lista && lista.juegos.some((j: any) => j.id === juego.id)) {
-      alert('Este juego ya está en la lista.');
+      this.mostrarConfirmacion(
+        'Juego ya añadido',
+        `"${juego.name}" ya está en esta lista.`,
+        'info',
+        () => {},
+        'ENTENDIDO',
+        'CERRAR'
+      );
       return;
     }
 
@@ -378,8 +387,9 @@ export class Perfil implements OnInit {
         if (lista) {
           lista.juegos.push({ ...juego, entryId: nuevaEntrada.id });
         }
+        const nombreLista = this.listaDestino;
         this.cerrarModalBusqueda();
-        this.mensajeExito = `¡${juego.name} añadido a ${this.listaDestino}!`;
+        this.mensajeExito = `¡${juego.name} añadido a ${nombreLista}!`;
         this.cdr.detectChanges();
         setTimeout(() => { this.mensajeExito = ''; this.cdr.detectChanges(); }, 3000);
       },
@@ -650,8 +660,8 @@ cancelarBanner() {
   getInitials(): string { return this.usuario?.username ? this.usuario.username.charAt(0).toUpperCase() : '?'; }
 
   // Helpers para el modal de confirmación
-  mostrarConfirmacion(titulo: string, mensaje: string, tipo: 'danger' | 'warning', accion: () => void) {
-    this.modalConfirmacionConfig = { titulo, mensaje, tipo, accion };
+  mostrarConfirmacion(titulo: string, mensaje: string, tipo: 'danger' | 'warning' | 'info', accion: () => void, confirmText = 'CONFIRMAR', cancelText = 'CANCELAR') {
+    this.modalConfirmacionConfig = { titulo, mensaje, tipo, accion, confirmText, cancelText };
     this.modalConfirmacionVisible = true;
     this.cdr.detectChanges();
   }
