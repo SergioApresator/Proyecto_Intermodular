@@ -50,6 +50,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 // --- ENDPOINTS PÚBLICOS ---
+                .requestMatchers(HttpMethod.GET, "/api/games", "/api/games/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/usuarios/buscar").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/usuarios/*").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/api/usuarios/*").permitAll()

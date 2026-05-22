@@ -8,6 +8,8 @@ import com.ratemygame.datamodel.entities.Usuario;
 import com.ratemygame.datamodel.repositories.ListaRepository;
 import com.ratemygame.datamodel.repositories.UsuarioRepository;
 import com.ratemygame.dtos.ListaDTO;
+import com.ratemygame.datamodel.repositories.VideojuegoRepository;
+import com.ratemygame.datamodel.entities.Videojuego;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +20,9 @@ public class ListaService {
 
     @Autowired
     private ListaRepository listaRepository;
+
+    @Autowired
+    private VideojuegoRepository videojuegoRepository;
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -38,7 +43,9 @@ public class ListaService {
 
         Lista lista = new Lista();
         lista.setNombre(listaDTO.getNombre());
-        lista.setId_videojuego(listaDTO.getId_videojuego());
+        Videojuego videojuego = videojuegoRepository.findById(listaDTO.getId_videojuego())
+                .orElseThrow(() -> new RuntimeException("Videojuego no encontrado"));
+        lista.setVideojuego(videojuego);
         lista.setUsuario(usuarioOpt.get());
 
         Lista savedLista = listaRepository.save(lista);
@@ -59,7 +66,9 @@ public class ListaService {
         ListaDTO dto = new ListaDTO();
         dto.setId(lista.getId());
         dto.setNombre(lista.getNombre());
-        dto.setId_videojuego(lista.getId_videojuego());
+        if (lista.getVideojuego() != null) {
+            dto.setId_videojuego(lista.getVideojuego().getId());
+        }
         if (lista.getUsuario() != null) {
             dto.setId_usuario(lista.getUsuario().getId());
         }

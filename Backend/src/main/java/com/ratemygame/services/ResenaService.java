@@ -13,6 +13,8 @@ import com.ratemygame.datamodel.repositories.RespuestaVotoRepository;
 
 import com.ratemygame.datamodel.repositories.UsuarioRepository;
 import com.ratemygame.dtos.ResenaDTO;
+import com.ratemygame.datamodel.repositories.VideojuegoRepository;
+import com.ratemygame.datamodel.entities.Videojuego;
 
 import jakarta.transaction.Transactional;
 import java.time.ZoneId;
@@ -27,6 +29,9 @@ public class ResenaService {
 
     @Autowired
     private ResenaRepository resenaRepository;
+
+    @Autowired
+    private VideojuegoRepository videojuegoRepository;
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -83,9 +88,9 @@ public class ResenaService {
         resena.setMeGustas(0);
         resena.setNoMeGustas(0);
         resena.setFechaResena(LocalDateTime.now(ZoneId.of("Europe/Madrid")));
-        resena.setId_videojuego(resenaDTO.getId_videojuego());
-        resena.setNombreVideojuego(resenaDTO.getNombreVideojuego());
-        resena.setFotoVideojuego(resenaDTO.getFotoVideojuego());
+        Videojuego videojuego = videojuegoRepository.findById(resenaDTO.getId_videojuego())
+                .orElseThrow(() -> new RuntimeException("Videojuego no encontrado"));
+        resena.setVideojuego(videojuego);
         resena.setUsuario(usuarioOpt.get());
 
         Resena savedResena = resenaRepository.save(resena);
@@ -205,9 +210,11 @@ public class ResenaService {
         dto.setMeGustas(resena.getMeGustas());
         dto.setNoMeGustas(resena.getNoMeGustas());
         dto.setFechaResena(resena.getFechaResena());
-        dto.setId_videojuego(resena.getId_videojuego());
-        dto.setNombreVideojuego(resena.getNombreVideojuego());
-        dto.setFotoVideojuego(resena.getFotoVideojuego());
+        if (resena.getVideojuego() != null) {
+            dto.setId_videojuego(resena.getVideojuego().getId());
+            dto.setNombreVideojuego(resena.getVideojuego().getName());
+            dto.setFotoVideojuego(resena.getVideojuego().getBackgroundImage());
+        }
         if (resena.getUsuario() != null) {
             dto.setId_usuario(resena.getUsuario().getId());
             dto.setNombreUsuario(resena.getUsuario().getUsername());

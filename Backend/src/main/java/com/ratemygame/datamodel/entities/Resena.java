@@ -60,14 +60,9 @@ public class Resena {
     foreignKey=@ForeignKey(value = ConstraintMode.CONSTRAINT, name = "FK_RESENA_USUARIO"))
     private Usuario usuario;
 
-    @Column(name = "ID_VIDEOJUEGO")
-    private Long id_videojuego;
-
-    @Column(name = "NOMBRE_VIDEOJUEGO")
-    private String nombreVideojuego;
-
-    @Column(name = "FOTO_VIDEOJUEGO")
-    private String fotoVideojuego;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "ID_VIDEOJUEGO", referencedColumnName = "ID")
+    private Videojuego videojuego;
 
     @Column(name = "REVISADA")
     private Boolean revisada;

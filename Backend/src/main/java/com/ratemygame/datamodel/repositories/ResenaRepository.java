@@ -14,7 +14,7 @@ public interface ResenaRepository extends JpaRepository<Resena, Long> {
     List<Resena> findByUsuario_Id(Long usuarioId);
 
     // Consulta para obtener todas las reseñas de un videojuego por su ID externo.
-    @Query("SELECT r FROM Resena r WHERE r.id_videojuego = :idVideojuego")
+    @Query("SELECT r FROM Resena r WHERE r.videojuego.id = :idVideojuego")
     List<Resena> findByIdVideojuego(@Param("idVideojuego") Long idVideojuego);
 
     // Consulta para obtener las 10 reseñas más recientes ordenadas por fecha e ID descendente.
