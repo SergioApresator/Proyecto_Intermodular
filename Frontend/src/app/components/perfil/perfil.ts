@@ -132,13 +132,13 @@ export class Perfil implements OnInit {
         if (query.length < 2) {
           this.buscando = false;
           this.cdr.detectChanges();
-          return of({ results: [] });
+          return of({ content: [] });
         }
         return this.videojuegosServicio.buscarJuegos(query);
       })
     ).subscribe({
       next: (res: any) => {
-        this.resultadosBusqueda = res.results || [];
+        this.resultadosBusqueda = res.content || [];
         this.buscando = false;
         this.cdr.detectChanges();
       },
