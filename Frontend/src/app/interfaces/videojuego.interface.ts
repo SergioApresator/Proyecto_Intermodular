@@ -31,7 +31,6 @@ export interface Videojuego {
   name: string;
   background_image: string | null;
   description?: string;
-  description_raw?: string;
   released?: string;
   rating?: number;
   metacritic?: number | null;
