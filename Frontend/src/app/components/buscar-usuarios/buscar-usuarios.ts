@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -11,7 +11,7 @@ import { Usuarios } from '../../services/usuarios';
   templateUrl: './buscar-usuarios.html',
   styleUrl: './buscar-usuarios.css',
 })
-export class BuscarUsuarios {
+export class BuscarUsuarios implements OnInit {
   constructor(private usuariosServicio: Usuarios, private cdr: ChangeDetectorRef) {}
 
   terminoBusqueda: string = '';
@@ -19,15 +19,18 @@ export class BuscarUsuarios {
   buscando: boolean = false;
   busquedaRealizada: boolean = false;
 
+  ngOnInit() {
+    this.buscar();
+  }
+
   // Método para buscar usuarios por nombre o alias y mostrar los resultados excluyendo al usuario autenticado.
   buscar() {
-    if (this.terminoBusqueda.trim().length === 0) return;
-
     this.buscando = true;
     this.busquedaRealizada = true;
     const miId = localStorage.getItem('usuarioId');
+    const term = this.terminoBusqueda.trim();
 
-    this.usuariosServicio.buscarUsuarios(this.terminoBusqueda).subscribe({
+    this.usuariosServicio.buscarUsuarios(term).subscribe({
       next: (respuesta: any) => {
         //Filtramos el usuario logueado de los resultados
         this.resultados = respuesta.filter((u: any) => u.id.toString() !== miId);

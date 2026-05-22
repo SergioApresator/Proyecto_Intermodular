@@ -55,11 +55,15 @@ export class Admin implements OnInit {
     }
 
     this.cargarResenas();
+    this.buscarUsuarios(); // Carga de usuarios de primeras
   }
 
   // Método para cambiar entre las pestañas de moderación y gestión de usuarios del panel de administración.
   cambiarPestana(pestana: 'moderacion' | 'usuarios') {
     this.pestanaActiva = pestana;
+    if (pestana === 'usuarios' && this.resultadosUsuarios.length === 0) {
+      this.buscarUsuarios();
+    }
   }
 
   // ===== MODERACIÓN =====
@@ -186,17 +190,12 @@ export class Admin implements OnInit {
 
   // Método para buscar usuarios por término e iniciar la paginación de resultados.
   buscarUsuarios() {
-    if (this.terminoBusqueda.trim().length === 0) {
-      this.resultadosUsuarios = [];
-      this.busquedaRealizada = false;
-      return;
-    }
-
     this.buscando = true;
     this.busquedaRealizada = true;
     this.paginaActual = 1;
+    const term = this.terminoBusqueda.trim();
 
-    this.usuariosServicio.buscarUsuarios(this.terminoBusqueda).subscribe({
+    this.usuariosServicio.buscarUsuarios(term).subscribe({
       next: (respuesta: any) => {
         this.resultadosUsuarios = respuesta;
         this.buscando = false;

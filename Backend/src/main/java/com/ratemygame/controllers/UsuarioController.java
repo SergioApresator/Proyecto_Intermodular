@@ -219,10 +219,14 @@ public class UsuarioController {
     @GetMapping("/buscar")
     public ResponseEntity<List<UsuarioDTO>> buscarUsuarios(@RequestParam(required = false) String username,
             @RequestParam(required = false) String query) {
-        if (query != null) {
+        if (query != null && !query.trim().isEmpty()) {
             return ResponseEntity.ok(usuarioService.buscarUsuariosGeneral(query));
         }
-        return ResponseEntity.ok(usuarioService.buscarPorUsername(username != null ? username : ""));
+        if (username != null && !username.trim().isEmpty()) {
+            return ResponseEntity.ok(usuarioService.buscarPorUsername(username));
+        }
+        // Si no se especifica un término de búsqueda válido, se devuelven todos los usuarios
+        return ResponseEntity.ok(usuarioService.getAllUsuarios());
     }
 
     // Resetea el banner de perfil a null
