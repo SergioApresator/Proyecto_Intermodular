@@ -10,6 +10,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
@@ -44,11 +45,19 @@ public class Usuario {
     @Column(name = "PASSWORD")
     private String password;
 
-    @Column(name = "FOTO_URL")
-    private String foto_url;
+    @Lob
+    @Column(name = "FOTO_DATOS", columnDefinition = "LONGBLOB")
+    private byte[] fotoDatos;
 
-    @Column(name = "BANNER_URL")
-    private String bannerUrl;
+    @Column(name = "FOTO_CONTENT_TYPE")
+    private String fotoContentType;
+
+    @Lob
+    @Column(name = "BANNER_DATOS", columnDefinition = "LONGBLOB")
+    private byte[] bannerDatos;
+
+    @Column(name = "BANNER_CONTENT_TYPE")
+    private String bannerContentType;
 
     @Column(name = "BIOGRAFIA", length = 500)
     private String biografia;
@@ -66,4 +75,19 @@ public class Usuario {
 
     @Column(name = "BANEADO")
     private Boolean baneado;
+
+    // Métodos dinámicos para obtener la URL correcta (sea local desde la BD o fallback del sistema)
+    public String getResolvedFotoUrl() {
+        if (this.fotoDatos != null) {
+            return "http://localhost:9999/api/usuarios/" + this.id + "/foto";
+        }
+        return null;
+    }
+
+    public String getResolvedBannerUrl() {
+        if (this.bannerDatos != null) {
+            return "http://localhost:9999/api/usuarios/" + this.id + "/banner";
+        }
+        return null;
+    }
 }
