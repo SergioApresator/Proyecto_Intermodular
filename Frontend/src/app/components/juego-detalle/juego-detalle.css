@@ -390,7 +390,9 @@
 .vote-btn.active.down { background: #fee2e2; color: #dc2626; border-color: #fecaca; }
 .vote-btn:hover:not(.active) { background: #e2e8f0; color: #334155; }
 .vote-btn.report-review-btn { background: #fffbeb; color: #d97706; border-color: #fef3c7; }
-.vote-btn.report-review-btn:hover { background: #fef3c7; color: #b45309; border-color: #fde68a; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(217, 119, 6, 0.15); }
+.vote-btn.report-review-btn:hover:not(.active) { background: #fef3c7; color: #b45309; border-color: #fde68a; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(217, 119, 6, 0.15); }
+.vote-btn.report-review-btn.active { background: #fee2e2; color: #dc2626; border-color: #fecaca; }
+.vote-btn.report-review-btn.active:hover { background: #fecaca; color: #b91c1c; border-color: #fca5a5; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2); }
 
 .review-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
 .toggle-replies-btn { background: none; border: none; font-family: 'Bebas Neue', sans-serif; color: #3b82f6; cursor: pointer; font-size: 1rem; letter-spacing: 1px; }
