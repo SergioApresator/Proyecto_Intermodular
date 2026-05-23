@@ -15,6 +15,7 @@ import com.ratemygame.datamodel.repositories.UsuarioRepository;
 import com.ratemygame.dtos.ResenaDTO;
 import com.ratemygame.datamodel.repositories.VideojuegoRepository;
 import com.ratemygame.datamodel.entities.Videojuego;
+import com.ratemygame.mapper.ResenaMapper;
 
 import jakarta.transaction.Transactional;
 import java.time.ZoneId;
@@ -45,11 +46,14 @@ public class ResenaService {
     @Autowired
     private RespuestaVotoRepository respuestaVotoRepository;
 
+    @Autowired
+    private ResenaMapper resenaMapper;
+
 
     // Método para obtener todas las reseñas de un videojuego concreto.
     public List<ResenaDTO> getResenasByVideojuego(Long idVideojuego) {
         return resenaRepository.findByIdVideojuego(idVideojuego).stream()
-                .map(this::convertToDTO)
+                .map(resenaMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -57,7 +61,7 @@ public class ResenaService {
     public List<ResenaDTO> getResenasByVideojuegoWithVoto(Long idVideojuego, Long idUsuario) {
         return resenaRepository.findByIdVideojuego(idVideojuego).stream()
                 .map(resena -> {
-                    ResenaDTO dto = convertToDTO(resena);
+                    ResenaDTO dto = resenaMapper.toDTO(resena);
                     Optional<ResenaVoto> voto = resenaVotoRepository.findByResena_IdAndUsuario_Id(resena.getId(),
                             idUsuario);
                     dto.setVotoUsuarioActual(voto.map(ResenaVoto::getEsMeGusta).orElse(null));
@@ -69,7 +73,7 @@ public class ResenaService {
     // Método para obtener todas las reseñas escritas por un usuario concreto.
     public List<ResenaDTO> getResenasByUsuario(Long idUsuario) {
         return resenaRepository.findByUsuario_Id(idUsuario).stream()
-                .map(this::convertToDTO)
+                .map(resenaMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -94,7 +98,7 @@ public class ResenaService {
         resena.setUsuario(usuarioOpt.get());
 
         Resena savedResena = resenaRepository.save(resena);
-        return Optional.of(convertToDTO(savedResena));
+        return Optional.of(resenaMapper.toDTO(savedResena));
     }
 
     @Transactional
@@ -147,7 +151,7 @@ public class ResenaService {
         }
 
         Resena savedResena = resenaRepository.save(resena);
-        ResenaDTO dto = convertToDTO(savedResena);
+        ResenaDTO dto = resenaMapper.toDTO(savedResena);
 
         // Determina el estado de voto actual del usuario tras la operación
         Optional<ResenaVoto> votoFinal = resenaVotoRepository.findByResena_IdAndUsuario_Id(idResena, idUsuario);
@@ -172,7 +176,7 @@ public class ResenaService {
                 resena.setRevisada(resenaDTO.getRevisada());
             }
             Resena updatedResena = resenaRepository.save(resena);
-            return convertToDTO(updatedResena);
+            return resenaMapper.toDTO(updatedResena);
         });
     }
 
@@ -199,46 +203,22 @@ public class ResenaService {
     }
 
 
-    // Método para convertir una entidad Resena en su DTO de transferencia de datos.
-    private ResenaDTO convertToDTO(Resena resena) {
-        ResenaDTO dto = new ResenaDTO();
-        dto.setId(resena.getId());
-        dto.setMensaje(resena.getMensaje());
-        dto.setPuntuacion(resena.getPuntuacion());
-        dto.setTieneSpoiler(resena.getTieneSpoiler());
-        dto.setRevisada(resena.getRevisada());
-        dto.setMeGustas(resena.getMeGustas());
-        dto.setNoMeGustas(resena.getNoMeGustas());
-        dto.setFechaResena(resena.getFechaResena());
-        if (resena.getVideojuego() != null) {
-            dto.setId_videojuego(resena.getVideojuego().getId());
-            dto.setNombreVideojuego(resena.getVideojuego().getName());
-            dto.setFotoVideojuego(resena.getVideojuego().getBackgroundImage());
-        }
-        if (resena.getUsuario() != null) {
-            dto.setId_usuario(resena.getUsuario().getId());
-            dto.setNombreUsuario(resena.getUsuario().getUsername());
-            dto.setFotoUsuario(resena.getUsuario().getResolvedFotoUrl());
-        }
-        return dto;
-    }
-
     // Método para obtener una reseña concreta por su ID.
     public Optional<ResenaDTO> getResenaById(Long id) {
-        return resenaRepository.findById(id).map(this::convertToDTO);
+        return resenaRepository.findById(id).map(resenaMapper::toDTO);
     }
 
     // Método para obtener las 10 reseñas más recientes para el feed de la página principal.
     public List<ResenaDTO> getRecentReviews() {
         return resenaRepository.findTop10ByOrderByFechaResenaDescIdDesc().stream()
-                .map(this::convertToDTO)
+                .map(resenaMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     // Método para obtener las reseñas pendientes de revisión por el administrador.
     public List<ResenaDTO> getResenasARevisar() {
         return resenaRepository.findResenasARevisar().stream()
-                .map(this::convertToDTO)
+                .map(resenaMapper::toDTO)
                 .collect(Collectors.toList());
     }
 }
