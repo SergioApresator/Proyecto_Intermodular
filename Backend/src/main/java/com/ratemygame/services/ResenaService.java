@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ratemygame.datamodel.entities.Resena;
+import com.ratemygame.datamodel.entities.ResenaReporte;
 import com.ratemygame.datamodel.entities.ResenaVoto;
 import com.ratemygame.datamodel.entities.Usuario;
 import com.ratemygame.datamodel.repositories.ResenaRepository;
+import com.ratemygame.datamodel.repositories.ResenaReporteRepository;
 import com.ratemygame.datamodel.repositories.ResenaVotoRepository;
 import com.ratemygame.datamodel.repositories.RespuestaRepository;
 import com.ratemygame.datamodel.repositories.RespuestaVotoRepository;
@@ -41,6 +43,9 @@ public class ResenaService {
     private ResenaVotoRepository resenaVotoRepository;
 
     @Autowired
+    private ResenaReporteRepository resenaReporteRepository;
+
+    @Autowired
     private RespuestaRepository respuestaRepository;
 
     @Autowired
@@ -57,7 +62,7 @@ public class ResenaService {
                 .collect(Collectors.toList());
     }
 
-    // Método para obtener las reseñas de un juego enriquecidas con el voto del usuario autenticado.
+    // Método para obtener las reseñas de un juego enriquecidas con el voto y reporte del usuario autenticado.
     public List<ResenaDTO> getResenasByVideojuegoWithVoto(Long idVideojuego, Long idUsuario) {
         return resenaRepository.findByIdVideojuego(idVideojuego).stream()
                 .map(resena -> {
@@ -65,6 +70,8 @@ public class ResenaService {
                     Optional<ResenaVoto> voto = resenaVotoRepository.findByResena_IdAndUsuario_Id(resena.getId(),
                             idUsuario);
                     dto.setVotoUsuarioActual(voto.map(ResenaVoto::getEsMeGusta).orElse(null));
+                    dto.setReportadoPorUsuarioActual(
+                            resenaReporteRepository.findByResena_IdAndUsuario_Id(resena.getId(), idUsuario).isPresent());
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -91,6 +98,7 @@ public class ResenaService {
         resena.setRevisada(resenaDTO.getRevisada() != null ? resenaDTO.getRevisada() : false);
         resena.setMeGustas(0);
         resena.setNoMeGustas(0);
+        resena.setReportes(0);
         resena.setFechaResena(LocalDateTime.now(ZoneId.of("Europe/Madrid")));
         Videojuego videojuego = videojuegoRepository.findById(resenaDTO.getId_videojuego())
                 .orElseThrow(() -> new RuntimeException("Videojuego no encontrado"));
@@ -174,6 +182,9 @@ public class ResenaService {
             }
             if (resenaDTO.getRevisada() != null) {
                 resena.setRevisada(resenaDTO.getRevisada());
+                if (resenaDTO.getRevisada()) {
+                    resena.setReportes(0);
+                }
             }
             Resena updatedResena = resenaRepository.save(resena);
             return resenaMapper.toDTO(updatedResena);
@@ -185,17 +196,20 @@ public class ResenaService {
         if (resenaRepository.existsById(id)) {
             // 1. Eliminar votos de la reseña
             resenaVotoRepository.deleteByResena_Id(id);
+
+            // 2. Eliminar reportes de la reseña
+            resenaReporteRepository.deleteByResena_Id(id);
             
-            // 2. Eliminar votos de todas las respuestas de esta reseña
+            // 3. Eliminar votos de todas las respuestas de esta reseña
             List<com.ratemygame.datamodel.entities.Respuesta> respuestas = respuestaRepository.findByResena_Id(id);
             for (com.ratemygame.datamodel.entities.Respuesta resp : respuestas) {
                 respuestaVotoRepository.deleteByRespuesta_Id(resp.getId());
             }
             
-            // 3. Eliminar las respuestas de la reseña
+            // 4. Eliminar las respuestas de la reseña
             respuestaRepository.deleteByResena_Id(id);
 
-            // 4. Eliminar la reseña
+            // 5. Eliminar la reseña
             resenaRepository.deleteById(id);
             return true;
         }
@@ -213,6 +227,40 @@ public class ResenaService {
         return resenaRepository.findTop10ByOrderByFechaResenaDescIdDesc().stream()
                 .map(resenaMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    // Método para reportar/quitar reporte de una reseña (toggle). Si el usuario ya la reportó, elimina su reporte.
+    @Transactional
+    public Optional<ResenaDTO> reportarResena(Long idResena, Long idUsuario) {
+        Optional<Resena> resenaOpt = resenaRepository.findById(idResena);
+        Optional<Usuario> usuarioOpt = usuarioRepository.findById(idUsuario);
+
+        if (!resenaOpt.isPresent() || !usuarioOpt.isPresent()) {
+            return Optional.empty();
+        }
+
+        Resena resena = resenaOpt.get();
+        Usuario usuario = usuarioOpt.get();
+        Optional<ResenaReporte> reporteExistente = resenaReporteRepository.findByResena_IdAndUsuario_Id(idResena, idUsuario);
+
+        if (reporteExistente.isPresent()) {
+            // Ya reportada: quitar el reporte
+            resenaReporteRepository.delete(reporteExistente.get());
+            resena.setReportes(Math.max(0, (resena.getReportes() == null ? 0 : resena.getReportes()) - 1));
+        } else {
+            // No reportada: añadir reporte
+            ResenaReporte nuevoReporte = new ResenaReporte();
+            nuevoReporte.setResena(resena);
+            nuevoReporte.setUsuario(usuario);
+            resenaReporteRepository.save(nuevoReporte);
+            resena.setReportes(resena.getReportes() == null ? 1 : resena.getReportes() + 1);
+        }
+
+        Resena savedResena = resenaRepository.save(resena);
+        ResenaDTO dto = resenaMapper.toDTO(savedResena);
+        // Tras el toggle, el estado es el inverso del que había
+        dto.setReportadoPorUsuarioActual(!reporteExistente.isPresent());
+        return Optional.of(dto);
     }
 
     // Método para obtener las reseñas pendientes de revisión por el administrador.

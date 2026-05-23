@@ -1262,3 +1262,10 @@ INSERT INTO screenshot (ID, IMAGE, videojuego_id) VALUES
 (253, 'assets/videojuegos/screenshots/253.jpg', 364806),
 (254, 'assets/videojuegos/screenshots/254.jpg', 364806);
 
+-- =====================================================================
+-- SEED DE REPORTES PARA PRUEBAS DE MODERACIÓN
+-- =====================================================================
+UPDATE resena SET REPORTES = 5 WHERE ID = 3;
+UPDATE resena SET REPORTES = 12 WHERE ID = 10;
+UPDATE resena SET REPORTES = 2 WHERE ID = 12;
+

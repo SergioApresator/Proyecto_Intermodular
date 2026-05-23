@@ -254,6 +254,32 @@
     box-shadow: 0 0 10px rgba(249, 158, 26, 0.3);
 }
 
+.badge.badge-danger {
+    background: #ef4444;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+}
+
+.card-header-badges {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.badge-reports-count {
+    display: inline-block;
+    background: #fee2e2;
+    color: #ef4444;
+    border: 1px solid #fca5a5;
+    padding: 4px 12px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 1px;
+    transform: skewX(-12deg);
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.1);
+}
+
 
 .card-body {
     flex-grow: 1;

@@ -67,6 +67,9 @@ public class Resena {
     @Column(name = "REVISADA")
     private Boolean revisada;
 
+    @Column(name = "REPORTES")
+    private Integer reportes = 0;
+
     @JsonIgnore
     @OneToMany(mappedBy = "resena", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Respuesta> respuestas;

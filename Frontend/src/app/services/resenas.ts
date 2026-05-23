@@ -66,6 +66,11 @@ export class ResenasService {
     return this.http.post(`${this.urlResenas}/${idResena}/votar`, { idUsuario, esMeGusta }, this.getHeaders());
   }
 
+  // Reportar/quitar reporte de una reseña (toggle)
+  reportarResena(idResena: number, idUsuario: number): Observable<any> {
+    return this.http.post(`${this.urlResenas}/${idResena}/reportar`, { idUsuario }, this.getHeaders());
+  }
+
   // Actualizar una reseña
   updateResena(idResena: number, resena: any): Observable<any> {
     return this.http.put(`${this.urlResenas}/updateResena/${idResena}`, resena, this.getHeaders());

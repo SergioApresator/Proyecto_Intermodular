@@ -224,18 +224,9 @@
             <div class="t-value">{{ juego.publishers[0]?.name }}</div>
           </div>
 
-          <div class="tech-item links">
-            <span class="t-label">ENLACES EXTERNOS</span>
-            <div class="links-row">
-              <a *ngIf="juego.website" [href]="juego.website" target="_blank" class="ow-link-btn">SITIO OFICIAL</a>
-              <a *ngIf="juego.reddit_url" [href]="juego.reddit_url" target="_blank" class="ow-link-btn">REDDIT</a>
-            </div>
-          </div>
-        </div>
-
         <!-- ETIQUETAS A ANCHO COMPLETO AL FINAL -->
         <div class="tags-full-width">
-          <span class="t-label">ETIQUETAS DEL SISTEMA</span>
+          <span class="t-label">ETIQUETAS</span>
           <div class="t-tags sm">
             <span *ngFor="let t of tagsJuego" class="t-tag grey">{{ t.name }}</span>
           </div>
@@ -317,6 +308,12 @@
                   <button class="vote-btn down" [class.active]="resena.votoUsuarioActual === false || resena.voto_usuario_actual === false" (click)="votarResena(resena, false)">
                     <svg viewBox="0 0 24 24" class="v-icon"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L8.83 23l6.59-6.59c.37-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/></svg>
                     <span>{{ resena.no_me_gustas ?? resena.noMeGustas ?? 0 }}</span>
+                  </button>
+                  <button class="vote-btn report-review-btn" [class.active]="resena.reportadoPorUsuarioActual" *ngIf="usuarioId && resena.id_usuario !== usuarioId" (click)="reportarResena(resena)" [title]="resena.reportadoPorUsuarioActual ? 'Retirar reporte' : 'Reportar reseña'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="v-icon report-icon">
+                      <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+                      <line x1="4" y1="22" x2="4" y2="15"></line>
+                    </svg>
                   </button>
                 </div>
                 <button class="toggle-replies-btn" (click)="toggleRespuestas(resena)">
@@ -536,6 +533,8 @@
   [title]="modalConfirmacionConfig.titulo"
   [message]="modalConfirmacionConfig.mensaje"
   [type]="modalConfirmacionConfig.tipo"
+  [cancelText]="modalConfirmacionConfig.cancelText"
+  [confirmText]="modalConfirmacionConfig.confirmText"
   (onConfirm)="ejecutarConfirmacion()"
   (onCancel)="cancelarConfirmacion()">
 </app-confirm-modal>
