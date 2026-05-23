@@ -218,7 +218,7 @@ public class ResenaService {
         if (resena.getUsuario() != null) {
             dto.setId_usuario(resena.getUsuario().getId());
             dto.setNombreUsuario(resena.getUsuario().getUsername());
-            dto.setFotoUsuario(resena.getUsuario().getFoto_url());
+            dto.setFotoUsuario(resena.getUsuario().getResolvedFotoUrl());
         }
         return dto;
     }

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+
 import { FormsModule } from '@angular/forms';
 import { Videojuegos } from '../../services/videojuegos';
 import { Usuarios } from '../../services/usuarios';
@@ -27,7 +27,6 @@ export class JuegoDetalle implements OnInit, OnDestroy {
   cargando: boolean = true;
   id: string | null = null;
   juego: any = null;
-  descripcionSegura: SafeHtml = '';
   
   mediaItems: any[] = [];
   indiceMediaActual: number = 0;
@@ -76,7 +75,6 @@ export class JuegoDetalle implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private videojuegosServicio: Videojuegos,
-    private sanitizer: DomSanitizer,
     private cdr: ChangeDetectorRef,
     private ngZone: NgZone,
     private usuariosServicio: Usuarios,
@@ -128,7 +126,7 @@ export class JuegoDetalle implements OnInit, OnDestroy {
           this.juego.parent_platforms = newPlatforms;
         }
 
-        this.descripcionSegura = this.sanitizer.bypassSecurityTrustHtml(this.juego.description || '');
+
         if (this.juego.background_image) {
           this.mediaItems.push({ tipo: 'imagen', url: this.juego.background_image });
         }

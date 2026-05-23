@@ -169,7 +169,7 @@ public class RespuestaService {
         if (respuesta.getUsuario() != null) {
             dto.setId_usuario(respuesta.getUsuario().getId());
             dto.setNombreUsuario(respuesta.getUsuario().getUsername());
-            dto.setFotoUsuario(respuesta.getUsuario().getFoto_url());
+            dto.setFotoUsuario(respuesta.getUsuario().getResolvedFotoUrl());
         }
         if (respuesta.getResena() != null) {
             dto.setId_resena(respuesta.getResena().getId());
