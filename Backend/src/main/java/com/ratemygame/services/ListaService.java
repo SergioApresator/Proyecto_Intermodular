@@ -10,6 +10,7 @@ import com.ratemygame.datamodel.repositories.UsuarioRepository;
 import com.ratemygame.dtos.ListaDTO;
 import com.ratemygame.datamodel.repositories.VideojuegoRepository;
 import com.ratemygame.datamodel.entities.Videojuego;
+import com.ratemygame.mapper.ListaMapper;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,10 +28,13 @@ public class ListaService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private ListaMapper listaMapper;
+
     // Método para obtener todas las entradas de listas de un usuario.
     public List<ListaDTO> getListasByUsuario(Long usuarioId) {
         return listaRepository.findByUsuario_Id(usuarioId).stream()
-                .map(this::convertToDTO)
+                .map(listaMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -49,7 +53,7 @@ public class ListaService {
         lista.setUsuario(usuarioOpt.get());
 
         Lista savedLista = listaRepository.save(lista);
-        return Optional.of(convertToDTO(savedLista));
+        return Optional.of(listaMapper.toDTO(savedLista));
     }
 
     // Método para eliminar una entrada de lista por su ID.
@@ -61,17 +65,4 @@ public class ListaService {
         return false;
     }
 
-    // Método para convertir una entidad Lista en su DTO de transferencia de datos.
-    private ListaDTO convertToDTO(Lista lista) {
-        ListaDTO dto = new ListaDTO();
-        dto.setId(lista.getId());
-        dto.setNombre(lista.getNombre());
-        if (lista.getVideojuego() != null) {
-            dto.setId_videojuego(lista.getVideojuego().getId());
-        }
-        if (lista.getUsuario() != null) {
-            dto.setId_usuario(lista.getUsuario().getId());
-        }
-        return dto;
-    }
 }

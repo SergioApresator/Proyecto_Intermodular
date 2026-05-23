@@ -9,6 +9,7 @@ import com.ratemygame.config.CustomUserDetails;
 import com.ratemygame.datamodel.entities.Usuario;
 import com.ratemygame.datamodel.repositories.UsuarioRepository;
 import com.ratemygame.dtos.UsuarioDTO;
+import com.ratemygame.mapper.UsuarioMapper;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,14 +27,17 @@ public class UsuarioService {
     @Autowired
     private JwtService jwtService;
 
+    @Autowired
+    private UsuarioMapper usuarioMapper;
+
     // Método para obtener la lista completa de usuarios registrados en el sistema.
     public List<UsuarioDTO> getAllUsuarios() {
-        return usuarioRepository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
+        return usuarioRepository.findAll().stream().map(usuarioMapper::toDTO).collect(Collectors.toList());
     }
 
     // Método para obtener los datos de un usuario por su ID.
     public Optional<UsuarioDTO> getUsuarioById(Long id) {
-        return usuarioRepository.findById(id).map(this::convertToDTO);
+        return usuarioRepository.findById(id).map(usuarioMapper::toDTO);
     }
 
     // Método para autenticar al usuario verificando sus credenciales y generando el token JWT.
@@ -46,7 +50,7 @@ public class UsuarioService {
                     throw new RuntimeException("USUARIO_BANEADO");
                 }
                 String token = jwtService.generateToken(new CustomUserDetails(usuario));
-                UsuarioDTO dto = convertToDTO(usuario);
+                UsuarioDTO dto = usuarioMapper.toDTO(usuario);
                 dto.setToken(token);
                 return Optional.of(dto);
             }
@@ -71,7 +75,7 @@ public class UsuarioService {
         usuario.setBaneado(false);
         Usuario savedUsuario = usuarioRepository.save(usuario);
         String token = jwtService.generateToken(new CustomUserDetails(savedUsuario));
-        UsuarioDTO dto = convertToDTO(savedUsuario);
+        UsuarioDTO dto = usuarioMapper.toDTO(savedUsuario);
         dto.setToken(token);
         return dto;
     }
@@ -93,7 +97,7 @@ public class UsuarioService {
                 usuario.setBaneado(usuarioDetails.getBaneado());
             }
             Usuario updatedUsuario = usuarioRepository.save(usuario);
-            return convertToDTO(updatedUsuario);
+            return usuarioMapper.toDTO(updatedUsuario);
         });
     }
 
@@ -102,7 +106,7 @@ public class UsuarioService {
         return usuarioRepository.findById(id).map(usuario -> {
             usuario.setEsAdmin(usuario.getEsAdmin() == null ? true : !usuario.getEsAdmin());
             Usuario updatedUsuario = usuarioRepository.save(usuario);
-            return convertToDTO(updatedUsuario);
+            return usuarioMapper.toDTO(updatedUsuario);
         });
     }
 
@@ -111,7 +115,7 @@ public class UsuarioService {
         return usuarioRepository.findById(id).map(usuario -> {
             usuario.setFotoDatos(fotoDatos);
             usuario.setFotoContentType(contentType);
-            return convertToDTO(usuarioRepository.save(usuario));
+            return usuarioMapper.toDTO(usuarioRepository.save(usuario));
         });
     }
 
@@ -120,7 +124,7 @@ public class UsuarioService {
         return usuarioRepository.findById(id).map(usuario -> {
             usuario.setBannerDatos(bannerDatos);
             usuario.setBannerContentType(contentType);
-            return convertToDTO(usuarioRepository.save(usuario));
+            return usuarioMapper.toDTO(usuarioRepository.save(usuario));
         });
     }
 
@@ -138,35 +142,17 @@ public class UsuarioService {
         return false;
     }
 
-    // Método para convertir una entidad Usuario en su DTO de transferencia de datos.
-    private UsuarioDTO convertToDTO(Usuario usuario) {
-        UsuarioDTO dto = new UsuarioDTO();
-        dto.setId(usuario.getId());
-        dto.setNombre(usuario.getNombre());
-        dto.setApellidos(usuario.getApellidos());
-        dto.setUsername(usuario.getUsername());
-        dto.setEmail(usuario.getEmail());
-        
-        dto.setFoto_url(usuario.getResolvedFotoUrl());
-        dto.setBanner_url(usuario.getResolvedBannerUrl());
-
-        dto.setBiografia(usuario.getBiografia());
-        dto.setEsAdmin(usuario.getEsAdmin() != null ? usuario.getEsAdmin() : false);
-        dto.setBaneado(usuario.getBaneado() != null ? usuario.getBaneado() : false);
-        return dto;
-    }
-
     // Método para buscar usuarios cuyo username contenga el texto indicado (búsqueda parcial).
     public List<UsuarioDTO> buscarPorUsername(String username) {
         return usuarioRepository.findByUsernameContainingIgnoreCase(username).stream()
-                .map(this::convertToDTO)
+                .map(usuarioMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     // Método para buscar usuarios por username o nombre completo de forma insensible a mayúsculas.
     public List<UsuarioDTO> buscarUsuariosGeneral(String query) {
         return usuarioRepository.buscarUsuariosGeneral(query).stream()
-                .map(this::convertToDTO)
+                .map(usuarioMapper::toDTO)
                 .collect(Collectors.toList());
     }
 }
