@@ -37,74 +37,56 @@ SET FOREIGN_KEY_CHECKS = 1;
 
 -- =====================================================================
 -- 0. TABLA: videojuego (Juegos mockeados para evitar errores de FK)
--- =====================================================================
-INSERT INTO videojuego (ID, NAME, RATING, METACRITIC, RELEASED, BACKGROUND_IMAGE, added_count, description, description_raw) VALUES
+-- =====================================================================INSERT INTO videojuego (ID, NAME, RATING, METACRITIC, RELEASED, BACKGROUND_IMAGE, added_count, description) VALUES
 (3328, 'The Witcher 3: Wild Hunt', 4.66, 92, '2026-02-10', 'assets/videojuegos/3328.jpg', 15000, 
-'<p><strong>The Witcher 3: Wild Hunt</strong> es un juego de rol de mundo abierto ambientado en un universo fantástico visualmente impresionante, lleno de decisiones importantes y consecuencias impactantes. En The Witcher, juegas como Geralt de Rivia, un cazador de monstruos profesional que busca a la niña de la profecía en un vasto mundo abierto rico en ciudades comerciales, islas piratas, peligrosos pasos de montaña y cuevas olvidadas por explorar.</p>', 
 'The Witcher 3: Wild Hunt es un juego de rol de mundo abierto ambientado en un universo fantástico visualmente impresionante, lleno de decisiones importantes y consecuencias impactantes. En The Witcher, juegas como Geralt de Rivia, un cazador de monstruos profesional que busca a la niña de la profecía en un vasto mundo abierto rico en ciudades comerciales, islas piratas, peligrosos pasos de montaña y cuevas olvidadas por explorar.'),
 
 (5679, 'The Elder Scrolls V: Skyrim', 4.42, 94, '2026-11-11', 'assets/videojuegos/5679.jpg', 12000, 
-'<p><strong>The Elder Scrolls V: Skyrim</strong> revoluciona la fantasía épica en mundos abiertos. Skyrim recrea un mundo virtual completo listo para ser explorado de la forma que tú elijas. Juega con cualquier tipo de personaje que puedas imaginar y haz lo que quieras; la legendaria libertad de elección, narración y aventura de The Elder Scrolls cobra vida como nunca antes.</p>', 
 'The Elder Scrolls V: Skyrim revoluciona la fantasía épica en mundos abiertos. Skyrim recrea un mundo virtual completo listo para ser explorado de la forma que tú elijas. Juega con cualquier tipo de personaje que puedas imaginar y haz lo que quieras; la legendaria libertad de elección, narración y aventura de The Elder Scrolls cobra vida como nunca antes.'),
 
 (326243, 'Elden Ring', 4.58, 96, '2026-03-15', 'assets/videojuegos/326243.jpg', 14500, 
-'<p><strong>ELDEN RING</strong> es un juego de rol y acción de fantasía desarrollado por FromSoftware Inc. y producido por Bandai Namco Entertainment Inc. Ambientado en un mundo lleno de misterios y peligros, surge la nueva gran epopeya de fantasía creada por Hidetaka Miyazaki y George R. R. Martin. Explora las Tierras Intermedias, desvela los misterios del poder del Círculo de Elden y conviértete en el Señor de Elden.</p>', 
 'ELDEN RING es un juego de rol y acción de fantasía desarrollado por FromSoftware Inc. y producido por Bandai Namco Entertainment Inc. Ambientado en un mundo lleno de misterios y peligros, surge la nueva gran epopeya de fantasía creada por Hidetaka Miyazaki y George R. R. Martin. Explora las Tierras Intermedias, desvela los misterios del poder del Círculo de Elden y conviértete en el Señor de Elden.'),
 
 (41494, 'Cyberpunk 2077', 4.15, 86, '2026-05-01', 'assets/videojuegos/41494.jpg', 11000, 
-'<p><strong>Cyberpunk 2077</strong> es un RPG de acción y aventura en mundo abierto ambientado en la megalópolis de Night City, donde encarnas a V, un mercenario cyberpunk que busca un implante único que permite alcanzar la inmortalidad. Personaliza las mejoras cibernéticas de tu personaje, su estilo de juego y explora una ciudad colosal donde tus decisiones dan forma a la historia.</p>', 
 'Cyberpunk 2077 es un RPG de acción y aventura en mundo abierto ambientado en la megalópolis de Night City, donde encarnas a V, un mercenario cyberpunk que busca un implante único que permite alcanzar la inmortalidad. Personaliza las mejoras cibernéticas de tu personaje, su estilo de juego y explora una ciudad colosal donde tus decisiones dan forma a la historia.'),
 
 (22509, 'Minecraft', 4.43, 83, '2011-11-18', 'assets/videojuegos/22509.jpg', 20000, 
-'<p><strong>Minecraft</strong> es un juego sobre colocar bloques y salir de aventuras. Explora mundos generados aleatoriamente y construye cosas increíbles, desde la más simple de las casas hasta el más grandioso de los castillos. Juega en modo creativo con recursos ilimitados o adéntrate en el mundo en el modo supervivencia, fabricando armas y armaduras para defenderte de peligrosas criaturas.</p>', 
 'Minecraft es un juego sobre colocar bloques y salir de aventuras. Explora mundos generados aleatoriamente y construye cosas increíbles, desde la más simple de las casas hasta el más grandioso de los castillos. Juega en modo creativo con recursos ilimitados o adéntrate en el mundo en el modo supervivencia, fabricando armas y armaduras para defenderte de peligrosas criaturas.'),
 
 (22511, 'The Legend of Zelda: Breath of the Wild', 4.6, 97, '2017-03-03', 'assets/videojuegos/22511.jpg', 18000, 
-'<p>Entra en un mundo de descubrimientos, exploración y aventura en <strong>The Legend of Zelda: Breath of the Wild</strong>, un nuevo juego de la aclamada saga que rompe barreras. Viaja por praderas, bosques y cumbres montañosas mientras descubres qué ha sido del reino en ruinas de Hyrule en esta increíble aventura al aire libre.</p>', 
 'Entra en un mundo de descubrimientos, exploración y aventura en The Legend of Zelda: Breath of the Wild, un nuevo juego de la aclamada saga que rompe barreras. Viaja por praderas, bosques y cumbres montañosas mientras descubres qué ha sido del reino en ruinas de Hyrule en esta increíble aventura al aire libre.'),
 
 (9767, 'Hollow Knight', 4.4, 90, '2026-03-25', 'assets/videojuegos/9767.jpg', 13000, 
-'<p><strong>Hollow Knight</strong> es una aventura de acción clásica en 2D ambientada en un vasto mundo interconectado. Explora cavernas serpenteantes, ciudades antiguas y páramos mortales; lucha contra criaturas corruptas y entabla amistad con extraños bichos; y resuelve los antiguos misterios ocultos en el corazón del reino abandonado bajo tierra.</p>', 
 'Hollow Knight es una aventura de acción clásica en 2D ambientada en un vasto mundo interconectado. Explora cavernas serpenteantes, ciudades antiguas y páramos mortales; lucha contra criaturas corruptas y entabla amistad con extraños bichos; y resuelve los antiguos misterios ocultos en el corazón del reino abandonado bajo tierra.'),
 
 (58175, 'God of War', 4.59, 94, '2026-12-05', 'assets/videojuegos/58175.jpg', 14000, 
-'<p>Tras vengar la muerte de los dioses olímpicos, Kratos vive ahora en el reino de las deidades y monstruos nórdicos. En este mundo hostil y despiadado, debe luchar para sobrevivir y enseñar a su hijo Atreus a hacer lo mismo. Esta nueva versión de <strong>God of War</strong> deconstruye los elementos definitorios de la serie para ofrecer una aventura narrativa íntima y visualmente espectacular.</p>', 
 'Tras vengar la muerte de los dioses olímpicos, Kratos vive ahora en el reino de las deidades y monstruos nórdicos. En este mundo hostil y despiadado, debe luchar para sobrevivir y enseñar a su hijo Atreus a hacer lo mismo. Esta nueva versión de God of War deconstruye los elementos definitorios de la serie para ofrecer una aventura narrativa íntima y visualmente espectacular.'),
 
 (4200, 'Portal 2', 4.61, 95, '2011-04-18', 'assets/videojuegos/4200.jpg', 16000, 
-'<p><strong>Portal 2</strong> introduce un elenco de nuevos personajes dinámicos, elementos de rompecabezas frescos y un conjunto mucho mayor de cámaras de prueba retorcidas. Los jugadores explorarán áreas nunca antes vistas de los Laboratorios Aperture Science y se reunirán con GLaDOS, la compañera informática mortalmente inventiva de la primera entrega.</p>', 
-'Portal 2 introduce un elenco de nuevos personajes dinámicos, elementos de rompecabezas frescos y un conjunto mucho mayor de cámaras de prueba retorcidas. Los jugadores explorarán áreas nunca antes vistas de los Laboratorios Aperture Science y se reunirán con GLaDOS, la compañera informática mortalmente inventiva de la primera entrega.'),
+'Portal 2 introduce un elenco de nuevos personajes dinámicos, elementos de rompecabezas frescos y un conjunto mucho mayor de cámaras de prueba retorcidas. Los jugadores explorarían áreas nunca antes vistas de los Laboratorios Aperture Science y se reunirán con GLaDOS, la compañera informática mortalmente inventiva de la primera entrega.'),
 
 (324997, "Baldur's Gate III", 4.8, 96, '2026-04-20', 'assets/videojuegos/324997.jpg', 17000, 
-'<p>Reúne a tu grupo y regresa a los Reinos Olvidados en una historia de compañerismo y traición, sacrificio y supervivencia, y la tentación del poder absoluto. Misteriosas habilidades despiertan dentro de ti, extraídas de un parásito de azotamentes implantado en tu cerebro. Elige entre una amplia variedad de razas y clases, y escribe tu propio destino en <strong>Baldur''s Gate 3</strong>.</p>', 
 'Reúne a tu grupo y regresa a los Reinos Olvidados en una historia de compañerismo y traición, sacrificio y supervivencia, y la tentación del poder absoluto. Misteriosas habilidades despiertan dentro de ti, extraídas de un parásito de azotamentes implantado en tu cerebro. Elige entre una amplia variedad de razas y clases, y escribe tu propio destino en Baldur''s Gate 3.'),
 
 (274755, 'Hades', 4.4, 93, '2026-09-17', 'assets/videojuegos/274755.jpg', 12500, 
-'<p><strong>Hades</strong> es un juego de exploración de mazmorras rogue-like que combina los mejores aspectos de los aclamados títulos de Supergiant, incluida la acción trepidante de Bastion, la atmósfera densa de Transistor y la narración centrada en personajes de Pyre. Desafía al dios de los muertos mientras te abres camino a espadazos para escapar del Inframundo.</p>', 
 'Hades es un juego de exploración de mazmorras rogue-like que combina los mejores aspectos de los aclamados títulos de Supergiant, incluida la acción trepidante de Bastion, la atmósfera densa de Transistor y la narración centrada en personajes de Pyre. Desafía al dios de los muertos mientras te abres camino a espadazos para escapar del Inframundo.'),
 
 (327239, 'The Legend of Zelda: Tears of the Kingdom', 4.6, 96, '2026-08-10', 'assets/videojuegos/327239.jpg', 15000, 
-'<p>Una aventura épica a través de la tierra y los cielos de Hyrule te espera en <strong>The Legend of Zelda: Tears of the Kingdom</strong>. Decide tu propio camino a través del inmenso y cambiante paisaje de Hyrule y las misteriosas islas flotantes. Domina las nuevas habilidades de Link para luchar contra las fuerzas oscuras que amenazan el reino.</p>', 
 'Una aventura épica a través de la tierra y los cielos de Hyrule te espera en The Legend of Zelda: Tears of the Kingdom. Decide tu propio camino a través del inmenso y cambiante paisaje de Hyrule y las misteriosas islas flotantes. Domina las nuevas habilidades de Link para luchar contra las fuerzas oscuras que amenazan el reino.'),
 
 (28, 'Red Dead Redemption 2', 4.5, 97, '2026-01-15', 'assets/videojuegos/28.jpg', 16000, 
-'<p>América, 1899. El ocaso del Salvaje Oeste ha comenzado. Tras un atraco fallido en Blackwater, Arthur Morgan y la banda de Van der Linde se ven obligados a huir. Con agentes federales y cazarrecompensas pisándoles los talones, la banda debe atracar, robar y luchar para sobrevivir en el escarpado territorio de <strong>Red Dead Redemption 2</strong>.</p>', 
 'América, 1899. El ocaso del Salvaje Oeste ha comenzado. Tras un atraco fallido en Blackwater, Arthur Morgan y la banda de Van der Linde se ven obligados a huir. Con agentes federales y cazarrecompensas pisándoles los talones, la banda debe atracar, robar y luchar para sobrevivir en el escarpado territorio de Red Dead Redemption 2.'),
 
 (3498, 'Grand Theft Auto V', 4.47, 97, '2013-09-17', 'assets/videojuegos/3498.jpg', 25000, 
-'<p>Cuando un joven estafador callejero, un ladrón de bancos retirado y un psicópata aterrador se ven involucrados con lo peor del submundo criminal, el gobierno de EE. UU. y la industria del entretenimiento, deben llevar a cabo una serie de peligrosos golpes para sobrevivir en una ciudad despiadada en la que no pueden confiar en nadie, y mucho menos los unos en los otros en <strong>GTA V</strong>.</p>', 
 'Cuando un joven estafador callejero, un ladrón de bancos retirado y un psicópata aterrador se ven involucrados con lo peor del submundo criminal, el gobierno de EE. UU. y la industria del entretenimiento, deben llevar a cabo una serie de peligrosos golpes para sobrevivir en una ciudad despiadada en la que no pueden confiar en nadie, y mucho menos los unos en los otros en GTA V.'),
 
 (22121, 'Celeste', 4.3, 88, '2026-04-05', 'assets/videojuegos/22121.jpg', 11000, 
-'<p>Ayuda a Madeline a sobrevivir a sus demonios internos en su viaje a la cima de la montaña Celeste, en este plataformas ultrapreciso de los creadores del clásico multijugador TowerFall. Una conmovedora historia de superación personal y salud mental acompañada de un apartado artístico sublime y una banda sonora inolvidable en <strong>Celeste</strong>.</p>', 
 'Ayuda a Madeline a sobrevivir a sus demonios internos en su viaje a la cima de la montaña Celeste, en este plataformas ultrapreciso de los creadores del clásico multijugador TowerFall. Una conmovedora historia de superación personal y salud mental acompañada de un apartado artístico sublime y una banda sonora inolvidable en Celeste.'),
 
 (5538, 'Dark Souls', 4.4, 89, '2011-09-22', 'assets/videojuegos/5538.jpg', 12000, 
-'<p><strong>Dark Souls</strong> es el nuevo juego de rol de acción de los creadores de Demon''s Souls. Prepárate para descubrir un universo oscuro y desolado con un diseño de niveles interconectado asombroso. Lucha con precisión quirúrgica, aprende de tus errores y supera desafíos insuperables para revivir la llama del mundo de Lordran.</p>', 
 'Dark Souls es el nuevo juego de rol de acción de los creadores de Demon''s Souls. Prepárate para descubrir un universo oscuro y desolado con un diseño de niveles interconectado asombroso. Lucha con precisión quirúrgica, aprende de tus errores y supera desafíos insuperables para revivir la llama del mundo de Lordran.'),
 
 (654, 'Stardew Valley', 4.3, 89, '2016-02-26', 'assets/videojuegos/654.jpg', 14000, 
-'<p>Heredaste la vieja parcela agrícola de tu abuelo en <strong>Stardew Valley</strong>. Armado con herramientas heredadas y unas pocas monedas, te dispones a comenzar tu nueva vida. ¿Podrás aprender a vivir de la tierra y convertir estos campos de maleza en un hogar próspero? Únete a la comunidad local y crea tu propia historia de tranquilidad.</p>', 
 'Heredaste la vieja parcela agrícola de tu abuelo en Stardew Valley. Armado con herramientas heredadas y unas pocas monedas, te dispones a comenzar tu nueva vida. ¿Podrás aprender a vivir de la tierra y convertir estos campos de maleza en un hogar próspero? Únete a la comunidad local y crea tu propia historia de tranquilidad.');
 
 -- INSERTS DE GENEROS, TAGS Y PLATAFORMAS
