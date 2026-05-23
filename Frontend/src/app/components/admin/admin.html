@@ -24,14 +24,14 @@
         <header class="admin-header">
           <div>
             <h1 class="admin-title">Panel de Moderación</h1>
-            <p class="admin-subtitle">Revisión de posibles spoilers en reseñas recientes</p>
+            <p class="admin-subtitle">Bandeja de moderación de reseñas reportadas por la comunidad</p>
           </div>
         </header>
 
         <section class="reviews-section">
           <div class="section-title">
-            <h2>Reseñas por verificar</h2>
-            <span class="badge">{{ resenasARevisar.length }} pendientes</span>
+            <h2>Reseñas reportadas</h2>
+            <span class="badge badge-danger">{{ resenasARevisar.length }} reportadas</span>
           </div>
 
           <div class="reviews-grid">
@@ -43,7 +43,10 @@
                   </span>
                   <span class="game-tag">{{ resena.nombreVideojuego || 'Juego' }}</span>
                 </div>
-                <span class="badge-spoiler-active" *ngIf="resena.tieneSpoiler">SPOILER</span>
+                <div class="card-header-badges">
+                  <span class="badge-reports-count">{{ resena.reportes || 0 }} REPORTES</span>
+                  <span class="badge-spoiler-active" *ngIf="resena.tieneSpoiler">SPOILER</span>
+                </div>
               </div>
 
               <div class="card-body">

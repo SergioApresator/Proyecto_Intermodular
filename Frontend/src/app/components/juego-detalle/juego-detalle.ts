@@ -46,6 +46,8 @@ export class JuegoDetalle implements OnInit, OnDestroy {
     titulo: 'CONFIRMAR',
     mensaje: '¿Estás seguro?',
     tipo: 'warning' as 'danger' | 'warning' | 'info',
+    cancelText: 'CANCELAR',
+    confirmText: 'CONFIRMAR',
     accion: () => {}
   };
 
@@ -488,6 +490,55 @@ export class JuegoDetalle implements OnInit, OnDestroy {
     });
   }
 
+  // Método para reportar o retirar reporte de una reseña (toggle).
+  reportarResena(resena: any) {
+    if (!this.usuarioId) return;
+    const yaReportada = resena.reportadoPorUsuarioActual;
+    const titulo = yaReportada ? 'RETIRAR REPORTE' : 'REPORTAR RESEÑA';
+    const mensaje = yaReportada
+      ? '¿Deseas retirar tu reporte sobre esta reseña? Se eliminará tu denuncia del panel de moderación.'
+      : '¿Estás seguro de que deseas reportar esta reseña por contenido inapropiado? Se enviará al panel de moderación para ser revisada.';
+
+    this.mostrarConfirmacion(
+      titulo,
+      mensaje,
+      'warning',
+      () => {
+        this.resenasServicio.reportarResena(resena.id, this.usuarioId!).subscribe({
+          next: (data) => {
+            this.ngZone.run(() => {
+              resena.reportadoPorUsuarioActual = data.reportadoPorUsuarioActual;
+              resena.reportes = data.reportes;
+              const msgExito = data.reportadoPorUsuarioActual
+                ? 'La reseña ha sido reportada con éxito al equipo de moderación. Gracias por tu colaboración.'
+                : 'Tu reporte sobre esta reseña ha sido retirado correctamente.';
+              this.mostrarConfirmacion(
+                data.reportadoPorUsuarioActual ? 'RESEÑA REPORTADA' : 'REPORTE RETIRADO',
+                msgExito,
+                'warning',
+                () => {},
+                '',
+                'ACEPTAR'
+              );
+              this.cdr.detectChanges();
+            });
+          },
+          error: (err) => {
+            console.error('Error al reportar:', err);
+            this.mostrarConfirmacion(
+              'ERROR',
+              'Ocurrió un error al procesar el reporte.',
+              'danger',
+              () => {},
+              '',
+              'ACEPTAR'
+            );
+          }
+        });
+      }
+    );
+  }
+
   // Método para obtener el nombre de usuario de la respuesta padre a partir de su ID.
   getNombrePadre(resena: any, idPadre: number): string {
     if (!idPadre) return '';
@@ -533,8 +584,8 @@ export class JuegoDetalle implements OnInit, OnDestroy {
 
   // Helpers para el modal de confirmación
   // Método para mostrar el modal de confirmación con el título, mensaje, tipo y acción a ejecutar.
-  mostrarConfirmacion(titulo: string, mensaje: string, tipo: 'danger' | 'warning', accion: () => void) {
-    this.modalConfirmacionConfig = { titulo, mensaje, tipo, accion };
+  mostrarConfirmacion(titulo: string, mensaje: string, tipo: 'danger' | 'warning', accion: () => void, cancelText: string = 'CANCELAR', confirmText: string = 'CONFIRMAR') {
+    this.modalConfirmacionConfig = { titulo, mensaje, tipo, accion, cancelText, confirmText };
     this.modalConfirmacionVisible = true;
     this.cdr.detectChanges();
   }

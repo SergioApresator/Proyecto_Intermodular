@@ -64,6 +64,18 @@ public class ResenaController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // Reporta o quita el reporte de una reseña (toggle por usuario).
+    @PostMapping("/{id}/reportar")
+    public ResponseEntity<ResenaDTO> reportarResena(@PathVariable Long id, @RequestBody java.util.Map<String, Long> body) {
+        Long idUsuario = body.get("idUsuario");
+        if (idUsuario == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return resenaService.reportarResena(id, idUsuario)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     // Permite al usuario editar su opinión o puntuación de un juego
     @PutMapping("/updateResena/{id}")
     public ResponseEntity<ResenaDTO> updateResena(@PathVariable Long id, @RequestBody ResenaDTO resenaDTO) {
