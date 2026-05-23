@@ -10,7 +10,6 @@ public class VideojuegoDTO {
     private String name;
     private String background_image; 
     private String description;
-    private String description_raw;
     private LocalDate released;
     private Double rating;
     private Integer metacritic;

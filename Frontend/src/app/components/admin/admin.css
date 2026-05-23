@@ -672,6 +672,52 @@
     transform: none;
 }
 
+/* ===== ROLE BUTTON ===== */
+.btn-role {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    flex: none;
+    width: auto;
+    background: #3b82f6;
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.2);
+    white-space: nowrap;
+    margin-left: 8px;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-role:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.btn-role.btn-is-admin {
+    background: #ef4444;
+    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.2);
+}
+
+.btn-role.btn-is-admin:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.btn-role:disabled {
+    background: #94a3b8;
+    box-shadow: none;
+    cursor: not-allowed;
+    transform: none;
+    opacity: 0.6;
+}
+
+
+
 /* ===== SVG ICON UTILITIES ===== */
 .btn-icon {
     display: inline-block;

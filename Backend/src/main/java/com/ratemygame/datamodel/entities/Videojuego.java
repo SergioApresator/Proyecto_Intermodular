@@ -28,9 +28,6 @@ public class Videojuego {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "description_raw", columnDefinition = "TEXT")
-    private String descriptionRaw;
-
     private LocalDate released;
 
     @Column(nullable = false)

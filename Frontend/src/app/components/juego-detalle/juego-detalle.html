@@ -58,7 +58,7 @@
   <!-- BANNER HERO -->
   <div class="juego-hero">
     <div class="hero-bg-wrapper">
-      <img *ngIf="juego.background_image && !juego['imgError']" [src]="juego.background_image" class="hero-bg-img" alt="Background" (error)="juego['imgError'] = true">
+      <img *ngIf="juego.background_image && !juego['imgError']" [src]="juego.background_image + '?v=1.0.1'" class="hero-bg-img" alt="Background" (error)="juego['imgError'] = true">
       <div *ngIf="!juego.background_image || juego['imgError']" class="game-image-placeholder dark-vignette"></div>
       <div class="hero-vignette"></div>
     </div>
@@ -197,7 +197,7 @@
           <div class="accent"></div>
           <h2>DESCRIPCIÓN OPERATIVA</h2>
         </div>
-        <div class="ow-text-content" [innerHTML]="descripcionSegura"></div>
+        <div class="ow-text-content">{{ juego.description }}</div>
       </div>
 
       <!-- DETALLES TÉCNICOS (MOVIDO ABAJO) -->
@@ -397,7 +397,7 @@
   <div class="ow-modal-premium" (click)="$event.stopPropagation()">
     
     <!-- LEFT SIDE: VISUAL -->
-    <div class="modal-visual" [style.backgroundImage]="juego.background_image ? 'url(' + juego.background_image + ')' : 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'">
+    <div class="modal-visual" [style.backgroundImage]="juego.background_image ? 'url(' + juego.background_image + '?v=1.0.1)' : 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'">
       <div class="visual-overlay"></div>
       <div class="visual-content">
         <span class="visual-tag">NUEVA RESEÑA</span>
@@ -459,7 +459,7 @@
   <div class="ow-modal-lists-ultra" (click)="$event.stopPropagation()">
     
     <!-- IZQUIERDA: DISEÑO TEMÁTICO VISUAL -->
-    <div class="lists-visual" [style.backgroundImage]="juego.background_image ? 'url(' + juego.background_image + ')' : 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'">
+    <div class="lists-visual" [style.backgroundImage]="juego.background_image ? 'url(' + juego.background_image + '?v=1.0.1)' : 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'">
       <div class="lists-visual-overlay"></div>
       <div class="lists-visual-content">
         <span class="ultra-tag">GESTOR DE COLECCIONES</span>

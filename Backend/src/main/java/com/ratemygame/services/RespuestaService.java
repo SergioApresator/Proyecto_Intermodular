@@ -14,6 +14,7 @@ import com.ratemygame.datamodel.repositories.RespuestaVotoRepository;
 import com.ratemygame.datamodel.repositories.ResenaRepository;
 import com.ratemygame.datamodel.repositories.UsuarioRepository;
 import com.ratemygame.dtos.RespuestaDTO;
+import com.ratemygame.mapper.RespuestaMapper;
 
 import jakarta.transaction.Transactional;
 import java.util.List;
@@ -34,6 +35,9 @@ public class RespuestaService {
 
     @Autowired
     private RespuestaVotoRepository respuestaVotoRepository;
+
+    @Autowired
+    private RespuestaMapper respuestaMapper;
 
     // Método para obtener todas las respuestas asociadas a una reseña concreta.
     public List<RespuestaDTO> getRespuestasByResena(Long idResena) {
@@ -159,31 +163,15 @@ public class RespuestaService {
     }
 
 
-    // Método para convertir una entidad Respuesta en su DTO incluyendo los datos del autor y del padre.
     private RespuestaDTO convertToDTO(Respuesta respuesta) {
-        RespuestaDTO dto = new RespuestaDTO();
-        dto.setId(respuesta.getId());
-        dto.setMensaje(respuesta.getMensaje());
-        dto.setMeGustas(respuesta.getMeGustas());
-        dto.setNoMeGustas(respuesta.getNoMeGustas());
-        if (respuesta.getUsuario() != null) {
-            dto.setId_usuario(respuesta.getUsuario().getId());
-            dto.setNombreUsuario(respuesta.getUsuario().getUsername());
-            dto.setFotoUsuario(respuesta.getUsuario().getFoto_url());
-        }
-        if (respuesta.getResena() != null) {
-            dto.setId_resena(respuesta.getResena().getId());
-        }
-        dto.setId_respuesta_padre(respuesta.getIdRespuestaPadre());
+        RespuestaDTO dto = respuestaMapper.toDTO(respuesta);
         if (respuesta.getIdRespuestaPadre() != null) {
             respuestaRepository.findById(respuesta.getIdRespuestaPadre()).ifPresent(padre -> {
-
                 if (padre.getUsuario() != null) {
                     dto.setNombreUsuarioPadre(padre.getUsuario().getUsername());
                 }
             });
         }
-        dto.setFechaRespuesta(respuesta.getFechaRespuesta());
         return dto;
     }
 
