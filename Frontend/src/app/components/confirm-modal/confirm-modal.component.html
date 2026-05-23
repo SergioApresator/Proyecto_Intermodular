@@ -33,13 +33,14 @@
 
       <!-- BOTONES DE ACCIÓN: cancelar y confirmar -->
       <div class="modal-actions">
-        <button class="btn-modal cancel" (click)="cancel()">
+        <button class="btn-modal cancel" *ngIf="cancelText" (click)="cancel()">
           <span>{{ cancelText | uppercase }}</span>
         </button>
         <button class="btn-modal confirm" (click)="confirm()">
           <span>{{ confirmText | uppercase }}</span>
         </button>
       </div>
+
     </div>
   </div>
 </div>
