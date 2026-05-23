@@ -27,6 +27,8 @@ export class Admin implements OnInit {
   busquedaRealizada: boolean = false;
   paginaActual: number = 1;
   elementosPorPagina: number = 5;
+  miUsuarioId: number | null = null;
+
   
   // Modal de confirmación
   modalConfirmacionVisible: boolean = false;
@@ -54,9 +56,17 @@ export class Admin implements OnInit {
       return;
     }
 
+    if (typeof window !== 'undefined') {
+      const storedId = localStorage.getItem('usuarioId');
+      if (storedId) {
+        this.miUsuarioId = Number(storedId);
+      }
+    }
+
     this.cargarResenas();
     this.buscarUsuarios(); // Carga de usuarios de primeras
   }
+
 
   // Método para cambiar entre las pestañas de moderación y gestión de usuarios del panel de administración.
   cambiarPestana(pestana: 'moderacion' | 'usuarios') {
@@ -248,6 +258,40 @@ export class Admin implements OnInit {
       }
     );
   }
+
+  // Método para alternar el rol de administrador de un usuario previa confirmación
+  toggleAdmin(usuario: any) {
+    if (this.miUsuarioId && usuario.id === this.miUsuarioId) {
+      alert('No puedes quitarte los permisos de administrador a ti mismo.');
+      return;
+    }
+
+    const accion = usuario.esAdmin ? 'QUITAR ADMIN' : 'HACER ADMIN';
+
+    const tipo = usuario.esAdmin ? 'danger' : 'warning';
+    const mensaje = usuario.esAdmin 
+      ? `¿Estás seguro de que deseas quitar los privilegios de administrador al usuario "${usuario.username}"?` 
+      : `¿Estás seguro de que deseas hacer ADMINISTRADOR al usuario "${usuario.username}"? Tendrá acceso completo al panel de control y moderación.`;
+
+    this.mostrarConfirmacion(
+      `${accion}`,
+      mensaje,
+      tipo,
+      () => {
+        this.usuariosServicio.toggleAdmin(usuario.id).subscribe({
+          next: (respuesta: any) => {
+            usuario.esAdmin = respuesta.esAdmin;
+            this.cdr.detectChanges();
+          },
+          error: (err: any) => {
+            console.error('Error al actualizar rol de administrador:', err);
+            alert('Hubo un error al intentar cambiar el rol del usuario.');
+          }
+        });
+      }
+    );
+  }
+
 
   // Getter para obtener el subconjunto de usuarios correspondiente a la página actual.
   get usuariosPaginados(): any[] {
