@@ -105,6 +105,22 @@ public class UsuarioController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // Endpoint para alternar el rol de administrador de un usuario. Exclusivo para ADMIN.
+    @PutMapping("/{id}/toggle-admin")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> toggleAdmin(
+            @PathVariable Long id,
+            @org.springframework.security.core.annotation.AuthenticationPrincipal com.ratemygame.config.CustomUserDetails userDetails) {
+        if (userDetails != null && id.equals(userDetails.getUsuario().getId())) {
+            return ResponseEntity.badRequest().body("No puedes quitarte el rol de administrador a ti mismo.");
+        }
+        return usuarioService.toggleAdmin(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+
+
     // Borra un usuario. Mismas restricciones: dueño del perfil o ADMIN.
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or (principal instanceof T(com.ratemygame.config.CustomUserDetails) and #id == principal.usuario.id)")

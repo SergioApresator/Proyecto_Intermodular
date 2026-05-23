@@ -55,6 +55,12 @@ export class Usuarios {
     return this.http.put(`${this.url}/${id}`, datos, this.getHeaders());
   }
 
+  // Alterna el estado de administrador de un usuario. Exclusivo para administradores.
+  toggleAdmin(id: number): Observable<any> {
+    return this.http.put(`${this.url}/${id}/toggle-admin`, {}, this.getHeaders());
+  }
+
+
   // Sube la foto de perfil del usuario.
   subirFotoPerfil(id: number, file: File): Observable<any> {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;

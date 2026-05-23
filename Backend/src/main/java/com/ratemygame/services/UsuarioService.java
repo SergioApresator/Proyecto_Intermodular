@@ -97,6 +97,15 @@ public class UsuarioService {
         });
     }
 
+    // Alterna el rol de administrador de un usuario (de normal a admin o viceversa)
+    public Optional<UsuarioDTO> toggleAdmin(Long id) {
+        return usuarioRepository.findById(id).map(usuario -> {
+            usuario.setEsAdmin(usuario.getEsAdmin() == null ? true : !usuario.getEsAdmin());
+            Usuario updatedUsuario = usuarioRepository.save(usuario);
+            return convertToDTO(updatedUsuario);
+        });
+    }
+
     // Método para actualizar los datos binarios de la foto de perfil en la base de datos.
     public Optional<UsuarioDTO> actualizarFotoDatos(Long id, byte[] fotoDatos, String contentType) {
         return usuarioRepository.findById(id).map(usuario -> {
