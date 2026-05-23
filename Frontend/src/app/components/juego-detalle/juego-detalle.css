@@ -292,8 +292,8 @@
 }
 
 .tags-full-width {
-    padding: 15px 30px 30px 30px;
-    border-top: 1px solid #f1f5f9;
+    padding: 0 30px 30px 30px;
+    align-self: start;
 }
 
 .tags-full-width .t-label {
@@ -1517,7 +1517,7 @@
         padding: 20px;
     }
 
-    .tags-full-width { padding: 10px 20px 20px; }
+    .tags-full-width { padding: 0 0 20px; }
     .t-value { font-size: 1.1rem; }
 
     /* RESEÑAS */

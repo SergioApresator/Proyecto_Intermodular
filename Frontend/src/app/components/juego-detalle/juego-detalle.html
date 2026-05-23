@@ -224,18 +224,9 @@
             <div class="t-value">{{ juego.publishers[0]?.name }}</div>
           </div>
 
-          <div class="tech-item links">
-            <span class="t-label">ENLACES EXTERNOS</span>
-            <div class="links-row">
-              <a *ngIf="juego.website" [href]="juego.website" target="_blank" class="ow-link-btn">SITIO OFICIAL</a>
-              <a *ngIf="juego.reddit_url" [href]="juego.reddit_url" target="_blank" class="ow-link-btn">REDDIT</a>
-            </div>
-          </div>
-        </div>
-
         <!-- ETIQUETAS A ANCHO COMPLETO AL FINAL -->
         <div class="tags-full-width">
-          <span class="t-label">ETIQUETAS DEL SISTEMA</span>
+          <span class="t-label">ETIQUETAS</span>
           <div class="t-tags sm">
             <span *ngFor="let t of tagsJuego" class="t-tag grey">{{ t.name }}</span>
           </div>
