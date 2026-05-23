@@ -129,11 +129,10 @@ export class Admin implements OnInit {
     );
   }
 
-  // Método para marcar una reseña como revisada y aprobada, haciéndola visible en la plataforma.
   validarResena(id: number) {
     this.mostrarConfirmacion(
       'VALIDAR RESEÑA',
-      '¿Estás seguro de que deseas VALIDAR esta reseña? Se marcará como aprobada y será visible para todos los usuarios de la plataforma.',
+      '¿Estás seguro de que deseas VALIDAR esta reseña? Se eliminarán todos sus reportes y dejará de aparecer en el panel de moderación.',
       'info',
       () => {
         this.resenasServicio.getResenaPorId(id).subscribe({

@@ -86,7 +86,7 @@ export class Login implements OnInit {
         next: (usuarioEncontrado) => this.guardarSesionYRedirigir(usuarioEncontrado),
         error: (err) => {
           if (err.status === 403) {
-            this.mostrarError('Tu cuenta ha sido baneada. Contacta con el administrador si crees que es un error.');
+            this.mostrarError('Tu cuenta ha sido baneada.');
           } else {
             this.mostrarError('Credenciales incorrectas. Verifica tu usuario/email y contraseña.');
           }
