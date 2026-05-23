@@ -421,6 +421,7 @@
 
 .reply-user-info { display: flex; flex-direction: column; }
 .reply-parent { font-size: 0.75rem; color: #94a3b8; }
+.reply-parent em { color: #dc2626; font-style: italic; font-weight: 600; }
 
 /* Profile link styles for reviews and replies */
 .user-profile-link,
