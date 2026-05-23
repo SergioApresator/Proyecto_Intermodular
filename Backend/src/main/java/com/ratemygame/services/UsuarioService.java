@@ -75,7 +75,7 @@ public class UsuarioService {
         usuario.setBaneado(false);
         Usuario savedUsuario = usuarioRepository.save(usuario);
         String token = jwtService.generateToken(new CustomUserDetails(savedUsuario));
-        UsuarioDTO dto = convertToDTO(savedUsuario);
+        UsuarioDTO dto = usuarioMapper.toDTO(savedUsuario);
         dto.setToken(token);
         return dto;
     }
@@ -106,7 +106,7 @@ public class UsuarioService {
         return usuarioRepository.findById(id).map(usuario -> {
             usuario.setEsAdmin(usuario.getEsAdmin() == null ? true : !usuario.getEsAdmin());
             Usuario updatedUsuario = usuarioRepository.save(usuario);
-            return convertToDTO(updatedUsuario);
+            return usuarioMapper.toDTO(updatedUsuario);
         });
     }
 
