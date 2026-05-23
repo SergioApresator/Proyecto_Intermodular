@@ -57,9 +57,11 @@ public class SecurityConfig {
                 .requestMatchers("/api/usuarios/login").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll()
                 
-                // Permitimos subida anónima de fotos/banners solo en el registro
+                // Permitimos subida y descarga de fotos/banners
                 .requestMatchers(HttpMethod.POST, "/api/usuarios/*/foto").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/usuarios/*/banner").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/usuarios/*/foto").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/usuarios/*/banner").permitAll()
                 
                 // Lectura pública de perfiles, reseñas, respuestas y listas
                 .requestMatchers(HttpMethod.GET, "/api/listas/usuario/**").permitAll()

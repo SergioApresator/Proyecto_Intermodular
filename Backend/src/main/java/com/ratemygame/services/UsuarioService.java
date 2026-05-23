@@ -86,9 +86,6 @@ public class UsuarioService {
             if (usuarioDetails.getPassword() != null && !usuarioDetails.getPassword().isEmpty()) {
                 usuario.setPassword(passwordEncoder.encode(usuarioDetails.getPassword()));
             }
-            if (usuarioDetails.getFoto_url() != null) {
-                usuario.setFoto_url(usuarioDetails.getFoto_url());
-            }
             if (usuarioDetails.getBiografia() != null) {
                 usuario.setBiografia(usuarioDetails.getBiografia());
             }
@@ -100,20 +97,27 @@ public class UsuarioService {
         });
     }
 
-    // Método para actualizar la URL de la foto de perfil del usuario en la base de datos.
-    public Optional<UsuarioDTO> actualizarFotoUrl(Long id, String fotoUrl) {
+    // Método para actualizar los datos binarios de la foto de perfil en la base de datos.
+    public Optional<UsuarioDTO> actualizarFotoDatos(Long id, byte[] fotoDatos, String contentType) {
         return usuarioRepository.findById(id).map(usuario -> {
-            usuario.setFoto_url(fotoUrl);
+            usuario.setFotoDatos(fotoDatos);
+            usuario.setFotoContentType(contentType);
             return convertToDTO(usuarioRepository.save(usuario));
         });
     }
 
-    // Método para actualizar la URL del banner de portada del usuario en la base de datos.
-    public Optional<UsuarioDTO> actualizarBannerUrl(Long id, String bannerUrl) {
+    // Método para actualizar los datos binarios del banner de portada en la base de datos.
+    public Optional<UsuarioDTO> actualizarBannerDatos(Long id, byte[] bannerDatos, String contentType) {
         return usuarioRepository.findById(id).map(usuario -> {
-            usuario.setBannerUrl(bannerUrl);
+            usuario.setBannerDatos(bannerDatos);
+            usuario.setBannerContentType(contentType);
             return convertToDTO(usuarioRepository.save(usuario));
         });
+    }
+
+    // Método para obtener la entidad Usuario cruda para servir sus imágenes.
+    public Optional<Usuario> getUsuarioEntityById(Long id) {
+        return usuarioRepository.findById(id);
     }
 
     // Método para eliminar un usuario de la base de datos por su ID.
@@ -133,8 +137,10 @@ public class UsuarioService {
         dto.setApellidos(usuario.getApellidos());
         dto.setUsername(usuario.getUsername());
         dto.setEmail(usuario.getEmail());
-        dto.setFoto_url(usuario.getFoto_url());
-        dto.setBanner_url(usuario.getBannerUrl());
+        
+        dto.setFoto_url(usuario.getResolvedFotoUrl());
+        dto.setBanner_url(usuario.getResolvedBannerUrl());
+
         dto.setBiografia(usuario.getBiografia());
         dto.setEsAdmin(usuario.getEsAdmin() != null ? usuario.getEsAdmin() : false);
         dto.setBaneado(usuario.getBaneado() != null ? usuario.getBaneado() : false);
