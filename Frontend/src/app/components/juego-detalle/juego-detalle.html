@@ -336,7 +336,12 @@
                         <span class="reply-user">{{ resp.nombre_usuario || resp.nombreUsuario }}</span>
                       </a>
                       <span class="reply-parent" *ngIf="resp.id_respuesta_padre">
-                        en respuesta a <strong>{{ getNombrePadre(resena, resp.id_respuesta_padre) }}</strong>
+                        <ng-container *ngIf="getNombrePadre(resena, resp.id_respuesta_padre) as nombrePadre; else padreEliminado">
+                          en respuesta a <strong>{{ nombrePadre }}</strong>
+                        </ng-container>
+                        <ng-template #padreEliminado>
+                          <em>El mensaje al que se ha respondido ha sido eliminado por el autor</em>
+                        </ng-template>
                       </span>
                     </div>
                     <span class="reply-date">{{ (resp.fecha_respuesta || resp.fechaRespuesta) | date:'dd.MM.yyyy HH:mm' }}</span>
