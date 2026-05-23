@@ -1,27 +1,42 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Usuarios } from '../../services/usuarios';
+import { ConfirmModal } from '../confirm-modal/confirm-modal.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, ConfirmModal],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
+
 export class Login implements OnInit {
 
   //Injección necesaria para viajar entre páginas
   private router = inject(Router);
 
   //Inyecto el servicio
-  constructor(private usuariosServicio: Usuarios) { }
+  constructor(
+    private usuariosServicio: Usuarios,
+    private cdr: ChangeDetectorRef
+  ) { }
+
 
   formularioLogin = new FormGroup({
     identity: new FormControl('', [Validators.required]),
     password: new FormControl('', [Validators.required, Validators.minLength(8)])
   });
+
+  // Control de Modal de Error
+  modalErrorVisible: boolean = false;
+  modalErrorConfig = {
+    titulo: 'ERROR',
+    mensaje: '',
+    tipo: 'danger' as 'danger' | 'warning' | 'info'
+  };
+
 
   // Variable para controlar qué modo de login se está mostrando (Por defecto: Username)
   loginConEmail: boolean = false;
@@ -46,6 +61,21 @@ export class Login implements OnInit {
     });
   }
 
+  // Métodos de control para el modal de error
+  mostrarError(mensaje: string, tipo: 'danger' | 'warning' = 'danger') {
+    this.modalErrorConfig.mensaje = mensaje;
+    this.modalErrorConfig.tipo = tipo;
+    this.modalErrorConfig.titulo = tipo === 'danger' ? 'ACCESO DENEGADO' : 'ADVERTENCIA';
+    this.modalErrorVisible = true;
+    this.cdr.detectChanges();
+  }
+
+  cerrarModalError() {
+    this.modalErrorVisible = false;
+    this.cdr.detectChanges();
+  }
+
+
   // Método para enviar el formulario de login y autenticar al usuario.
   submit() {
     if (this.formularioLogin.valid) {
@@ -56,9 +86,9 @@ export class Login implements OnInit {
         next: (usuarioEncontrado) => this.guardarSesionYRedirigir(usuarioEncontrado),
         error: (err) => {
           if (err.status === 403) {
-            alert('Tu cuenta ha sido baneada. Contacta con el administrador si crees que es un error.');
+            this.mostrarError('Tu cuenta ha sido baneada. Contacta con el administrador si crees que es un error.');
           } else {
-            alert('Credenciales incorrectas. Verifica tu usuario/email y contraseña.');
+            this.mostrarError('Credenciales incorrectas. Verifica tu usuario/email y contraseña.');
           }
         }
       });
@@ -66,6 +96,7 @@ export class Login implements OnInit {
       this.formularioLogin.markAllAsTouched();
     }
   }
+
 
   // Guardado de la información de la sesion en localStorage
   private guardarSesionYRedirigir(usuarioEncontrado: any) {
