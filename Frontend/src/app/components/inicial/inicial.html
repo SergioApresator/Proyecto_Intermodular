@@ -201,14 +201,14 @@
         <div *ngFor="let resena of resenasRecientes" class="activity-item" [routerLink]="['/juego', resena.id_videojuego]" style="cursor: pointer;">
 
           <div class="activity-user">
-            <a class="user-profile-link" [routerLink]="['/perfil', resena.id_usuario]" (click)="$event.stopPropagation()">
+            <a class="user-profile-link" [routerLink]="resena.id_usuario === usuarioId ? ['/perfil'] : ['/perfil', resena.id_usuario]" (click)="$event.stopPropagation()">
               <div class="user-avatar" [class.no-photo]="!resena.fotoUsuario || resena['avatarError']">
                 <img *ngIf="resena.fotoUsuario && !resena['avatarError']" [src]="resena.fotoUsuario" (error)="resena['avatarError'] = true" alt="">
                 <span *ngIf="!resena.fotoUsuario || resena['avatarError']">{{ obtenerInicial(resena.nombreUsuario) }}</span>
               </div>
             </a>
             <div class="user-info">
-              <a class="user-name-link" [routerLink]="['/perfil', resena.id_usuario]" (click)="$event.stopPropagation()">
+              <a class="user-name-link" [routerLink]="resena.id_usuario === usuarioId ? ['/perfil'] : ['/perfil', resena.id_usuario]" (click)="$event.stopPropagation()">
                 <span class="user-name">{{ resena.nombreUsuario }}</span>
               </a>
               <span class="activity-time">{{ obtenerTiempoTranscurrido(resena.fechaResena) }}</span>

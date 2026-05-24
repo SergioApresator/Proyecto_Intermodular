@@ -31,9 +31,12 @@ export class Inicial implements OnInit, OnDestroy {
   intervaloCarrusel: any = null;
   juegoSpotlight: any = null;
   anioActual: number = new Date().getFullYear();
+  usuarioId: number | null = null;
 
   // Método para inicializar el componente y lanzar la carga de datos de la página principal.
   ngOnInit() {
+    const uid = localStorage.getItem('usuarioId');
+    if (uid) this.usuarioId = parseInt(uid, 10);
     this.cargarDatosIniciales();
   }
 
