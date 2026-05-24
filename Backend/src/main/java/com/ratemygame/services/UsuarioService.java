@@ -104,6 +104,9 @@ public class UsuarioService {
     // Alterna el rol de administrador de un usuario (de normal a admin o viceversa)
     public Optional<UsuarioDTO> toggleAdmin(Long id) {
         return usuarioRepository.findById(id).map(usuario -> {
+            if (Boolean.TRUE.equals(usuario.getBaneado()) && !Boolean.TRUE.equals(usuario.getEsAdmin())) {
+                throw new IllegalArgumentException("No se puede hacer administrador a un usuario baneado.");
+            }
             usuario.setEsAdmin(usuario.getEsAdmin() == null ? true : !usuario.getEsAdmin());
             Usuario updatedUsuario = usuarioRepository.save(usuario);
             return usuarioMapper.toDTO(updatedUsuario);

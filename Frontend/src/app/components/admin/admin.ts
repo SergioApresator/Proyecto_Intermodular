@@ -265,8 +265,12 @@ export class Admin implements OnInit {
       return;
     }
 
-    const accion = usuario.esAdmin ? 'QUITAR ADMIN' : 'HACER ADMIN';
+    if (usuario.baneado && !usuario.esAdmin) {
+      alert('No se puede hacer administrador a un usuario baneado.');
+      return;
+    }
 
+    const accion = usuario.esAdmin ? 'QUITAR ADMIN' : 'HACER ADMIN';
     const tipo = usuario.esAdmin ? 'danger' : 'warning';
     const mensaje = usuario.esAdmin 
       ? `¿Estás seguro de que deseas quitar los privilegios de administrador al usuario "${usuario.username}"?` 
@@ -284,7 +288,8 @@ export class Admin implements OnInit {
           },
           error: (err: any) => {
             console.error('Error al actualizar rol de administrador:', err);
-            alert('Hubo un error al intentar cambiar el rol del usuario.');
+            const errorMsg = err.error && typeof err.error === 'string' ? err.error : 'Hubo un error al intentar cambiar el rol del usuario.';
+            alert(errorMsg);
           }
         });
       }

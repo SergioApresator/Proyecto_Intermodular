@@ -114,9 +114,13 @@ public class UsuarioController {
         if (userDetails != null && id.equals(userDetails.getUsuario().getId())) {
             return ResponseEntity.badRequest().body("No puedes quitarte el rol de administrador a ti mismo.");
         }
-        return usuarioService.toggleAdmin(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        try {
+            return usuarioService.toggleAdmin(id)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
 
