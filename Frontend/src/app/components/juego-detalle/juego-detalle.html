@@ -248,13 +248,13 @@
           <div class="ow-review-card" *ngFor="let resena of resenas">
             <div class="review-side">
               <div class="user-id-box">
-                <a class="user-profile-link" [routerLink]="['/perfil', resena.id_usuario]">
+                <a class="user-profile-link" [routerLink]="resena.id_usuario === usuarioId ? ['/perfil'] : ['/perfil', resena.id_usuario]">
                   <div class="avatar-mini-ow" [class.no-photo]="!resena.fotoUsuario || resena['avatarError']">
                     <img *ngIf="resena.fotoUsuario && !resena['avatarError']" [src]="resena.fotoUsuario" (error)="resena['avatarError'] = true" class="avatar-img">
                     <span *ngIf="!resena.fotoUsuario || resena['avatarError']">{{ resena.nombreUsuario?.charAt(0) || '?' }}</span>
                   </div>
                 </a>
-                <a class="user-name-link" [routerLink]="['/perfil', resena.id_usuario]">
+                <a class="user-name-link" [routerLink]="resena.id_usuario === usuarioId ? ['/perfil'] : ['/perfil', resena.id_usuario]">
                   <div class="user-name">{{ resena.nombreUsuario || 'ANÓNIMO' }}</div>
                 </a>
               </div>
@@ -325,14 +325,14 @@
               <div class="replies-container-ow" *ngIf="resena.mostrarRespuestas">
                 <div class="reply-card-ow" *ngFor="let resp of resena.respuestas">
                   <div class="reply-header">
-                    <a class="user-profile-link" [routerLink]="['/perfil', resp.id_usuario || resp.idUsuario]">
+                    <a class="user-profile-link" [routerLink]="(resp.id_usuario || resp.idUsuario) === usuarioId ? ['/perfil'] : ['/perfil', resp.id_usuario || resp.idUsuario]">
                       <div class="avatar-tiny-ow" [class.no-photo]="(!resp.foto_usuario && !resp.fotoUsuario) || resp['avatarError']">
                         <img *ngIf="(resp.foto_usuario || resp.fotoUsuario) && !resp['avatarError']" [src]="resp.foto_usuario || resp.fotoUsuario" (error)="resp['avatarError'] = true" class="avatar-img">
                         <span *ngIf="(!resp.foto_usuario && !resp.fotoUsuario) || resp['avatarError']">{{ (resp.nombre_usuario || resp.nombreUsuario)?.charAt(0) }}</span>
                       </div>
                     </a>
                     <div class="reply-user-info">
-                      <a class="user-name-link" [routerLink]="['/perfil', resp.id_usuario || resp.idUsuario]">
+                      <a class="user-name-link" [routerLink]="(resp.id_usuario || resp.idUsuario) === usuarioId ? ['/perfil'] : ['/perfil', resp.id_usuario || resp.idUsuario]">
                         <span class="reply-user">{{ resp.nombre_usuario || resp.nombreUsuario }}</span>
                       </a>
                       <span class="reply-parent" *ngIf="resp.id_respuesta_padre">
