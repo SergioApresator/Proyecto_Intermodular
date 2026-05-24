@@ -6,6 +6,7 @@ SET NAMES 'utf8mb4';
 SET CHARACTER SET utf8mb4;
 
 SET FOREIGN_KEY_CHECKS = 0;
+SET UNIQUE_CHECKS = 0;
 
 DELETE FROM respuesta_voto;
 DELETE FROM resena_voto;
@@ -33,7 +34,6 @@ ALTER TABLE tag AUTO_INCREMENT = 1;
 ALTER TABLE genero AUTO_INCREMENT = 1;
 ALTER TABLE screenshot AUTO_INCREMENT = 1;
 
-SET FOREIGN_KEY_CHECKS = 1;
 
 -- =====================================================================
 -- 0. TABLA: videojuego (Juegos mockeados para evitar errores de FK)
@@ -55,10 +55,9 @@ INSERT INTO videojuego (ID, NAME, RATING, METACRITIC, RELEASED, BACKGROUND_IMAGE
 (3498, 'Grand Theft Auto V', 4.47, 97, '2013-09-17', 'assets/videojuegos/3498.jpg', 25000, 'Cuando un joven estafador callejero, un ladrón de bancos retirado y un psicópata aterrador se ven involucrados con lo peor del submundo criminal, el gobierno de EE. UU. y la industria del entretenimiento, deben llevar a cabo una serie de peligrosos golpes para sobrevivir en una ciudad despiadada en la que no pueden confiar en nadie, y mucho menos los unos en los otros en GTA V.'),
 (22121, 'Celeste', 4.3, 88, '2026-04-05', 'assets/videojuegos/22121.jpg', 11000, 'Ayuda a Madeline a sobrevivir a sus demonios internos en su viaje a la cima de la montaña Celeste, en este plataformas ultrapreciso de los creadores del clásico multijugador TowerFall. Una conmovedora historia de superación personal y salud mental acompañada de un apartado artístico sublime y una banda sonora inolvidable en Celeste.'),
 (5538, 'Dark Souls', 4.4, 89, '2011-09-22', 'assets/videojuegos/5538.jpg', 12000, 'Dark Souls es el nuevo juego de rol de acción de los creadores de Demon''s Souls. Prepárate para descubrir un universo oscuro y desolado con un diseño de niveles interconectado asombroso. Lucha con precisión quirúrgica, aprende de tus errores y supera desafíos insuperables para revivir la llama del mundo de Lordran.'),
-(654, 'Stardew Valley', 4.3, 89, '2016-02-26', 'assets/videojuegos/654.jpg', 14000, 'Heredaste la vieja parcela agrícola de tu abuelo en Stardew Valley. Armado con herramientas heredadas y unas pocas monedas, te dispones a comenzar tu nueva vida. ¿Podrás aprender a vivir de la tierra y convertir estos campos de maleza en un hogar próspero? Únete a la comunidad local y crea tu propia historia de tranquilidad.');
+(654, 'Stardew Valley', 4.3, 89, '2016-02-26', 'assets/videojuegos/654.jpg', 14000, 'Heredaste la vieja parcela agrícola de tu abuelo en Stardew Valley. Armado con herramientas heredadas y unas pocas monedas, te dispones a comenzar tu nueva vida. ¿Podrás aprender a vivir de la tierra y convertir estos campos de maleza en un hogar próspero? Únete a la comunidad local y crea tu propia historia de tranquilidad.'),
 
 -- NUEVOS VIDEOJUEGOS AÑADIDOS AUTOMÁTICAMENTE
-INSERT INTO videojuego (ID, NAME, RATING, METACRITIC, RELEASED, BACKGROUND_IMAGE, added_count, description) VALUES
 (12020, 'Left 4 Dead 2', 4.1, 89, '2009-11-17', 'assets/videojuegos/12020.jpg', 17510, 'Cooperative survival continues with a different set of characters. New survivors are making their way through 5 campaigns with an added ability to play through the story of the first game as well, using not only expanded arsenal of 20 ranged and 10 melee weapons but improved AI Director. Your surroundings and weather will change; enemy and item placement will differ from map to map, from difficulty to difficulty. New unique special zombies, placed in the unlucky for the player spot, can end your run.
 
 High compatibility with community mods will allow you not only to add user-created maps but player models, enemy models, and even in-game music, which will help any player to create the unique experience on top of solid game mechanics.
@@ -482,10 +481,9 @@ INSERT INTO videojuego_genero (videojuego_id, genero_id) VALUES
 (3498, 1), (3498, 2), (3498, 4),
 (22121, 6), (22121, 7),
 (5538, 3), (5538, 1),
-(654, 6), (654, 3);
+(654, 6), (654, 3),
 
 -- RELACIONES DE GÉNERO PARA NUEVOS VIDEOJUEGOS
-INSERT INTO videojuego_genero (videojuego_id, genero_id) VALUES
 (12020, 1),
 (12020, 4),
 (50734, 1),
@@ -583,10 +581,9 @@ INSERT INTO videojuego_plataforma (videojuego_id, plataforma_id) VALUES
 (3498, 1), (3498, 2), (3498, 3),
 (22121, 1), (22121, 2), (22121, 3), (22121, 4),
 (5538, 1), (5538, 2), (5538, 3), (5538, 4),
-(654, 1), (654, 2), (654, 3), (654, 4);
+(654, 1), (654, 2), (654, 3), (654, 4),
 
 -- RELACIONES DE PLATAFORMA PARA NUEVOS VIDEOJUEGOS
-INSERT INTO videojuego_plataforma (videojuego_id, plataforma_id) VALUES
 (12020, 3),
 (12020, 1),
 (50734, 3),
@@ -723,10 +720,9 @@ INSERT INTO videojuego_tag (videojuego_id, tag_id) VALUES
 (3498, 1), (3498, 2), (3498, 3),
 (22121, 1), (22121, 7),
 (5538, 1), (5538, 2), (5538, 10), (5538, 8),
-(654, 1), (654, 2);
+(654, 1), (654, 2),
 
 -- RELACIONES DE ETIQUETAS PARA NUEVOS VIDEOJUEGOS
-INSERT INTO videojuego_tag (videojuego_id, tag_id) VALUES
 (12020, 1),
 (12020, 2),
 (12020, 6),
@@ -1088,10 +1084,9 @@ INSERT INTO screenshot (ID, IMAGE, videojuego_id) VALUES
 (82, 'assets/videojuegos/screenshots/82.jpg', 654),
 (83, 'assets/videojuegos/screenshots/83.jpg', 654),
 (84, 'assets/videojuegos/screenshots/84.jpg', 654),
-(85, 'assets/videojuegos/screenshots/85.jpg', 654);
+(85, 'assets/videojuegos/screenshots/85.jpg', 654),
 
 -- CAPTURAS DE PANTALLA PARA NUEVOS VIDEOJUEGOS
-INSERT INTO screenshot (ID, IMAGE, videojuego_id) VALUES
 (86, 'assets/videojuegos/screenshots/86.jpg', 12020),
 (87, 'assets/videojuegos/screenshots/87.jpg', 12020),
 (88, 'assets/videojuegos/screenshots/88.jpg', 12020),
@@ -1268,4 +1263,8 @@ INSERT INTO screenshot (ID, IMAGE, videojuego_id) VALUES
 UPDATE resena SET REPORTES = 5 WHERE ID = 3;
 UPDATE resena SET REPORTES = 12 WHERE ID = 10;
 UPDATE resena SET REPORTES = 2 WHERE ID = 12;
+
+SET FOREIGN_KEY_CHECKS = 1;
+SET UNIQUE_CHECKS = 1;
+COMMIT;
 

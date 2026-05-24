@@ -24,6 +24,10 @@ La forma más sencilla de ejecutar la aplicación completa (Base de datos, Backe
 
 3. **¡Y listo!** La primera vez que el backend se inicie, detectará de forma inteligente que la base de datos está vacía y la poblará automáticamente con un conjunto de **datos premium de prueba** (usuarios ficticios, listas, reseñas detalladas con spoilers, hilos de comentarios y calificaciones). En reinicios posteriores, el sistema conservará tus datos sin duplicarlos ni borrarlos.
 
+> [!NOTE]  
+> **Primer arranque**: La primera vez que ejecutes el comando, la aplicación y la base de datos pueden tardar un poco más de lo habitual en responder (menos de 1 minuto) mientras el *DatabaseSeeder* inserta todos los datos iniciales de prueba en la base de datos.
+
+
 ---
 
 ## 🔗 Accesos Rápidos

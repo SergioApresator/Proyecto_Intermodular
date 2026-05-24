@@ -26,8 +26,15 @@ public class DatabaseSeeder implements CommandLineRunner {
         if (count == 0) {
             System.out.println("DatabaseSeeder: La base de datos está vacía. Sembrando datos de prueba...");
             try (Connection conn = dataSource.getConnection()) {
-                ScriptUtils.executeSqlScript(conn, new ClassPathResource("datos_de_prueba.sql"));
-                System.out.println("DatabaseSeeder: ¡Base de datos sembrada con éxito!");
+                conn.setAutoCommit(false);
+                try {
+                    ScriptUtils.executeSqlScript(conn, new ClassPathResource("datos_de_prueba.sql"));
+                    conn.commit();
+                    System.out.println("DatabaseSeeder: ¡Base de datos sembrada con éxito!");
+                } catch (Exception e) {
+                    conn.rollback();
+                    throw e;
+                }
             } catch (Exception e) {
                 System.err.println("DatabaseSeeder: Error al sembrar la base de datos: " + e.getMessage());
                 e.printStackTrace();
