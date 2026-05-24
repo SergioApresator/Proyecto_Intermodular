@@ -98,7 +98,7 @@
 
   <!-- BARRA DE ESTADÍSTICAS -->
   <div class="stats-ticker">
-    <div class="ticker-item"><span class="ticker-val">900K+</span> JUEGOS</div>
+    <div class="ticker-item"><span class="ticker-val">unos cuantos</span> JUEGOS</div>
     <div class="ticker-divider">/</div>
     <div class="ticker-item">JUEGA</div>
     <div class="ticker-divider">/</div>
@@ -148,9 +148,9 @@
             <div class="tile-overlay"></div>
             <span>TERROR</span>
           </div>
-          <div class="genre-tile strategy" [routerLink]="['/ver-todos/strategy']">
+          <div class="genre-tile platformer" [routerLink]="['/ver-todos/platformer']">
             <div class="tile-overlay"></div>
-            <span>ESTRATEGIA</span>
+            <span>PLATAFORMAS</span>
           </div>
           <div class="genre-tile shooter" [routerLink]="['/ver-todos/shooter']">
             <div class="tile-overlay"></div>
@@ -201,12 +201,16 @@
         <div *ngFor="let resena of resenasRecientes" class="activity-item" [routerLink]="['/juego', resena.id_videojuego]" style="cursor: pointer;">
 
           <div class="activity-user">
-            <div class="user-avatar" [class.no-photo]="!resena.fotoUsuario || resena['avatarError']">
-              <img *ngIf="resena.fotoUsuario && !resena['avatarError']" [src]="resena.fotoUsuario" (error)="resena['avatarError'] = true" alt="">
-              <span *ngIf="!resena.fotoUsuario || resena['avatarError']">{{ obtenerInicial(resena.nombreUsuario) }}</span>
-            </div>
+            <a class="user-profile-link" [routerLink]="resena.id_usuario === usuarioId ? ['/perfil'] : ['/perfil', resena.id_usuario]" (click)="$event.stopPropagation()">
+              <div class="user-avatar" [class.no-photo]="!resena.fotoUsuario || resena['avatarError']">
+                <img *ngIf="resena.fotoUsuario && !resena['avatarError']" [src]="resena.fotoUsuario" (error)="resena['avatarError'] = true" alt="">
+                <span *ngIf="!resena.fotoUsuario || resena['avatarError']">{{ obtenerInicial(resena.nombreUsuario) }}</span>
+              </div>
+            </a>
             <div class="user-info">
-              <span class="user-name">{{ resena.nombreUsuario }}</span>
+              <a class="user-name-link" [routerLink]="resena.id_usuario === usuarioId ? ['/perfil'] : ['/perfil', resena.id_usuario]" (click)="$event.stopPropagation()">
+                <span class="user-name">{{ resena.nombreUsuario }}</span>
+              </a>
               <span class="activity-time">{{ obtenerTiempoTranscurrido(resena.fechaResena) }}</span>
             </div>
           </div>

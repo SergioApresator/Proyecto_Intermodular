@@ -8,6 +8,9 @@ import com.ratemygame.datamodel.entities.Usuario;
 import com.ratemygame.datamodel.repositories.ListaRepository;
 import com.ratemygame.datamodel.repositories.UsuarioRepository;
 import com.ratemygame.dtos.ListaDTO;
+import com.ratemygame.datamodel.repositories.VideojuegoRepository;
+import com.ratemygame.datamodel.entities.Videojuego;
+import com.ratemygame.mapper.ListaMapper;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,12 +23,18 @@ public class ListaService {
     private ListaRepository listaRepository;
 
     @Autowired
+    private VideojuegoRepository videojuegoRepository;
+
+    @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private ListaMapper listaMapper;
 
     // Método para obtener todas las entradas de listas de un usuario.
     public List<ListaDTO> getListasByUsuario(Long usuarioId) {
         return listaRepository.findByUsuario_Id(usuarioId).stream()
-                .map(this::convertToDTO)
+                .map(listaMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -38,11 +47,13 @@ public class ListaService {
 
         Lista lista = new Lista();
         lista.setNombre(listaDTO.getNombre());
-        lista.setId_videojuego(listaDTO.getId_videojuego());
+        Videojuego videojuego = videojuegoRepository.findById(listaDTO.getId_videojuego())
+                .orElseThrow(() -> new RuntimeException("Videojuego no encontrado"));
+        lista.setVideojuego(videojuego);
         lista.setUsuario(usuarioOpt.get());
 
         Lista savedLista = listaRepository.save(lista);
-        return Optional.of(convertToDTO(savedLista));
+        return Optional.of(listaMapper.toDTO(savedLista));
     }
 
     // Método para eliminar una entrada de lista por su ID.
@@ -54,15 +65,4 @@ public class ListaService {
         return false;
     }
 
-    // Método para convertir una entidad Lista en su DTO de transferencia de datos.
-    private ListaDTO convertToDTO(Lista lista) {
-        ListaDTO dto = new ListaDTO();
-        dto.setId(lista.getId());
-        dto.setNombre(lista.getNombre());
-        dto.setId_videojuego(lista.getId_videojuego());
-        if (lista.getUsuario() != null) {
-            dto.setId_usuario(lista.getUsuario().getId());
-        }
-        return dto;
-    }
 }

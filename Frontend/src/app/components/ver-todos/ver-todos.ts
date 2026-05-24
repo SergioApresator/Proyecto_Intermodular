@@ -37,23 +37,23 @@ export class VerTodos implements OnInit {
     else if (this.genero === 'adventure') this.titulo = 'Aventura';
     else if (this.genero === 'sports') this.titulo = 'Deportes';
     else if (this.genero === 'indie') this.titulo = 'Indie';
+    else if (this.genero === 'platformer') this.titulo = 'Plataformas';
 
     //Carga la primera pagina
     this.cargarJuegos();
   }
 
   // Método para cargar los juegos de la página actual según el género o categoría seleccionada.
-  cargarJuegos() {
+  cargarJuegos(scrollTop = false) {
     this.cargando = true; this.cdr.detectChanges();
     if (this.genero === 'popular') {
       this.videojuegosServicio.getPopularesPaginados(this.paginaActual).subscribe({
         next: (respuesta: any) => {
-          //Añade los juegos nuevos a la lista existente
-          this.juegos = respuesta.results
-          //Si no hay siguiente pagina desactiva el boton
-          this.hayPaginaSiguiente = respuesta.next !== null;
+          this.juegos = respuesta.content || [];
+          this.hayPaginaSiguiente = !respuesta.last;
           this.cargando = false;
           this.cdr.detectChanges();
+          if (scrollTop) window.scrollTo(0, 0);
         },
         error: (err: any) => {
           console.log('Error al cargar juegos', err);
@@ -63,10 +63,11 @@ export class VerTodos implements OnInit {
     } else if (this.genero === 'proximos') {
       this.videojuegosServicio.getProximosPaginados(this.paginaActual).subscribe({
         next: (respuesta: any) => {
-          this.juegos = respuesta.results
-          this.hayPaginaSiguiente = respuesta.next !== null;
+          this.juegos = respuesta.content || [];
+          this.hayPaginaSiguiente = !respuesta.last;
           this.cargando = false;
           this.cdr.detectChanges();
+          if (scrollTop) window.scrollTo(0, 0);
         },
         error: (err: any) => {
           console.log('Error al cargar proximos lanzamientos', err);
@@ -76,10 +77,11 @@ export class VerTodos implements OnInit {
     } else {
       this.videojuegosServicio.getJuegosPaginados(this.genero, this.paginaActual).subscribe({
         next: (respuesta: any) => {
-          this.juegos = respuesta.results
-          this.hayPaginaSiguiente = respuesta.next !== null;
+          this.juegos = respuesta.content || [];
+          this.hayPaginaSiguiente = !respuesta.last;
           this.cargando = false;
           this.cdr.detectChanges();
+          if (scrollTop) window.scrollTo(0, 0);
         },
         error: (err: any) => {
           console.log('Error al cargar juegos', err);
@@ -89,21 +91,17 @@ export class VerTodos implements OnInit {
     }
   }
 
-  // Método para retroceder a la página anterior de juegos y desplazar la vista al inicio.
   paginaAnterior() {
     if (this.paginaActual > 1) {
       this.paginaActual--;
-      this.cargarJuegos();
-      window.scrollTo(0, 0);
+      this.cargarJuegos(true);
     }
   }
 
-  // Método para avanzar a la siguiente página de juegos y desplazar la vista al inicio.
   paginaSiguiente() {
     if (this.hayPaginaSiguiente) {
       this.paginaActual++;
-      this.cargarJuegos();
-      window.scrollTo(0, 0);
+      this.cargarJuegos(true);
     }
   }
 }

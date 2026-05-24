@@ -342,11 +342,13 @@
 
 
 <!-- Modal de Confirmación Genérico -->
-<app-confirm-modal 
+<app-confirm-modal
   [visible]="modalConfirmacionVisible"
   [title]="modalConfirmacionConfig.titulo"
   [message]="modalConfirmacionConfig.mensaje"
   [type]="modalConfirmacionConfig.tipo"
+  [confirmText]="modalConfirmacionConfig.confirmText"
+  [cancelText]="modalConfirmacionConfig.cancelText"
   (onConfirm)="ejecutarConfirmacion()"
   (onCancel)="cancelarConfirmacion()">
 </app-confirm-modal>

@@ -21,4 +21,6 @@ public class ResenaDTO {
     private String fotoVideojuego;
     private Boolean votoUsuarioActual; // true = me gusta, false = no me gusta, null = no ha votado
     private Boolean revisada;
+    private Integer reportes;
+    private Boolean reportadoPorUsuarioActual; // true = ya reportada por el usuario actual
 }

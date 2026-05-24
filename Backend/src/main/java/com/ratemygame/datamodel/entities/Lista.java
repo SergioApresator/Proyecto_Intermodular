@@ -34,6 +34,7 @@ public class Lista {
     foreignKey=@ForeignKey(value = ConstraintMode.CONSTRAINT, name = "FK_LISTA_USUARIO"))
     private Usuario usuario;
 
-    @Column(name = "ID_VIDEOJUEGO")
-    private Long id_videojuego;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "ID_VIDEOJUEGO", referencedColumnName = "ID")
+    private Videojuego videojuego;
 }

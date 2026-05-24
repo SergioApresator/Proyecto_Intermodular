@@ -105,6 +105,22 @@ public class UsuarioController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // Endpoint para alternar el rol de administrador de un usuario. Exclusivo para ADMIN.
+    @PutMapping("/{id}/toggle-admin")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> toggleAdmin(
+            @PathVariable Long id,
+            @org.springframework.security.core.annotation.AuthenticationPrincipal com.ratemygame.config.CustomUserDetails userDetails) {
+        if (userDetails != null && id.equals(userDetails.getUsuario().getId())) {
+            return ResponseEntity.badRequest().body("No puedes quitarte el rol de administrador a ti mismo.");
+        }
+        return usuarioService.toggleAdmin(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+
+
     // Borra un usuario. Mismas restricciones: dueño del perfil o ADMIN.
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or (principal instanceof T(com.ratemygame.config.CustomUserDetails) and #id == principal.usuario.id)")
@@ -115,7 +131,7 @@ public class UsuarioController {
         return ResponseEntity.notFound().build();
     }
 
-    // Sube la foto de perfil en disco y guarda la URL en la base de datos.
+    // Sube la foto de perfil y la guarda directamente en la base de datos (BLOB).
     @PostMapping(value = "/{id}/foto", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("isAnonymous() or hasRole('ADMIN') or (principal instanceof T(com.ratemygame.config.CustomUserDetails) and #id == principal.usuario.id)")
     public ResponseEntity<UsuarioDTO> subirFotoPerfil(
@@ -134,37 +150,17 @@ public class UsuarioController {
         }
 
         try {
-            // Crear directorio si no existe
-            Path uploadPath = Paths.get(uploadDir);
-            Files.createDirectories(uploadPath);
-
-            // Generar nombre único para evitar colisiones
-            String originalFilename = file.getOriginalFilename();
-            String extension = (originalFilename != null && originalFilename.contains("."))
-                    ? originalFilename.substring(originalFilename.lastIndexOf("."))
-                    : ".jpg";
-            String uniqueFilename = "usuario_" + id + "_" + UUID.randomUUID().toString().substring(0, 8) + extension;
-
-            // Guardar el archivo en disco
-            Path filePath = uploadPath.resolve(uniqueFilename);
-            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-            // Construir la URL pública de acceso
-            String fotoUrl = "http://localhost:9999/uploads/fotos-perfil/" + uniqueFilename;
-
-
-
-            // Actualizar foto_url del usuario en la BD
-            return usuarioService.actualizarFotoUrl(id, fotoUrl)
+            // Guardar los bytes directamente en la BD
+            byte[] bytes = file.getBytes();
+            return usuarioService.actualizarFotoDatos(id, bytes, contentType)
                     .map(ResponseEntity::ok)
                     .orElse(ResponseEntity.notFound().build());
-
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    // Sube la imagen de banner del perfil. Mismo flujo de registro/seguridad que la foto.
+    // Sube la imagen de banner del perfil y la guarda directamente en la base de datos (BLOB).
     @PostMapping(value = "/{id}/banner", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("isAnonymous() or hasRole('ADMIN') or (principal instanceof T(com.ratemygame.config.CustomUserDetails) and #id == principal.usuario.id)")
     public ResponseEntity<UsuarioDTO> subirBanner(
@@ -181,36 +177,21 @@ public class UsuarioController {
         }
 
         try {
-            Path uploadPath = Paths.get(uploadDir);
-            Files.createDirectories(uploadPath);
-
-            String originalFilename = file.getOriginalFilename();
-            String extension = (originalFilename != null && originalFilename.contains("."))
-                    ? originalFilename.substring(originalFilename.lastIndexOf("."))
-                    : ".jpg";
-            String uniqueFilename = "banner_" + id + "_" + UUID.randomUUID().toString().substring(0, 8) + extension;
-
-            Path filePath = uploadPath.resolve(uniqueFilename);
-            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-            String bannerUrl = "http://localhost:9999/uploads/fotos-perfil/" + uniqueFilename;
-
-
-
-            return usuarioService.actualizarBannerUrl(id, bannerUrl)
+            // Guardar los bytes directamente en la BD
+            byte[] bytes = file.getBytes();
+            return usuarioService.actualizarBannerDatos(id, bytes, contentType)
                     .map(ResponseEntity::ok)
                     .orElse(ResponseEntity.notFound().build());
-
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    // Resetea la foto de perfil del usuario (la borra lógicamente poniendo la URL a null)
+    // Resetea la foto de perfil del usuario (borra los datos binarios en la BD)
     @DeleteMapping("/{id}/foto")
     @PreAuthorize("hasRole('ADMIN') or (principal instanceof T(com.ratemygame.config.CustomUserDetails) and #id == principal.usuario.id)")
     public ResponseEntity<UsuarioDTO> resetearFotoPerfil(@PathVariable Long id) {
-        return usuarioService.actualizarFotoUrl(id, null)
+        return usuarioService.actualizarFotoDatos(id, null, null)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -219,18 +200,44 @@ public class UsuarioController {
     @GetMapping("/buscar")
     public ResponseEntity<List<UsuarioDTO>> buscarUsuarios(@RequestParam(required = false) String username,
             @RequestParam(required = false) String query) {
-        if (query != null) {
+        if (query != null && !query.trim().isEmpty()) {
             return ResponseEntity.ok(usuarioService.buscarUsuariosGeneral(query));
         }
-        return ResponseEntity.ok(usuarioService.buscarPorUsername(username != null ? username : ""));
+        if (username != null && !username.trim().isEmpty()) {
+            return ResponseEntity.ok(usuarioService.buscarPorUsername(username));
+        }
+        // Si no se especifica un término de búsqueda válido, se devuelven todos los usuarios
+        return ResponseEntity.ok(usuarioService.getAllUsuarios());
     }
 
-    // Resetea el banner de perfil a null
+    // Resetea el banner de perfil a null (borra los datos binarios en la BD)
     @DeleteMapping("/{id}/banner")
     @PreAuthorize("hasRole('ADMIN') or (principal instanceof T(com.ratemygame.config.CustomUserDetails) and #id == principal.usuario.id)")
     public ResponseEntity<UsuarioDTO> resetearBanner(@PathVariable Long id) {
-        return usuarioService.actualizarBannerUrl(id, null)
+        return usuarioService.actualizarBannerDatos(id, null, null)
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
+    }
+
+    // Endpoint para servir la foto de perfil en binario desde la base de datos.
+    @GetMapping("/{id}/foto")
+    public ResponseEntity<byte[]> getFotoPerfil(@PathVariable Long id) {
+        return usuarioService.getUsuarioEntityById(id)
+                .filter(u -> u.getFotoDatos() != null)
+                .map(u -> ResponseEntity.ok()
+                        .contentType(MediaType.parseMediaType(u.getFotoContentType() != null ? u.getFotoContentType() : "image/jpeg"))
+                        .body(u.getFotoDatos()))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // Endpoint para servir el banner de portada en binario desde la base de datos.
+    @GetMapping("/{id}/banner")
+    public ResponseEntity<byte[]> getBanner(@PathVariable Long id) {
+        return usuarioService.getUsuarioEntityById(id)
+                .filter(u -> u.getBannerDatos() != null)
+                .map(u -> ResponseEntity.ok()
+                        .contentType(MediaType.parseMediaType(u.getBannerContentType() != null ? u.getBannerContentType() : "image/jpeg"))
+                        .body(u.getBannerDatos()))
+                .orElse(ResponseEntity.notFound().build());
     }
 }

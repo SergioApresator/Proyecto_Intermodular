@@ -50,15 +50,18 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 // --- ENDPOINTS PÚBLICOS ---
+                .requestMatchers(HttpMethod.GET, "/api/games", "/api/games/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/usuarios/buscar").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/usuarios/*").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/api/usuarios/*").permitAll()
                 .requestMatchers("/api/usuarios/login").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll()
                 
-                // Permitimos subida anónima de fotos/banners solo en el registro
+                // Permitimos subida y descarga de fotos/banners
                 .requestMatchers(HttpMethod.POST, "/api/usuarios/*/foto").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/usuarios/*/banner").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/usuarios/*/foto").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/usuarios/*/banner").permitAll()
                 
                 // Lectura pública de perfiles, reseñas, respuestas y listas
                 .requestMatchers(HttpMethod.GET, "/api/listas/usuario/**").permitAll()

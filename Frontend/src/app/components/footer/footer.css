@@ -1,9 +1,8 @@
 footer {
     background-color: #ffffff;
-    color: #444;
-    padding: 40px 5%;
-    border-top: 4px solid #f0f0f0;
-    text-align: center;
+    color: #1e293b;
+    padding: 48px 5% 32px;
+    border-top: 4px solid #3b82f6;
     font-family: 'Rajdhani', sans-serif;
 }
 
@@ -11,44 +10,111 @@ footer {
     max-width: 1200px;
     margin: 0 auto;
     display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 40px;
+}
+
+/* Columna izquierda */
+.footer-brand {
+    display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 10px;
+    max-width: 320px;
 }
 
-.footer-logo {
-    height: 40px;
-    margin-bottom: 10px;
-}
-
-.footer-text {
-    font-size: 1.1rem;
+.footer-logo-text {
     font-family: 'Bebas Neue', sans-serif;
-    letter-spacing: 2px;
-    color: #888;
+    font-size: 2.2rem;
+    letter-spacing: 5px;
+    color: #1e293b;
+    line-height: 1;
 }
 
-.footer-divider {
-    width: 50px;
+.footer-logo-text::after {
+    content: '';
+    display: block;
+    width: 36px;
     height: 4px;
+    background: #f99e1a;
+    margin-top: 10px;
+}
+
+.footer-desc {
+    font-size: 1rem;
+    color: #64748b;
+    line-height: 1.6;
+    letter-spacing: 0.3px;
+    font-weight: 600;
+    margin-top: 4px;
+}
+
+.footer-copy {
+    font-size: 0.82rem;
+    color: #94a3b8;
+    letter-spacing: 1px;
+    margin-top: 4px;
+}
+
+/* Columna derecha */
+.footer-links-col {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-end;
+}
+
+.footer-col-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 4px;
+    color: #1e293b;
+    margin-bottom: 6px;
+    position: relative;
+    padding-bottom: 12px;
+}
+
+.footer-col-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 32px;
+    height: 3px;
     background: #3b82f6;
-    margin: 10px auto;
+}
+
+.footer-link {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #64748b;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.footer-link:hover {
+    color: #3b82f6;
 }
 
 @media (max-width: 768px) {
     footer {
-        padding: 25px 5%;
-    }
-
-    .footer-text {
-        font-size: 0.9rem;
-        letter-spacing: 1px;
-    }
-
-    .footer-divider {
-        margin: 6px auto;
+        padding: 32px 5% 24px;
     }
 
     .footer-content {
-        gap: 8px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 28px;
+    }
+
+    .footer-links-col {
+        align-items: flex-start;
+    }
+
+    .footer-col-title::after {
+        right: auto;
+        left: 0;
     }
 }

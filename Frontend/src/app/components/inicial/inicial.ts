@@ -31,9 +31,12 @@ export class Inicial implements OnInit, OnDestroy {
   intervaloCarrusel: any = null;
   juegoSpotlight: any = null;
   anioActual: number = new Date().getFullYear();
+  usuarioId: number | null = null;
 
   // Método para inicializar el componente y lanzar la carga de datos de la página principal.
   ngOnInit() {
+    const uid = localStorage.getItem('usuarioId');
+    if (uid) this.usuarioId = parseInt(uid, 10);
     this.cargarDatosIniciales();
   }
 
@@ -51,7 +54,7 @@ export class Inicial implements OnInit, OnDestroy {
     // 1. Juegos Tendencia (para Spotlight)
     this.videojuegosServicio.getTrendingLast30Days().subscribe({
       next: (resp) => {
-        const tendencia = resp.results;
+        const tendencia = resp.content || resp;
         if (tendencia.length > 0) {
           this.juegosDestacados = tendencia.slice(0, 5);
           this.indiceCarrusel = 0;
@@ -69,7 +72,11 @@ export class Inicial implements OnInit, OnDestroy {
     // 2. Mejores del Año
     this.videojuegosServicio.getBestGamesOfYear().subscribe({
       next: (resp) => {
-        this.mejoresDelAnio = resp.results;
+        this.mejoresDelAnio = resp.content || resp;
+        this.verificarCargaCompleta();
+      },
+      error: (err) => {
+        console.error("Error cargando mejores del año:", err);
         this.verificarCargaCompleta();
       }
     });
@@ -77,7 +84,11 @@ export class Inicial implements OnInit, OnDestroy {
     // 3. Próximos Lanzamientos
     this.videojuegosServicio.getProximosLanzamientos().subscribe({
       next: (resp) => {
-        this.proximosLanzamientos = resp.results;
+        this.proximosLanzamientos = resp.content || resp;
+        this.verificarCargaCompleta();
+      },
+      error: (err) => {
+        console.error("Error cargando próximos lanzamientos:", err);
         this.verificarCargaCompleta();
       }
     });
@@ -86,6 +97,10 @@ export class Inicial implements OnInit, OnDestroy {
     this.resenasServicio.getResenasRecientes().subscribe({
       next: (resp) => {
         this.resenasRecientes = resp;
+        this.verificarCargaCompleta();
+      },
+      error: (err) => {
+        console.error("Error cargando reseñas recientes:", err);
         this.verificarCargaCompleta();
       }
     });

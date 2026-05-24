@@ -58,7 +58,7 @@
   <!-- BANNER HERO -->
   <div class="juego-hero">
     <div class="hero-bg-wrapper">
-      <img *ngIf="juego.background_image && !juego['imgError']" [src]="juego.background_image" class="hero-bg-img" alt="Background" (error)="juego['imgError'] = true">
+      <img *ngIf="juego.background_image && !juego['imgError']" [src]="juego.background_image + '?v=1.0.1'" class="hero-bg-img" alt="Background" (error)="juego['imgError'] = true">
       <div *ngIf="!juego.background_image || juego['imgError']" class="game-image-placeholder dark-vignette"></div>
       <div class="hero-vignette"></div>
     </div>
@@ -197,7 +197,7 @@
           <div class="accent"></div>
           <h2>DESCRIPCIÓN OPERATIVA</h2>
         </div>
-        <div class="ow-text-content" [innerHTML]="descripcionSegura"></div>
+        <div class="ow-text-content">{{ juego.description }}</div>
       </div>
 
       <!-- DETALLES TÉCNICOS (MOVIDO ABAJO) -->
@@ -224,18 +224,9 @@
             <div class="t-value">{{ juego.publishers[0]?.name }}</div>
           </div>
 
-          <div class="tech-item links">
-            <span class="t-label">ENLACES EXTERNOS</span>
-            <div class="links-row">
-              <a *ngIf="juego.website" [href]="juego.website" target="_blank" class="ow-link-btn">SITIO OFICIAL</a>
-              <a *ngIf="juego.reddit_url" [href]="juego.reddit_url" target="_blank" class="ow-link-btn">REDDIT</a>
-            </div>
-          </div>
-        </div>
-
         <!-- ETIQUETAS A ANCHO COMPLETO AL FINAL -->
         <div class="tags-full-width">
-          <span class="t-label">ETIQUETAS DEL SISTEMA</span>
+          <span class="t-label">ETIQUETAS</span>
           <div class="t-tags sm">
             <span *ngFor="let t of tagsJuego" class="t-tag grey">{{ t.name }}</span>
           </div>
@@ -257,11 +248,15 @@
           <div class="ow-review-card" *ngFor="let resena of resenas">
             <div class="review-side">
               <div class="user-id-box">
-                <div class="avatar-mini-ow" [class.no-photo]="!resena.fotoUsuario || resena['avatarError']">
-                  <img *ngIf="resena.fotoUsuario && !resena['avatarError']" [src]="resena.fotoUsuario" (error)="resena['avatarError'] = true" class="avatar-img">
-                  <span *ngIf="!resena.fotoUsuario || resena['avatarError']">{{ resena.nombreUsuario?.charAt(0) || '?' }}</span>
-                </div>
-                <div class="user-name">{{ resena.nombreUsuario || 'ANÓNIMO' }}</div>
+                <a class="user-profile-link" [routerLink]="resena.id_usuario === usuarioId ? ['/perfil'] : ['/perfil', resena.id_usuario]">
+                  <div class="avatar-mini-ow" [class.no-photo]="!resena.fotoUsuario || resena['avatarError']">
+                    <img *ngIf="resena.fotoUsuario && !resena['avatarError']" [src]="resena.fotoUsuario" (error)="resena['avatarError'] = true" class="avatar-img">
+                    <span *ngIf="!resena.fotoUsuario || resena['avatarError']">{{ resena.nombreUsuario?.charAt(0) || '?' }}</span>
+                  </div>
+                </a>
+                <a class="user-name-link" [routerLink]="resena.id_usuario === usuarioId ? ['/perfil'] : ['/perfil', resena.id_usuario]">
+                  <div class="user-name">{{ resena.nombreUsuario || 'ANÓNIMO' }}</div>
+                </a>
               </div>
               <div class="review-score">
                 <div class="stars-ow">
@@ -314,6 +309,12 @@
                     <svg viewBox="0 0 24 24" class="v-icon"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L8.83 23l6.59-6.59c.37-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/></svg>
                     <span>{{ resena.no_me_gustas ?? resena.noMeGustas ?? 0 }}</span>
                   </button>
+                  <button class="vote-btn report-review-btn" [class.active]="resena.reportadoPorUsuarioActual" *ngIf="usuarioId && resena.id_usuario !== usuarioId" (click)="reportarResena(resena)" [title]="resena.reportadoPorUsuarioActual ? 'Retirar reporte' : 'Reportar reseña'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="v-icon report-icon">
+                      <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+                      <line x1="4" y1="22" x2="4" y2="15"></line>
+                    </svg>
+                  </button>
                 </div>
                 <button class="toggle-replies-btn" (click)="toggleRespuestas(resena)">
                   {{ resena.mostrarRespuestas ? 'OCULTAR RESPUESTAS' : 'MOSTRAR RESPUESTAS (' + (resena.respuestas?.length || 0) + ')' }}
@@ -324,14 +325,23 @@
               <div class="replies-container-ow" *ngIf="resena.mostrarRespuestas">
                 <div class="reply-card-ow" *ngFor="let resp of resena.respuestas">
                   <div class="reply-header">
-                    <div class="avatar-tiny-ow" [class.no-photo]="(!resp.foto_usuario && !resp.fotoUsuario) || resp['avatarError']">
-                      <img *ngIf="(resp.foto_usuario || resp.fotoUsuario) && !resp['avatarError']" [src]="resp.foto_usuario || resp.fotoUsuario" (error)="resp['avatarError'] = true" class="avatar-img">
-                      <span *ngIf="(!resp.foto_usuario && !resp.fotoUsuario) || resp['avatarError']">{{ (resp.nombre_usuario || resp.nombreUsuario)?.charAt(0) }}</span>
-                    </div>
+                    <a class="user-profile-link" [routerLink]="(resp.id_usuario || resp.idUsuario) === usuarioId ? ['/perfil'] : ['/perfil', resp.id_usuario || resp.idUsuario]">
+                      <div class="avatar-tiny-ow" [class.no-photo]="(!resp.foto_usuario && !resp.fotoUsuario) || resp['avatarError']">
+                        <img *ngIf="(resp.foto_usuario || resp.fotoUsuario) && !resp['avatarError']" [src]="resp.foto_usuario || resp.fotoUsuario" (error)="resp['avatarError'] = true" class="avatar-img">
+                        <span *ngIf="(!resp.foto_usuario && !resp.fotoUsuario) || resp['avatarError']">{{ (resp.nombre_usuario || resp.nombreUsuario)?.charAt(0) }}</span>
+                      </div>
+                    </a>
                     <div class="reply-user-info">
-                      <span class="reply-user">{{ resp.nombre_usuario || resp.nombreUsuario }}</span>
+                      <a class="user-name-link" [routerLink]="(resp.id_usuario || resp.idUsuario) === usuarioId ? ['/perfil'] : ['/perfil', resp.id_usuario || resp.idUsuario]">
+                        <span class="reply-user">{{ resp.nombre_usuario || resp.nombreUsuario }}</span>
+                      </a>
                       <span class="reply-parent" *ngIf="resp.id_respuesta_padre">
-                        en respuesta a <strong>{{ getNombrePadre(resena, resp.id_respuesta_padre) }}</strong>
+                        <ng-container *ngIf="getNombrePadre(resena, resp.id_respuesta_padre) as nombrePadre; else padreEliminado">
+                          en respuesta a <strong>{{ nombrePadre }}</strong>
+                        </ng-container>
+                        <ng-template #padreEliminado>
+                          <em>El mensaje al que se ha respondido ha sido eliminado por el autor</em>
+                        </ng-template>
                       </span>
                     </div>
                     <span class="reply-date">{{ (resp.fecha_respuesta || resp.fechaRespuesta) | date:'dd.MM.yyyy HH:mm' }}</span>
@@ -389,7 +399,7 @@
   <div class="ow-modal-premium" (click)="$event.stopPropagation()">
     
     <!-- LEFT SIDE: VISUAL -->
-    <div class="modal-visual" [style.backgroundImage]="juego.background_image ? 'url(' + juego.background_image + ')' : 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'">
+    <div class="modal-visual" [style.backgroundImage]="juego.background_image ? 'url(' + juego.background_image + '?v=1.0.1)' : 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'">
       <div class="visual-overlay"></div>
       <div class="visual-content">
         <span class="visual-tag">NUEVA RESEÑA</span>
@@ -451,7 +461,7 @@
   <div class="ow-modal-lists-ultra" (click)="$event.stopPropagation()">
     
     <!-- IZQUIERDA: DISEÑO TEMÁTICO VISUAL -->
-    <div class="lists-visual" [style.backgroundImage]="juego.background_image ? 'url(' + juego.background_image + ')' : 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'">
+    <div class="lists-visual" [style.backgroundImage]="juego.background_image ? 'url(' + juego.background_image + '?v=1.0.1)' : 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'">
       <div class="lists-visual-overlay"></div>
       <div class="lists-visual-content">
         <span class="ultra-tag">GESTOR DE COLECCIONES</span>
@@ -528,6 +538,8 @@
   [title]="modalConfirmacionConfig.titulo"
   [message]="modalConfirmacionConfig.mensaje"
   [type]="modalConfirmacionConfig.tipo"
+  [cancelText]="modalConfirmacionConfig.cancelText"
+  [confirmText]="modalConfirmacionConfig.confirmText"
   (onConfirm)="ejecutarConfirmacion()"
   (onCancel)="cancelarConfirmacion()">
 </app-confirm-modal>

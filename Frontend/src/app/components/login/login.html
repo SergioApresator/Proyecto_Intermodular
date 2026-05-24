@@ -58,3 +58,16 @@
     </div>
 
 </div>
+
+<!-- Modal de error con botón único (cancelText vacío oculta el botón de cancelar) -->
+<app-confirm-modal [visible]="modalErrorVisible" 
+                   [title]="modalErrorConfig.titulo"
+                   [message]="modalErrorConfig.mensaje" 
+                   [type]="modalErrorConfig.tipo" 
+                   [confirmText]="'ACEPTAR'"
+                   [cancelText]="''"
+                   (onConfirm)="cerrarModalError()"
+                   (onCancel)="cerrarModalError()">
+</app-confirm-modal>
+
+
