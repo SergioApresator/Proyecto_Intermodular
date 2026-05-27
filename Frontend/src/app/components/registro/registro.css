@@ -715,3 +715,11 @@
 .btn-oauth-google:hover .google-icon {
     transform: scale(1.1) rotate(5deg);
 }
+
+.google-signin-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 15px 0;
+}

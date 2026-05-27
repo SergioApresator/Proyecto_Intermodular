@@ -29,7 +29,12 @@ export const appConfig: ApplicationConfig = {
         providers: [
           {
             id: GoogleLoginProvider.PROVIDER_ID,
-            provider: new GoogleLoginProvider('282069571764-nvt8lsn47d4ci8gdq54malt2qgvpi81a.apps.googleusercontent.com')
+            provider: new GoogleLoginProvider(
+              '282069571764-nvt8lsn47d4ci8gdq54malt2qgvpi81a.apps.googleusercontent.com',
+              {
+                oneTapEnabled: false
+              }
+            )
           }
         ],
         onError: (err) => {

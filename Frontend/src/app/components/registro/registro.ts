@@ -3,12 +3,12 @@ import { ReactiveFormsModule, FormControl, FormGroup, Validators, AbstractContro
 import { Router, RouterLink } from '@angular/router';
 import { Usuarios } from '../../services/usuarios';
 import { CommonModule } from '@angular/common';
-import { SocialAuthService, GoogleLoginProvider } from '@abacritt/angularx-social-login';
+import { SocialAuthService, GoogleLoginProvider, GoogleSigninButtonModule } from '@abacritt/angularx-social-login';
 
 @Component({
   selector: 'app-registro',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, CommonModule],
+  imports: [ReactiveFormsModule, RouterLink, CommonModule, GoogleSigninButtonModule],
   templateUrl: './registro.html',
   styleUrl: './registro.css',
 })
@@ -50,6 +50,12 @@ export class Registro implements OnInit {
                   localStorage.setItem('esAdmin', 'true');
                 } else {
                   localStorage.removeItem('esAdmin');
+                }
+                const oauthProv = usuarioEncontrado.oauthProvider || usuarioEncontrado.oauth_provider;
+                if (oauthProv) {
+                  localStorage.setItem('oauthProvider', oauthProv);
+                } else {
+                  localStorage.removeItem('oauthProvider');
                 }
               }
               this.usuariosServicio.notificarCambioPerfil();
@@ -272,12 +278,5 @@ export class Registro implements OnInit {
     if (nom && nom.trim()) initials += nom.trim().charAt(0);
     if (ape && ape.trim()) initials += ape.trim().charAt(0);
     return initials ? initials.toUpperCase() : 'RM';
-  }
-
-  // Desencadena el inicio de sesión emergente de Google
-  loginGoogle() {
-    this.socialAuthService.signIn(GoogleLoginProvider.PROVIDER_ID).catch(err => {
-      console.error('Error al iniciar flujo con Google:', err);
-    });
   }
 }

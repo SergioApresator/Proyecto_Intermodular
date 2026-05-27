@@ -3,12 +3,12 @@ import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angula
 import { Router, RouterLink } from '@angular/router';
 import { Usuarios } from '../../services/usuarios';
 import { ConfirmModal } from '../confirm-modal/confirm-modal.component';
-import { SocialAuthService, GoogleLoginProvider } from '@abacritt/angularx-social-login';
+import { SocialAuthService, GoogleLoginProvider, GoogleSigninButtonModule } from '@abacritt/angularx-social-login';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, ConfirmModal],
+  imports: [ReactiveFormsModule, RouterLink, ConfirmModal, GoogleSigninButtonModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
@@ -122,13 +122,6 @@ export class Login implements OnInit {
     }
   }
 
-  // Desencadena el inicio de sesión emergente de Google
-  loginGoogle() {
-    this.socialAuthService.signIn(GoogleLoginProvider.PROVIDER_ID).catch(err => {
-      console.error('Error al iniciar flujo con Google:', err);
-    });
-  }
-
 
   // Guardado de la información de la sesion en localStorage
   private guardarSesionYRedirigir(usuarioEncontrado: any) {
@@ -152,6 +145,12 @@ export class Login implements OnInit {
         localStorage.setItem('esAdmin', 'true');
       } else {
         localStorage.removeItem('esAdmin');
+      }
+      const oauthProv = usuarioEncontrado.oauthProvider || usuarioEncontrado.oauth_provider;
+      if (oauthProv) {
+        localStorage.setItem('oauthProvider', oauthProv);
+      } else {
+        localStorage.removeItem('oauthProvider');
       }
     }
     this.router.navigate(['/inicial']);
