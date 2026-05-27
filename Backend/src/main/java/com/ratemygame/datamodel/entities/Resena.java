@@ -50,6 +50,9 @@ public class Resena {
     @Column(name = "NO_ME_GUSTAS")
     private Integer noMeGustas;
 
+    @Column(name = "HORAS_JUGADAS")
+    private Integer horasJugadas;
+
     @Column(name = "FECHA_RESENA")
     private LocalDateTime fechaResena;
 

@@ -57,7 +57,8 @@ export class JuegoDetalle implements OnInit, OnDestroy {
   nuevaResena = {
     puntuacion: 5,
     mensaje: '',
-    tieneSpoiler: false
+    tieneSpoiler: false,
+    horasJugadas: null as number | null
   };
   mensajeLogin: string = '';
 
@@ -459,7 +460,7 @@ export class JuegoDetalle implements OnInit, OnDestroy {
   // Método para cerrar el modal de reseña y resetear el formulario de nueva reseña.
   cerrarModalResena() {
     this.mostrarModalResena = false;
-    this.nuevaResena = { puntuacion: 5, mensaje: '', tieneSpoiler: false };
+    this.nuevaResena = { puntuacion: 5, mensaje: '', tieneSpoiler: false, horasJugadas: null };
   }
   // Método para enviar una nueva reseña del juego y añadirla al principio de la lista.
   enviarResena() {

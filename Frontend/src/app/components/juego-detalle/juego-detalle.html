@@ -262,6 +262,9 @@
                 <div class="stars-ow">
                   <span *ngFor="let _ of [].constructor(resena.puntuacion)">⭐</span>
                 </div>
+                <div class="review-hours" *ngIf="resena.horasJugadas !== null && resena.horasJugadas !== undefined">
+                  <span class="hours-badge">{{ resena.horasJugadas }}H JUGADAS</span>
+                </div>
               </div>
             </div>
             
@@ -436,6 +439,14 @@
         </div>
 
 
+      </div>
+
+      <div class="ow-form-row-modern">
+        <label>HORAS JUGADAS</label>
+        <div class="textarea-wrapper">
+          <input type="number" [(ngModel)]="nuevaResena.horasJugadas" placeholder="Ej. 120" min="0" max="99999" class="ow-numeric-input">
+          <div class="textarea-border"></div>
+        </div>
       </div>
 
       <div class="ow-form-row-modern checkbox-tactical">

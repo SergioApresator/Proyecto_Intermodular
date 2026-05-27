@@ -324,10 +324,10 @@
 /* REVIEWS */
 .ow-review-card { display: grid; grid-template-columns: 220px 1fr; border-bottom: 1px solid #f1f5f9; }
 .review-side { padding: 30px; background: #f8fafc; display: flex; flex-direction: column; align-items: center; gap: 15px; border-right: 1px solid #e2e8f0; }
-.user-id-box { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; gap: 5px; }
+.user-id-box { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; gap: 5px; max-width: 160px; margin: 0 auto; }
 .avatar-mini-ow { width: 70px; height: 70px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; overflow: hidden; position: relative; border: 2px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
 .avatar-img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.user-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; text-align: center; color: #1e293b; margin-top: 5px; }
+.user-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; text-align: center; color: #1e293b; margin-top: 5px; max-width: 100%; word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; }
 .review-main { padding: 30px; position: relative; min-width: 0; }
 
 .review-body {
@@ -1841,4 +1841,57 @@
         font-size: 1.4rem;
         padding: 14px 35px;
     }
+}
+
+/* CUSTOM HOUR BADGE & REVIEW FORM NUMERIC INPUT */
+.review-hours {
+    margin-top: 8px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.hours-badge {
+    background: rgba(249, 158, 26, 0.1);
+    color: #f99e1a;
+    border: 1px solid rgba(249, 158, 26, 0.3);
+    padding: 4px 10px;
+    font-size: 0.85rem;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    box-shadow: 0 0 10px rgba(249, 158, 26, 0.05);
+    text-transform: uppercase;
+    transition: all 0.2s ease;
+}
+
+.hours-badge:hover {
+    background: rgba(249, 158, 26, 0.18);
+    border-color: rgba(249, 158, 26, 0.6);
+    box-shadow: 0 0 15px rgba(249, 158, 26, 0.15);
+    transform: translateY(-1px);
+}
+
+.textarea-wrapper input[type="number"] {
+    width: 100%;
+    height: 48px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 0 20px;
+    font-family: inherit;
+    font-size: 1.1rem;
+    color: #1e293b;
+    outline: none;
+    transition: background-color 0.2s;
+}
+
+.textarea-wrapper input[type="number"]:focus {
+    background: white;
+}
+
+.textarea-wrapper input[type="number"]:focus + .textarea-border {
+    width: 100%;
 }

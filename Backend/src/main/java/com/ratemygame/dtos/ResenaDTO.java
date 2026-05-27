@@ -23,4 +23,5 @@ public class ResenaDTO {
     private Boolean revisada;
     private Integer reportes;
     private Boolean reportadoPorUsuarioActual; // true = ya reportada por el usuario actual
+    private Integer horasJugadas;
 }

@@ -104,6 +104,7 @@ public class ResenaService {
                 .orElseThrow(() -> new RuntimeException("Videojuego no encontrado"));
         resena.setVideojuego(videojuego);
         resena.setUsuario(usuarioOpt.get());
+        resena.setHorasJugadas(resenaDTO.getHorasJugadas());
 
         Resena savedResena = resenaRepository.save(resena);
         return Optional.of(resenaMapper.toDTO(savedResena));
@@ -185,6 +186,9 @@ public class ResenaService {
                 if (resenaDTO.getRevisada()) {
                     resena.setReportes(0);
                 }
+            }
+            if (resenaDTO.getHorasJugadas() != null) {
+                resena.setHorasJugadas(resenaDTO.getHorasJugadas());
             }
             Resena updatedResena = resenaRepository.save(resena);
             return resenaMapper.toDTO(updatedResena);
