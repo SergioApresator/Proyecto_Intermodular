@@ -1562,8 +1562,8 @@
 
 /* PREMIUM DASHBOARD STATISTICS & RATING DISTRIBUTION */
 .premium-stats-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    flex-direction: column;
     gap: 15px;
     margin-bottom: 25px;
 }

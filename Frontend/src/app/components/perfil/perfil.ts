@@ -77,10 +77,6 @@ export class Perfil implements OnInit {
     return this.resenas.length;
   }
 
-  get totalHorasJugadas(): number {
-    return this.resenas.reduce((sum, r) => sum + (r.horasJugadas || 0), 0);
-  }
-
   get notaMedia(): number {
     if (this.resenas.length === 0) return 0;
     const sum = this.resenas.reduce((sum, r) => sum + (r.puntuacion || 0), 0);

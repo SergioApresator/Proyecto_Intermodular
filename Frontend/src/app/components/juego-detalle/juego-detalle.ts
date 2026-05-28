@@ -57,8 +57,7 @@ export class JuegoDetalle implements OnInit, OnDestroy {
   nuevaResena = {
     puntuacion: 5,
     mensaje: '',
-    tieneSpoiler: false,
-    horasJugadas: null as number | null
+    tieneSpoiler: false
   };
   mensajeLogin: string = '';
 
@@ -185,7 +184,10 @@ export class JuegoDetalle implements OnInit, OnDestroy {
           this.esPendiente = !!pen;
           this.listaPendienteId = pen ? pen.id : null;
 
-          this.listasUsuario = [...new Set(listas.map(l => l.nombre))];
+          const nombres = listas.map(l => l.nombre);
+          nombres.push('Favoritos');
+          nombres.push('Videojuegos Pendientes');
+          this.listasUsuario = [...new Set(nombres)];
           this.cdr.detectChanges();
         });
       }
@@ -460,7 +462,7 @@ export class JuegoDetalle implements OnInit, OnDestroy {
   // Método para cerrar el modal de reseña y resetear el formulario de nueva reseña.
   cerrarModalResena() {
     this.mostrarModalResena = false;
-    this.nuevaResena = { puntuacion: 5, mensaje: '', tieneSpoiler: false, horasJugadas: null };
+    this.nuevaResena = { puntuacion: 5, mensaje: '', tieneSpoiler: false };
   }
   // Método para enviar una nueva reseña del juego y añadirla al principio de la lista.
   enviarResena() {
