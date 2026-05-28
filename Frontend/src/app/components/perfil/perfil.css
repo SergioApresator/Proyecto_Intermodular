@@ -1559,3 +1559,171 @@
 
     .juego-title { font-size: 0.7rem; }
 }
+
+/* PREMIUM DASHBOARD STATISTICS & RATING DISTRIBUTION */
+.premium-stats-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.premium-stat-card {
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 6px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    transition: all 0.25s ease;
+}
+
+.premium-stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: rgba(249, 158, 26, 0.4);
+    transition: background-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.premium-stat-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(249, 158, 26, 0.3);
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 8px 25px rgba(249, 158, 26, 0.08);
+}
+
+.premium-stat-card:hover::before {
+    background: #f99e1a;
+    box-shadow: 0 0 8px rgba(249, 158, 26, 0.6);
+}
+
+.stat-icon {
+    font-size: 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.03);
+    width: 44px;
+    height: 44px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.stat-svg-icon {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+    color: #64748b;
+    transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.premium-stat-card:hover .stat-svg-icon {
+    color: #f99e1a;
+    transform: scale(1.1);
+}
+
+.stat-data {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-num {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1e293b;
+    line-height: 1.1;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.5px;
+}
+
+.stat-lbl {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #64748b;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* RATING DISTRIBUTION GRAPHICS */
+.rating-distribution-card {
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 6px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.distribution-row {
+    display: grid;
+    grid-template-columns: 45px 1fr 45px 45px;
+    align-items: center;
+    gap: 12px;
+}
+
+.stars-label {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #334155;
+    font-family: 'Rajdhani', sans-serif;
+    text-align: right;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+}
+
+.stars-label .star {
+    color: #f59e0b;
+    font-size: 1.05rem;
+}
+
+.progress-bar-container {
+    height: 10px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 5px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(0, 0, 0, 0.02);
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #f99e1a 0%, #ffc06e 100%);
+    border-radius: 5px;
+    box-shadow: 0 0 4px rgba(249, 158, 26, 0.2);
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 0;
+}
+
+.percentage-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #f99e1a;
+    font-family: 'Bebas Neue', sans-serif;
+    text-align: right;
+}
+
+.count-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #64748b;
+    text-align: right;
+}
+
+@media (max-width: 768px) {
+    .premium-stats-grid {
+        grid-template-columns: 1fr;
+    }
+}

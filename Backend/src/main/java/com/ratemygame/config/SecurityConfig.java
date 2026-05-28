@@ -55,6 +55,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/usuarios/*").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/api/usuarios/*").permitAll()
                 .requestMatchers("/api/usuarios/login").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/usuarios/oauth2/google").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll()
                 
                 // Permitimos subida y descarga de fotos/banners

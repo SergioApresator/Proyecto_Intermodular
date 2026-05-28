@@ -3,6 +3,7 @@ import { RouterOutlet, RouterLink, RouterLinkActive, Router, NavigationEnd } fro
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Usuarios } from './services/usuarios';
+import { SocialAuthService } from '@abacritt/angularx-social-login';
 
 @Component({
   selector: 'app-root',
@@ -17,6 +18,7 @@ export class App implements OnInit {
   private usuariosServicio = inject(Usuarios);
   private cdr = inject(ChangeDetectorRef);
   private ngZone = inject(NgZone);
+  private socialAuthService = inject(SocialAuthService);
 
   mostrarBuscador: boolean = false;
   terminoBusqueda: string = '';
@@ -90,12 +92,17 @@ export class App implements OnInit {
 
   // Método para cerrar la sesión del usuario eliminando sus datos del localStorage y redirigiendo a la página inicial.
   cerrarSesion() {
+    const isOauth = localStorage.getItem('oauthProvider');
+    if (isOauth) {
+      this.socialAuthService.signOut().catch(() => {});
+    }
     localStorage.removeItem('token');
     localStorage.removeItem('usuarioId');
     localStorage.removeItem('username');
     localStorage.removeItem('foto_url');
     localStorage.removeItem('banner_url');
     localStorage.removeItem('esAdmin');
+    localStorage.removeItem('oauthProvider');
     this.estaLogueado = false;
     this.esAdmin = false;
     this.username = '';

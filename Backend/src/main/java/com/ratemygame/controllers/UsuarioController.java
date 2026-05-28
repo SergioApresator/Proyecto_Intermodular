@@ -10,7 +10,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ratemygame.datamodel.entities.Usuario;
 import com.ratemygame.dtos.UsuarioDTO;
+import com.ratemygame.dtos.OAuthLoginRequest;
 import com.ratemygame.services.UsuarioService;
+import com.ratemygame.services.OAuthService;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -29,6 +31,9 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private OAuthService oAuthService;
 
     @Value("${app.upload.dir}")
     private String uploadDir;
@@ -66,6 +71,24 @@ public class UsuarioController {
     @PostMapping("/login-email")
     public ResponseEntity<UsuarioDTO> loginUsuarioEmail(@RequestBody Map<String, String> credentials) {
         return login(credentials);
+    }
+
+    // Método para autenticar un usuario usando Google Login, registrándolo si es nuevo y devolviendo su DTO y JWT.
+    @PostMapping("/oauth2/google")
+    public ResponseEntity<?> loginConGoogle(@RequestBody OAuthLoginRequest request) {
+        try {
+            java.util.Optional<UsuarioDTO> optionalDto = oAuthService.loginConGoogle(request.getIdToken());
+            if (optionalDto.isPresent()) {
+                return ResponseEntity.ok(optionalDto.get());
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token de Google inválido.");
+            }
+        } catch (RuntimeException e) {
+            if ("USUARIO_BANEADO".equals(e.getMessage())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("El usuario se encuentra baneado.");
+            }
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     // Comprueba si el token JWT enviado en la cabecera es válido

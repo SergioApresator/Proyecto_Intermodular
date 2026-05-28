@@ -48,6 +48,15 @@
                     <button type="submit" class="btn-auth-primary" [disabled]="formularioLogin.invalid">
                         CONFIRMAR ACCESO
                     </button>
+
+                    <div class="oauth-divider">
+                        <span>O CONTINÚA CON</span>
+                    </div>
+
+                    <div class="google-signin-container">
+                        <asl-google-signin-button type="standard" size="large" text="signin_with" theme="filled_blue" shape="rectangular" [width]="400"></asl-google-signin-button>
+                    </div>
+
                     <p class="auth-switch">
                         ¿No tienes cuenta? <a routerLink="/registro">Regístrate aquí</a>
                     </p>

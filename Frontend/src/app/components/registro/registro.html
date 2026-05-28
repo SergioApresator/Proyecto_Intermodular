@@ -168,6 +168,15 @@
                     <button type="submit" class="btn-auth-primary" [disabled]="formularioRegistro.invalid">
                         CREAR CUENTA
                     </button>
+
+                    <div class="oauth-divider">
+                        <span>O CONTINÚA CON</span>
+                    </div>
+
+                    <div class="google-signin-container">
+                        <asl-google-signin-button type="standard" size="large" text="signup_with" theme="filled_blue" shape="rectangular" [width]="400"></asl-google-signin-button>
+                    </div>
+
                     <p class="auth-switch">
                         ¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a>
                     </p>

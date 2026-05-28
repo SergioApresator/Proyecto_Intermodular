@@ -186,6 +186,7 @@ public class ResenaService {
                     resena.setReportes(0);
                 }
             }
+
             Resena updatedResena = resenaRepository.save(resena);
             return resenaMapper.toDTO(updatedResena);
         });

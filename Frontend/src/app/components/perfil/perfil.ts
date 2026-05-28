@@ -73,6 +73,34 @@ export class Perfil implements OnInit {
     return favList ? favList.juegos.length : 0;
   }
 
+  get totalResenas(): number {
+    return this.resenas.length;
+  }
+
+  get notaMedia(): number {
+    if (this.resenas.length === 0) return 0;
+    const sum = this.resenas.reduce((sum, r) => sum + (r.puntuacion || 0), 0);
+    return Math.round((sum / this.resenas.length) * 10) / 10;
+  }
+
+  get distribucionNotas(): { estrella: number; cantidad: number; porcentaje: number }[] {
+    const counts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+    this.resenas.forEach(r => {
+      const p = r.puntuacion as 1 | 2 | 3 | 4 | 5;
+      if (counts[p] !== undefined) {
+        counts[p]++;
+      }
+    });
+    
+    const total = this.resenas.length || 1;
+    
+    return [5, 4, 3, 2, 1].map(est => ({
+      estrella: est,
+      cantidad: counts[est as 1 | 2 | 3 | 4 | 5],
+      porcentaje: Math.round((counts[est as 1 | 2 | 3 | 4 | 5] / total) * 100)
+    }));
+  }
+
   pestanaActual: string = 'resumen';
 
   // Método para cambiar la pestaña activa del perfil (resumen, listas, ajustes).

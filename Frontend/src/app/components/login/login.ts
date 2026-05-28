@@ -3,11 +3,12 @@ import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angula
 import { Router, RouterLink } from '@angular/router';
 import { Usuarios } from '../../services/usuarios';
 import { ConfirmModal } from '../confirm-modal/confirm-modal.component';
+import { SocialAuthService, GoogleLoginProvider, GoogleSigninButtonModule } from '@abacritt/angularx-social-login';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, ConfirmModal],
+  imports: [ReactiveFormsModule, RouterLink, ConfirmModal, GoogleSigninButtonModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
@@ -16,6 +17,7 @@ export class Login implements OnInit {
 
   //Injección necesaria para viajar entre páginas
   private router = inject(Router);
+  private socialAuthService = inject(SocialAuthService);
 
   //Inyecto el servicio
   constructor(
@@ -43,6 +45,29 @@ export class Login implements OnInit {
 
   // Método para inicializar el componente y configurar los validadores dinámicos del campo de identidad.
   ngOnInit() {
+    // Suscripción al estado de autenticación de Google
+    this.socialAuthService.authState.subscribe({
+      next: (user) => {
+        if (user && user.idToken) {
+          this.usuariosServicio.loginGoogle(user.idToken).subscribe({
+            next: (usuarioEncontrado) => {
+              this.guardarSesionYRedirigir(usuarioEncontrado);
+              this.usuariosServicio.notificarCambioPerfil();
+            },
+            error: (err) => {
+              if (err.status === 403) {
+                this.mostrarError('Tu cuenta ha sido baneada.');
+              } else {
+                this.mostrarError('Error al iniciar sesión con Google.');
+              }
+            }
+          });
+        }
+      },
+      error: (err) => {
+        console.error('Error en el estado de autenticación social:', err);
+      }
+    });
 
     this.formularioLogin.get('identity')?.valueChanges.subscribe(value => {
       const control = this.formularioLogin.get('identity');
@@ -120,6 +145,12 @@ export class Login implements OnInit {
         localStorage.setItem('esAdmin', 'true');
       } else {
         localStorage.removeItem('esAdmin');
+      }
+      const oauthProv = usuarioEncontrado.oauthProvider || usuarioEncontrado.oauth_provider;
+      if (oauthProv) {
+        localStorage.setItem('oauthProvider', oauthProv);
+      } else {
+        localStorage.removeItem('oauthProvider');
       }
     }
     this.router.navigate(['/inicial']);

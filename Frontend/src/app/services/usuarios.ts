@@ -40,6 +40,11 @@ export class Usuarios {
     return this.login(email, password);
   }
 
+  // Envía el ID Token de Google al backend para iniciar sesión o registrarse
+  loginGoogle(idToken: string): Observable<any> {
+    return this.http.post(`${this.url}/oauth2/google`, { idToken });
+  }
+
   // Método para obtener los datos completos de un usuario por su ID.
   getUsuarioById(id: number): Observable<any> {
     return this.http.get(`${this.url}/${id}`, this.getHeaders());

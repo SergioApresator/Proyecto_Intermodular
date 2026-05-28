@@ -184,7 +184,10 @@ export class JuegoDetalle implements OnInit, OnDestroy {
           this.esPendiente = !!pen;
           this.listaPendienteId = pen ? pen.id : null;
 
-          this.listasUsuario = [...new Set(listas.map(l => l.nombre))];
+          const nombres = listas.map(l => l.nombre);
+          nombres.push('Favoritos');
+          nombres.push('Videojuegos Pendientes');
+          this.listasUsuario = [...new Set(nombres)];
           this.cdr.detectChanges();
         });
       }

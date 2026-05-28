@@ -39,7 +39,7 @@ public class Usuario {
     @Column(name = "USERNAME", unique = true)
     private String username;
 
-    @Column(name = "EMAIL")
+    @Column(name = "EMAIL", unique = true)
     private String email;
 
     @Column(name = "PASSWORD")
@@ -75,6 +75,12 @@ public class Usuario {
 
     @Column(name = "BANEADO")
     private Boolean baneado;
+
+    @Column(name = "OAUTH_PROVIDER", length = 50)
+    private String oauthProvider;
+
+    @Column(name = "OAUTH_PROVIDER_ID", length = 255)
+    private String oauthProviderId;
 
     // Métodos dinámicos para obtener la URL correcta (sea local desde la BD o fallback del sistema)
     public String getResolvedFotoUrl() {

@@ -1,25 +1,81 @@
-import { Component, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, ChangeDetectorRef, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Usuarios } from '../../services/usuarios';
 import { CommonModule } from '@angular/common';
+import { SocialAuthService, GoogleLoginProvider, GoogleSigninButtonModule } from '@abacritt/angularx-social-login';
 
 @Component({
   selector: 'app-registro',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, CommonModule],
+  imports: [ReactiveFormsModule, RouterLink, CommonModule, GoogleSigninButtonModule],
   templateUrl: './registro.html',
   styleUrl: './registro.css',
 })
 
-export class Registro {
+export class Registro implements OnInit {
 
   //Injección necesaria para viajar entre páginas
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
+  private socialAuthService = inject(SocialAuthService);
 
   // Inyecto el servicio
   constructor(private usuariosServicio: Usuarios) { }
+
+  ngOnInit() {
+    // Suscripción al estado de autenticación de Google
+    this.socialAuthService.authState.subscribe({
+      next: (user) => {
+        if (user && user.idToken) {
+          this.usuariosServicio.loginGoogle(user.idToken).subscribe({
+            next: (usuarioEncontrado) => {
+              if (usuarioEncontrado && usuarioEncontrado.token) {
+                localStorage.setItem('token', usuarioEncontrado.token);
+                if (usuarioEncontrado.id) {
+                  localStorage.setItem('usuarioId', usuarioEncontrado.id.toString());
+                }
+                if (usuarioEncontrado.username) {
+                  localStorage.setItem('username', usuarioEncontrado.username);
+                }
+                const foto = usuarioEncontrado.foto_url || usuarioEncontrado.fotoUrl;
+                if (foto) {
+                  localStorage.setItem('foto_url', foto);
+                }
+                const banner = usuarioEncontrado.banner_url || usuarioEncontrado.bannerUrl;
+                if (banner) {
+                  localStorage.setItem('banner_url', banner);
+                }
+                if (usuarioEncontrado.esAdmin) {
+                  localStorage.setItem('esAdmin', 'true');
+                } else {
+                  localStorage.removeItem('esAdmin');
+                }
+                const oauthProv = usuarioEncontrado.oauthProvider || usuarioEncontrado.oauth_provider;
+                if (oauthProv) {
+                  localStorage.setItem('oauthProvider', oauthProv);
+                } else {
+                  localStorage.removeItem('oauthProvider');
+                }
+              }
+              this.usuariosServicio.notificarCambioPerfil();
+              this.router.navigate(['/inicial']);
+            },
+            error: (err) => {
+              if (err.status === 403) {
+                alert('Tu cuenta ha sido baneada.');
+              } else {
+                alert('Error al iniciar sesión con Google.');
+              }
+            }
+          });
+        }
+      },
+      error: (err) => {
+        console.error('Error en el estado de autenticación social:', err);
+      }
+    });
+  }
 
   // Validador personalizado para asegurar que las contraseñas coincidan
   passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
