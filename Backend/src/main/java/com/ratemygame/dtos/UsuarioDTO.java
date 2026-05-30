@@ -16,5 +16,6 @@ public class UsuarioDTO {
     private String token;
     private Boolean esAdmin;
     private Boolean baneado;
+    private Boolean correoReal;
     private String oauthProvider;
 }

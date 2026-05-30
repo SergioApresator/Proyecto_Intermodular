@@ -65,6 +65,7 @@ public class OAuthService {
                     nuevo.setOauthProviderId(userIdGoogle);
                     nuevo.setEsAdmin(false);
                     nuevo.setBaneado(false);
+                    nuevo.setCorreoReal(true); // El correo de Google OAuth es 100% verificado y real
                     return usuarioRepository.save(nuevo);
                 });
 
@@ -73,10 +74,11 @@ public class OAuthService {
                     throw new RuntimeException("USUARIO_BANEADO");
                 }
 
-                // Si no tiene vinculación OAuth, se la agregamos
-                if (usuario.getOauthProvider() == null) {
+                // Si no tiene vinculación OAuth o su correo real no estaba marcado, lo actualizamos
+                if (usuario.getOauthProvider() == null || !Boolean.TRUE.equals(usuario.getCorreoReal())) {
                     usuario.setOauthProvider("GOOGLE");
                     usuario.setOauthProviderId(userIdGoogle);
+                    usuario.setCorreoReal(true); // Certificar que el correo es real gracias a Google
                     usuario = usuarioRepository.save(usuario);
                 }
 

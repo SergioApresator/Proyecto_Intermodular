@@ -76,6 +76,9 @@ public class Usuario {
     @Column(name = "BANEADO")
     private Boolean baneado;
 
+    @Column(name = "CORREO_REAL")
+    private Boolean correoReal = false;
+
     @Column(name = "OAUTH_PROVIDER", length = 50)
     private String oauthProvider;
 

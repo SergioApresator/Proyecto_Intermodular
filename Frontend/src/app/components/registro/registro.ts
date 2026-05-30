@@ -101,6 +101,7 @@ export class Registro implements OnInit {
       Validators.required,
       Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/)
     ]),
+    correoReal: new FormControl(false),
     password: new FormControl('', [
       Validators.required,
       Validators.minLength(8),
@@ -194,7 +195,8 @@ export class Registro implements OnInit {
         username: rawData.username?.trim(),
         email: rawData.email?.trim()?.toLowerCase(),
         password: rawData.password,
-        esAdmin: false
+        esAdmin: false,
+        correoReal: rawData.correoReal || false
       };
 
       this.usuariosServicio.guardarUsuario(cleanData).subscribe({

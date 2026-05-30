@@ -68,6 +68,13 @@
                         @if(this.formularioRegistro.get('email')?.errors?.['required']) { <span class="error-msg">El correo es obligatorio</span> }
                         @if(this.formularioRegistro.get('email')?.errors?.['pattern']) { <span class="error-msg">Introduce un email válido (ej: .com, .es)</span> }
                     }
+                    <div class="checkbox-wrapper-email">
+                        <label class="custom-checkbox-container">
+                            <input type="checkbox" formControlName="correoReal">
+                            <span class="custom-checkbox-checkmark"></span>
+                            <span class="checkbox-text">Mi correo electrónico es real (Recibir avisos por email 📧)</span>
+                        </label>
+                    </div>
                 </div>
 
                 <div class="input-group">

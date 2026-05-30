@@ -7,6 +7,7 @@ import com.ratemygame.datamodel.entities.Resena;
 import com.ratemygame.datamodel.entities.ResenaReporte;
 import com.ratemygame.datamodel.entities.ResenaVoto;
 import com.ratemygame.datamodel.entities.Usuario;
+import com.ratemygame.datamodel.entities.TipoNotificacion;
 import com.ratemygame.datamodel.repositories.ResenaRepository;
 import com.ratemygame.datamodel.repositories.ResenaReporteRepository;
 import com.ratemygame.datamodel.repositories.ResenaVotoRepository;
@@ -54,6 +55,12 @@ public class ResenaService {
     @Autowired
     private ResenaMapper resenaMapper;
 
+    @Autowired
+    private NotificacionService notificacionService;
+
+    @Autowired
+    private EmailService emailService;
+
 
     // Método para obtener todas las reseñas de un videojuego concreto.
     public List<ResenaDTO> getResenasByVideojuego(Long idVideojuego) {
@@ -79,7 +86,7 @@ public class ResenaService {
 
     // Método para obtener todas las reseñas escritas por un usuario concreto.
     public List<ResenaDTO> getResenasByUsuario(Long idUsuario) {
-        return resenaRepository.findByUsuario_Id(idUsuario).stream()
+        return resenaRepository.findByUsuario_IdAndEliminadaFalse(idUsuario).stream()
                 .map(resenaMapper::toDTO)
                 .collect(Collectors.toList());
     }
@@ -177,7 +184,26 @@ public class ResenaService {
             if (resenaDTO.getPuntuacion() > 0) {
                 resena.setPuntuacion(resenaDTO.getPuntuacion());
             }
-            if (resenaDTO.getTieneSpoiler() != null) {
+            if (resenaDTO.getTieneSpoiler() != null && !resenaDTO.getTieneSpoiler().equals(resena.getTieneSpoiler())) {
+                resena.setTieneSpoiler(resenaDTO.getTieneSpoiler());
+                
+                Usuario autor = resena.getUsuario();
+                String juegoTitulo = resena.getVideojuego() != null ? resena.getVideojuego().getName() : "Videojuego Desconocido";
+                String accion = resenaDTO.getTieneSpoiler() ? "SPOILER_MARCADO" : "SPOILER_DESMARCADO";
+                TipoNotificacion tipo = resenaDTO.getTieneSpoiler() ? TipoNotificacion.RESENA_SPOILER_MARCADO : TipoNotificacion.RESENA_SPOILER_DESMARCADO;
+                
+                String mensajeAlerta = resenaDTO.getTieneSpoiler() 
+                    ? "Tu reseña del juego '" + juegoTitulo + "' ha sido MARCADA como SPOILER por un administrador."
+                    : "Tu reseña del juego '" + juegoTitulo + "' ha sido DESMARCADA como SPOILER por un administrador.";
+                
+                // 1. Notificación In-App siempre
+                notificacionService.crearNotificacion(autor, resena, tipo, mensajeAlerta);
+                
+                // 2. Email asíncrono si el usuario activó la opción de correo real
+                if (autor != null && Boolean.TRUE.equals(autor.getCorreoReal()) && autor.getEmail() != null) {
+                    emailService.enviarEmailModeracion(autor.getEmail(), autor.getUsername(), accion, juegoTitulo, resena.getMensaje());
+                }
+            } else if (resenaDTO.getTieneSpoiler() != null) {
                 resena.setTieneSpoiler(resenaDTO.getTieneSpoiler());
             }
             if (resenaDTO.getRevisada() != null) {
@@ -194,24 +220,27 @@ public class ResenaService {
 
     @Transactional
     public boolean deleteResena(Long id) {
-        if (resenaRepository.existsById(id)) {
-            // 1. Eliminar votos de la reseña
-            resenaVotoRepository.deleteByResena_Id(id);
-
-            // 2. Eliminar reportes de la reseña
-            resenaReporteRepository.deleteByResena_Id(id);
+        Optional<Resena> resenaOpt = resenaRepository.findById(id);
+        if (resenaOpt.isPresent()) {
+            Resena resena = resenaOpt.get();
             
-            // 3. Eliminar votos de todas las respuestas de esta reseña
-            List<com.ratemygame.datamodel.entities.Respuesta> respuestas = respuestaRepository.findByResena_Id(id);
-            for (com.ratemygame.datamodel.entities.Respuesta resp : respuestas) {
-                respuestaVotoRepository.deleteByRespuesta_Id(resp.getId());
+            // 1. Marcar como eliminada lógicamente en base de datos
+            resena.setEliminada(true);
+            resenaRepository.save(resena);
+            
+            // 2. Notificar al autor del cambio
+            Usuario autor = resena.getUsuario();
+            String juegoTitulo = resena.getVideojuego() != null ? resena.getVideojuego().getName() : "Videojuego Desconocido";
+            String mensajeAlerta = "Tu reseña del juego '" + juegoTitulo + "' ha sido ELIMINADA por un administrador debido a que incumple las normas de convivencia.";
+            
+            // 2.1. Notificación In-App siempre
+            notificacionService.crearNotificacion(autor, resena, TipoNotificacion.RESENA_ELIMINADA, mensajeAlerta);
+            
+            // 2.2. Email asíncrono si el usuario activó la opción de correo real
+            if (autor != null && Boolean.TRUE.equals(autor.getCorreoReal()) && autor.getEmail() != null) {
+                emailService.enviarEmailModeracion(autor.getEmail(), autor.getUsername(), "ELIMINADA", juegoTitulo, resena.getMensaje());
             }
             
-            // 4. Eliminar las respuestas de la reseña
-            respuestaRepository.deleteByResena_Id(id);
-
-            // 5. Eliminar la reseña
-            resenaRepository.deleteById(id);
             return true;
         }
         return false;
@@ -225,7 +254,7 @@ public class ResenaService {
 
     // Método para obtener las 10 reseñas más recientes para el feed de la página principal.
     public List<ResenaDTO> getRecentReviews() {
-        return resenaRepository.findTop10ByOrderByFechaResenaDescIdDesc().stream()
+        return resenaRepository.findTop10ByEliminadaFalseOrderByFechaResenaDescIdDesc().stream()
                 .map(resenaMapper::toDTO)
                 .collect(Collectors.toList());
     }

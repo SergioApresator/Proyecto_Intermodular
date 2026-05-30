@@ -87,6 +87,9 @@ public class UsuarioService {
             usuario.setApellidos(usuarioDetails.getApellidos());
             usuario.setUsername(usuarioDetails.getUsername());
             usuario.setEmail(usuarioDetails.getEmail());
+            if (usuarioDetails.getCorreoReal() != null) {
+                usuario.setCorreoReal(usuarioDetails.getCorreoReal());
+            }
             if (usuarioDetails.getPassword() != null && !usuarioDetails.getPassword().isEmpty()) {
                 usuario.setPassword(passwordEncoder.encode(usuarioDetails.getPassword()));
             }

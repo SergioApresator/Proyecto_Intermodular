@@ -70,6 +70,9 @@ public class Resena {
     @Column(name = "REPORTES")
     private Integer reportes = 0;
 
+    @Column(name = "ELIMINADA")
+    private Boolean eliminada = false;
+
     @JsonIgnore
     @OneToMany(mappedBy = "resena", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Respuesta> respuestas;

@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Usuarios } from './services/usuarios';
 import { SocialAuthService } from '@abacritt/angularx-social-login';
+import { Notificacion } from './services/notificacion';
 
 @Component({
   selector: 'app-root',
@@ -16,6 +17,7 @@ import { SocialAuthService } from '@abacritt/angularx-social-login';
 export class App implements OnInit {
   private router = inject(Router);
   private usuariosServicio = inject(Usuarios);
+  private notifServicio = inject(Notificacion);
   private cdr = inject(ChangeDetectorRef);
   private ngZone = inject(NgZone);
   private socialAuthService = inject(SocialAuthService);
@@ -31,6 +33,11 @@ export class App implements OnInit {
   fotoUrl: string = '';
   bannerUrl: string = '';
   mostrarDropdown: boolean = false;
+
+  // Estado de notificaciones
+  notificaciones: any[] = [];
+  notifNoLeadasCount: number = 0;
+  mostrarNotificaciones: boolean = false;
 
   // Método para inicializar el componente, cargar el estado de autenticación y suscribirse a cambios de ruta y perfil.
   ngOnInit() {
@@ -49,6 +56,16 @@ export class App implements OnInit {
         this.cdr.detectChanges();
       });
     });
+
+    // Cargar notificaciones inicialmente
+    this.cargarNotificaciones();
+
+    // Polling de notificaciones en segundo plano cada 20 segundos
+    setInterval(() => {
+      if (this.estaLogueado) {
+        this.cargarNotificaciones();
+      }
+    }, 20000);
   }
 
   // Sincroniza las variables locales de la sesión del usuario con el almacenamiento en navegador
@@ -62,6 +79,10 @@ export class App implements OnInit {
       this.fotoUrl = localStorage.getItem('foto_url') || '';
       this.bannerUrl = localStorage.getItem('banner_url') || '';
       this.esAdmin = localStorage.getItem('esAdmin') === 'true';
+    }
+    // Refrescar notificaciones si el usuario está logueado
+    if (this.estaLogueado) {
+      this.cargarNotificaciones();
     }
   }
 
@@ -87,6 +108,9 @@ export class App implements OnInit {
     const target = event.target as HTMLElement;
     if (!target.closest('.user-menu-ow')) {
       this.mostrarDropdown = false;
+    }
+    if (!target.closest('.notif-menu-container')) {
+      this.mostrarNotificaciones = false;
     }
   }
 
@@ -136,5 +160,73 @@ export class App implements OnInit {
       return this.username.charAt(0).toUpperCase();
     }
     return '?';
+  }
+
+  // --- LÓGICA DE NOTIFICACIONES ---
+
+  cargarNotificaciones() {
+    if (this.estaLogueado && this.userId) {
+      const id = parseInt(this.userId, 10);
+      this.notifServicio.getNotificaciones(id).subscribe({
+        next: (res) => {
+          this.notificaciones = res;
+          this.cdr.detectChanges();
+        }
+      });
+      this.notifServicio.getNoLeidasCount(id).subscribe({
+        next: (count) => {
+          this.notifNoLeadasCount = count;
+          this.cdr.detectChanges();
+        }
+      });
+    }
+  }
+
+  toggleNotificaciones(event: MouseEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.mostrarNotificaciones = !this.mostrarNotificaciones;
+    if (this.mostrarNotificaciones) {
+      this.mostrarDropdown = false;
+      this.cargarNotificaciones();
+    }
+  }
+
+  marcarComoLeida(id: number, event: MouseEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.notifServicio.marcarComoLeida(id).subscribe({
+      next: () => {
+        this.cargarNotificaciones();
+      }
+    });
+  }
+
+  marcarTodasComoLeidas() {
+    if (this.userId) {
+      const id = parseInt(this.userId, 10);
+      this.notifServicio.marcarTodasComoLeidas(id).subscribe({
+        next: () => {
+          this.cargarNotificaciones();
+        }
+      });
+    }
+  }
+
+  eliminarNotificacion(id: number, event: MouseEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.notifServicio.eliminarNotificacion(id).subscribe({
+      next: () => {
+        this.cargarNotificaciones();
+      }
+    });
+  }
+
+  getNotifColor(tipo: string): string {
+    if (tipo === 'RESENA_ELIMINADA') return '#ef4444';
+    if (tipo === 'RESENA_SPOILER_MARCADO') return '#f59e0b';
+    if (tipo === 'RESENA_SPOILER_DESMARCADO') return '#f59e0b';
+    return '#3b82f6';
   }
 }

@@ -1,5 +1,6 @@
 package com.ratemygame.datamodel.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -65,9 +66,11 @@ public class Videojuego {
     @OneToMany(mappedBy = "videojuego", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Screenshot> screenshots;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "videojuego", cascade = CascadeType.ALL)
     private List<Resena> resenas;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "videojuego", cascade = CascadeType.ALL)
     private List<Lista> listas;
 }

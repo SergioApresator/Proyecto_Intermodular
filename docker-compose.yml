@@ -40,13 +40,15 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/ratemygame?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
+      EMAIL_USER: ${EMAIL_USER}
+      EMAIL_PASS: ${EMAIL_PASS}
     depends_on:
       db:
         condition: service_healthy
     volumes:
       - ./Backend/uploads:/app/uploads:z
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:9999/api/games"]
+      test: ["CMD", "wget", "-qO-", "http://localhost:9999/api/games?size=1"]
       interval: 3s
       timeout: 3s
       retries: 20

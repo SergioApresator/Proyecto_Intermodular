@@ -42,6 +42,51 @@
     </button>
   </div>
 
+  <!-- CAMPANA DE NOTIFICACIONES (Solo si está logueado) -->
+  <div class="notif-menu-container" *ngIf="estaLogueado">
+    <button class="btn-notif-bell" (click)="toggleNotificaciones($event)" title="Notificaciones">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+      </svg>
+      <span class="notif-badge" *ngIf="notifNoLeadasCount > 0">{{ notifNoLeadasCount }}</span>
+    </button>
+
+    <!-- Panel desplegable de notificaciones -->
+    <div class="notif-dropdown" [class.active-notif]="mostrarNotificaciones">
+      <div class="notif-header">
+        <h3>NOTIFICACIONES</h3>
+        <button *ngIf="notificaciones.length > 0" class="btn-clear-all" (click)="marcarTodasComoLeidas()">Marcar todas como leídas</button>
+      </div>
+
+      <div class="notif-list" [class.empty]="notificaciones.length === 0">
+        <div class="notif-item" *ngFor="let notif of notificaciones" [class.unread]="!notif.leida">
+          <div class="notif-indicator" [style.backgroundColor]="getNotifColor(notif.tipo)"></div>
+          <div class="notif-content-box">
+            <p class="notif-text">{{ notif.mensaje }}</p>
+            <span class="notif-time">{{ notif.fecha | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+          <div class="notif-actions-item">
+            <button *ngIf="!notif.leida" class="btn-action-notif read" (click)="marcarComoLeida(notif.id, $event)" title="Marcar como leída">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </button>
+            <button class="btn-action-notif delete" (click)="eliminarNotificacion(notif.id, $event)" title="Eliminar">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="notif-empty" *ngIf="notificaciones.length === 0">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #94a3b8; margin-bottom: 10px;">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          <p>No tienes notificaciones por ahora.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Menú de usuario estilo tarjeta de jugador -->
   <div class="user-menu-ow" *ngIf="estaLogueado">
     
