@@ -149,13 +149,56 @@ public class UsuarioController {
 
 
     // Borra un usuario. Mismas restricciones: dueño del perfil o ADMIN.
+    // Un administrador NO puede eliminar a otro administrador.
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or (principal instanceof T(com.ratemygame.config.CustomUserDetails) and #id == principal.usuario.id)")
-    public ResponseEntity<Void> deleteUsuario(@PathVariable Long id) {
+    public ResponseEntity<?> deleteUsuario(
+            @PathVariable Long id,
+            @org.springframework.security.core.annotation.AuthenticationPrincipal com.ratemygame.config.CustomUserDetails principal) {
+        
+        java.util.Optional<Usuario> targetOpt = usuarioService.getUsuarioEntityById(id);
+        if (targetOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Usuario target = targetOpt.get();
+
+        // Evitar que un administrador elimine a otro administrador
+        if (principal != null && principal.getUsuario().getEsAdmin() && !principal.getUsuario().getId().equals(id)) {
+            if (Boolean.TRUE.equals(target.getEsAdmin())) {
+                return ResponseEntity.badRequest().body("Un administrador no puede eliminar a otro administrador.");
+            }
+        }
+
         if (usuarioService.deleteUsuario(id)) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    // Endpoint para que el propio usuario elimine su cuenta validando su contraseña.
+    @PostMapping("/eliminar-cuenta")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> eliminarCuentaPropia(
+            @RequestBody Map<String, String> payload,
+            @org.springframework.security.core.annotation.AuthenticationPrincipal com.ratemygame.config.CustomUserDetails principal) {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        String password = payload.get("password");
+        if (password == null || password.isEmpty()) {
+            return ResponseEntity.badRequest().body("La contraseña es requerida.");
+        }
+        Long id = principal.getUsuario().getId();
+
+        // Validar contraseña
+        if (!usuarioService.checkPassword(id, password)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("La contraseña introducida es incorrecta.");
+        }
+
+        if (usuarioService.deleteUsuario(id)) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("No se pudo eliminar la cuenta.");
     }
 
     // Sube la foto de perfil y la guarda directamente en la base de datos (BLOB).

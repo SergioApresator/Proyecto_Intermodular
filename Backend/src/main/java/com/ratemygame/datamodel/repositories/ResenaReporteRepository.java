@@ -13,4 +13,7 @@ public interface ResenaReporteRepository extends JpaRepository<ResenaReporte, Lo
     Optional<ResenaReporte> findByResena_IdAndUsuario_Id(Long idResena, Long idUsuario);
     // Consulta para eliminar todos los reportes de una reseña al borrarla.
     void deleteByResena_Id(Long idResena);
+
+    // Consulta para eliminar todos los reportes creados por un usuario al borrar su cuenta.
+    void deleteByUsuario_Id(Long idUsuario);
 }

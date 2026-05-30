@@ -1727,3 +1727,132 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* ===== DANGER ZONE (ZONA DE PELIGRO) ===== */
+.danger-divider {
+    border-top: 2px dashed rgba(239, 68, 68, 0.3) !important;
+}
+
+.seccion-ajustes-danger {
+    margin-top: 30px;
+}
+
+.danger-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ef4444;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+.danger-box {
+    border: 2px dashed rgba(239, 68, 68, 0.4);
+    padding: 25px;
+    background: rgba(239, 68, 68, 0.03);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    transition: all 0.3s ease;
+}
+
+.danger-box:hover {
+    border-color: #ef4444;
+    background: rgba(239, 68, 68, 0.05);
+}
+
+.danger-info h4 {
+    margin: 0 0 8px 0;
+    font-size: 1.1rem;
+    color: #1e293b;
+    font-weight: 700;
+}
+
+.danger-info p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #64748b;
+    line-height: 1.5;
+}
+
+.delete-account-btn {
+    background: #dc2626 !important;
+    border-color: #dc2626 !important;
+    color: white !important;
+    font-weight: 700 !important;
+    padding: 12px 24px !important;
+    font-size: 0.9rem !important;
+    letter-spacing: 1px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 4px 6px rgba(220, 38, 38, 0.15);
+}
+
+.delete-account-btn:hover {
+    background: #b91c1c !important;
+    border-color: #b91c1c !important;
+    box-shadow: 0 6px 12px rgba(220, 38, 38, 0.3);
+}
+
+/* Modal warning text style */
+.modal-warning-text {
+    color: #64748b;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0 0 20px 0;
+}
+
+/* Responsive adjustments for Danger Zone */
+@media (max-width: 768px) {
+    .danger-box {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .delete-account-btn {
+        width: 100%;
+    }
+}
+
+/* ===== REDESIGN DELETE ACCOUNT MODAL (LIGHT THEME) ===== */
+.delete-account-modal {
+    width: 500px;
+    background: #ffffff !important;
+    border: 2px solid #e2e8f0 !important;
+    color: #1e293b !important;
+    padding: 0;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
+    border-radius: 0;
+}
+
+.delete-account-modal .modal-header {
+    background: #f8fafc !important;
+    padding: 20px 30px;
+    border-bottom: 2px solid #e2e8f0 !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.delete-account-modal .modal-header h3 {
+    margin: 0;
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+    color: #1e293b !important;
+    text-transform: uppercase;
+}
+
+.delete-account-modal .btn-cerrar {
+    color: #64748b !important;
+}
+
+.delete-account-modal .btn-cerrar:hover {
+    color: #ef4444 !important;
+}
+
+.delete-account-modal .modal-body {
+    padding: 30px;
+}

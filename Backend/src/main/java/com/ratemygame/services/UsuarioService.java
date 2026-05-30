@@ -7,10 +7,12 @@ import com.ratemygame.config.JwtService;
 import com.ratemygame.config.CustomUserDetails;
 
 import com.ratemygame.datamodel.entities.Usuario;
-import com.ratemygame.datamodel.repositories.UsuarioRepository;
+import com.ratemygame.datamodel.entities.Resena;
+import com.ratemygame.datamodel.repositories.*;
 import com.ratemygame.dtos.UsuarioDTO;
 import com.ratemygame.mapper.UsuarioMapper;
 
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,6 +22,27 @@ public class UsuarioService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private ListaRepository listaRepository;
+
+    @Autowired
+    private ResenaRepository resenaRepository;
+
+    @Autowired
+    private NotificacionRepository notificacionRepository;
+
+    @Autowired
+    private ResenaVotoRepository resenaVotoRepository;
+
+    @Autowired
+    private RespuestaVotoRepository respuestaVotoRepository;
+
+    @Autowired
+    private ResenaReporteRepository resenaReporteRepository;
+
+    @Autowired
+    private RespuestaRepository respuestaRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -139,13 +162,51 @@ public class UsuarioService {
         return usuarioRepository.findById(id);
     }
 
-    // Método para eliminar un usuario de la base de datos por su ID.
+    // Método para eliminar un usuario de la base de datos por su ID de forma segura con cascada.
+    @Transactional
     public boolean deleteUsuario(Long id) {
-        if (usuarioRepository.existsById(id)) {
-            usuarioRepository.deleteById(id);
+        Optional<Usuario> usuarioOpt = usuarioRepository.findById(id);
+        if (usuarioOpt.isPresent()) {
+            Usuario usuario = usuarioOpt.get();
+
+            // 1. Eliminar votos realizados por el usuario en comentarios
+            respuestaVotoRepository.deleteByUsuario_Id(id);
+
+            // 2. Eliminar votos realizados por el usuario en reseñas
+            resenaVotoRepository.deleteByUsuario_Id(id);
+
+            // 3. Eliminar reportes realizados por el usuario
+            resenaReporteRepository.deleteByUsuario_Id(id);
+
+            // 4. Eliminar notificaciones recibidas por el usuario
+            notificacionRepository.deleteByUsuario_Id(id);
+
+            // 5. Eliminar entradas de listas del usuario
+            listaRepository.deleteByUsuario_Id(id);
+
+            // 6. Eliminar comentarios/respuestas escritos por el usuario (y sus votos en cascada)
+            respuestaRepository.deleteByUsuario_Id(id);
+
+            // 7. Cargar reseñas escritas por el usuario y borrar sus reportes/notificaciones antes de borrarlas
+            List<Resena> resenas = resenaRepository.findByUsuario_Id(id);
+            for (Resena resena : resenas) {
+                resenaReporteRepository.deleteByResena_Id(resena.getId());
+                notificacionRepository.deleteByResena_Id(resena.getId());
+                resenaRepository.delete(resena);
+            }
+
+            // 8. Eliminar la entidad de usuario
+            usuarioRepository.delete(usuario);
             return true;
         }
         return false;
+    }
+
+    // Método para comprobar si la contraseña introducida coincide con la del usuario.
+    public boolean checkPassword(Long usuarioId, String rawPassword) {
+        return usuarioRepository.findById(usuarioId)
+                .map(u -> passwordEncoder.matches(rawPassword, u.getPassword()))
+                .orElse(false);
     }
 
     // Método para buscar usuarios cuyo username contenga el texto indicado (búsqueda parcial).

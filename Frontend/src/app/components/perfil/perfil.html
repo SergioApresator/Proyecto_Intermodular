@@ -322,6 +322,25 @@
           <div class="ajustes-actions">
             <button class="btn-primary" (click)="guardarCambios()" [disabled]="guardando">GUARDAR CAMBIOS</button>
           </div>
+
+          <hr class="ajustes-divider danger-divider">
+
+          <!-- ZONA DE PELIGRO -->
+          <div class="seccion-ajustes-danger">
+            <h3 class="danger-title">ZONA DE PELIGRO</h3>
+            <div class="danger-box">
+              <div class="danger-info">
+                <h4>Eliminar cuenta de forma permanente</h4>
+                <p>Una vez que elimines tu cuenta, no habrá marcha atrás. Se borrarán de forma inmediata y definitiva todas tus listas de videojuegos, tus reseñas escritas y tus comentarios.</p>
+              </div>
+              <div class="danger-action">
+                <button type="button" class="btn-action-ow delete-account-btn" (click)="abrirModalPassword()">
+                  ELIMINAR MI CUENTA
+                </button>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -389,4 +408,36 @@
   (onConfirm)="ejecutarConfirmacion()"
   (onCancel)="cancelarConfirmacion()">
 </app-confirm-modal>
+
+<!-- Modal de Confirmación por Contraseña (Eliminar Cuenta) -->
+<div class="modal-overlay delete-account-overlay" *ngIf="mostrarModalPassword" (click)="cerrarModalPassword()">
+  <div class="modal-content delete-account-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>CONFIRMAR ELIMINACIÓN DE CUENTA</h3>
+      <button class="btn-cerrar" (click)="cerrarModalPassword()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-warning-text">Por favor, introduce tu contraseña actual para confirmar que deseas eliminar tu cuenta permanentemente. Esta acción eliminará todo tu progreso, reseñas y listas, y no se puede deshacer.</p>
+      
+      <div class="error-banner" *ngIf="errorPassword" style="margin-bottom: 20px;">
+         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+         {{ errorPassword }}
+      </div>
+
+      <div class="field" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 25px;">
+        <label style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">CONTRASEÑA ACTUAL</label>
+        <input type="password" [(ngModel)]="confirmPassword" placeholder="Introduce tu contraseña..." style="background: #ffffff; border: 2px solid #e2e8f0; padding: 12px; font-family: inherit; font-weight: 600; outline: none;" (keyup.enter)="confirmarEliminarCuenta()">
+      </div>
+
+      <div class="modal-actions-custom" style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 15px;">
+        <button class="btn-action-ow cancel" (click)="cerrarModalPassword()" style="font-family: inherit; font-weight: 700; padding: 10px 20px; cursor: pointer; background: transparent; border: 1px solid #cbd5e1; color: #64748b;">CANCELAR</button>
+        <button class="btn-action-ow delete" (click)="confirmarEliminarCuenta()" [disabled]="!confirmPassword || eliminandoCuenta" style="font-family: inherit; font-weight: 700; padding: 10px 20px; cursor: pointer; background: #ef4444; border: 1px solid #ef4444; color: #ffffff;">
+          {{ eliminandoCuenta ? 'ELIMINANDO...' : 'ELIMINAR DEFINITIVAMENTE' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 

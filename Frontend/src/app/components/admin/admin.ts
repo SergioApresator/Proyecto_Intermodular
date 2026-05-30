@@ -332,4 +332,35 @@ export class Admin implements OnInit {
       this.cdr.detectChanges();
     }
   }
+
+  // Método para eliminar definitivamente un usuario previa confirmación del administrador.
+  eliminarUsuario(usuario: any) {
+    if (usuario.esAdmin) {
+      alert('No puedes eliminar a un usuario administrador.');
+      return;
+    }
+
+    this.mostrarConfirmacion(
+      'ELIMINAR USUARIO',
+      `¿Estás seguro de que deseas ELIMINAR permanentemente la cuenta de "${usuario.username}"? Se borrarán de forma definitiva todas sus reseñas, comentarios, listas y notificaciones. Esta acción es irreversible.`,
+      'danger',
+      () => {
+        this.usuariosServicio.eliminarUsuario(usuario.id).subscribe({
+          next: () => {
+            this.resultadosUsuarios = this.resultadosUsuarios.filter(u => u.id !== usuario.id);
+            const maxPaginas = this.totalPaginas;
+            if (this.paginaActual > maxPaginas && this.paginaActual > 1) {
+              this.paginaActual = maxPaginas;
+            }
+            this.cdr.detectChanges();
+          },
+          error: (err: any) => {
+            console.error('Error al eliminar usuario:', err);
+            const errorMsg = err.error && typeof err.error === 'string' ? err.error : 'Hubo un error al intentar eliminar el usuario.';
+            alert(errorMsg);
+          }
+        });
+      }
+    );
+  }
 }

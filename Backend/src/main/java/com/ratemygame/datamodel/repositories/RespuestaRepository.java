@@ -17,5 +17,8 @@ public interface RespuestaRepository extends JpaRepository<Respuesta, Long> {
     // Consulta para eliminar todas las respuestas de una reseña al borrarla en cascada.
     void deleteByResena_Id(Long resenaId);
 
+    // Consulta para eliminar todas las respuestas de un usuario al borrar su cuenta.
+    void deleteByUsuario_Id(Long usuarioId);
+
 
 }

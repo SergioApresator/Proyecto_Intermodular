@@ -14,4 +14,10 @@ public interface NotificacionRepository extends JpaRepository<Notificacion, Long
 
     // Cuenta cuántas notificaciones tiene un usuario sin leer.
     long countByUsuario_IdAndLeidaFalse(Long usuarioId);
+
+    // Consulta para eliminar todas las notificaciones de un usuario.
+    void deleteByUsuario_Id(Long usuarioId);
+
+    // Consulta para eliminar todas las notificaciones relacionadas con una reseña concreta.
+    void deleteByResena_Id(Long resenaId);
 }

@@ -66,6 +66,12 @@ export class Perfil implements OnInit {
     accion: () => { }
   };
 
+  // Modal de eliminación por contraseña (autoborrado)
+  mostrarModalPassword: boolean = false;
+  confirmPassword: string = '';
+  errorPassword: string = '';
+  eliminandoCuenta: boolean = false;
+
 
   // Getter para obtener el número de juegos en la lista de Favoritos del usuario.
   get favoritosCount(): number {
@@ -733,4 +739,65 @@ cancelarBanner() {
         }
     );
 }
+
+  abrirModalPassword() {
+    this.mostrarModalPassword = true;
+    this.confirmPassword = '';
+    this.errorPassword = '';
+    this.eliminandoCuenta = false;
+    this.cdr.detectChanges();
+  }
+
+  cerrarModalPassword() {
+    this.mostrarModalPassword = false;
+    this.confirmPassword = '';
+    this.errorPassword = '';
+    this.eliminandoCuenta = false;
+    this.cdr.detectChanges();
+  }
+
+  confirmarEliminarCuenta() {
+    const password = this.confirmPassword.trim();
+    if (!password) {
+      this.errorPassword = 'La contraseña es obligatoria.';
+      this.cdr.detectChanges();
+      return;
+    }
+
+    this.eliminandoCuenta = true;
+    this.errorPassword = '';
+    this.cdr.detectChanges();
+
+    this.usuariosServicio.eliminarCuentaPropia(password).subscribe({
+      next: () => {
+        // Borrar el estado del localstorage (cerrar sesión)
+        localStorage.removeItem('token');
+        localStorage.removeItem('usuarioId');
+        localStorage.removeItem('username');
+        localStorage.removeItem('foto_url');
+        localStorage.removeItem('banner_url');
+        localStorage.removeItem('esAdmin');
+        localStorage.removeItem('oauthProvider');
+
+        // Notificar a Navbar/App para actualizar el header reactivamente
+        this.usuariosServicio.notificarCambioPerfil();
+        this.mostrarModalPassword = false;
+        this.eliminandoCuenta = false;
+        this.cdr.detectChanges();
+
+        // Redirigir al inicio
+        this.router.navigate(['/inicial']);
+      },
+      error: (err: any) => {
+        this.eliminandoCuenta = false;
+        console.error('Error al eliminar la cuenta:', err);
+        if (err.status === 401) {
+          this.errorPassword = 'La contraseña introducida es incorrecta.';
+        } else {
+          this.errorPassword = err.error && typeof err.error === 'string' ? err.error : 'Hubo un error al intentar eliminar la cuenta. Por favor, vuelve a intentarlo.';
+        }
+        this.cdr.detectChanges();
+      }
+    });
+  }
 }

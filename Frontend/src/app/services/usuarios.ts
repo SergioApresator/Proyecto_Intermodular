@@ -138,4 +138,14 @@ export class Usuarios {
   eliminarDeLista(listaId: number): Observable<any> {
     return this.http.delete(`${this.urlListas}/${listaId}`, this.getHeaders());
   }
+
+  // Elimina un usuario de forma definitiva (desde el panel de administración)
+  eliminarUsuario(id: number): Observable<any> {
+    return this.http.delete(`${this.url}/${id}`, this.getHeaders());
+  }
+
+  // Permite al propio usuario eliminar su cuenta confirmando con su contraseña
+  eliminarCuentaPropia(password: string): Observable<any> {
+    return this.http.post(`${this.url}/eliminar-cuenta`, { password }, this.getHeaders());
+  }
 }

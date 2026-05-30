@@ -13,6 +13,9 @@ public interface ResenaRepository extends JpaRepository<Resena, Long> {
     // Consulta para obtener todas las reseñas escritas por un usuario concreto que no estén eliminadas.
     List<Resena> findByUsuario_IdAndEliminadaFalse(Long usuarioId);
 
+    // Consulta para obtener todas las reseñas escritas por un usuario concreto.
+    List<Resena> findByUsuario_Id(Long usuarioId);
+
     // Consulta para obtener todas las reseñas de un videojuego por su ID externo que no estén eliminadas.
     @Query("SELECT r FROM Resena r WHERE r.videojuego.id = :idVideojuego AND r.eliminada = false")
     List<Resena> findByIdVideojuego(@Param("idVideojuego") Long idVideojuego);

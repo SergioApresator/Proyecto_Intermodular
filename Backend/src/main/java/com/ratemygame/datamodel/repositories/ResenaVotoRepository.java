@@ -14,4 +14,7 @@ public interface ResenaVotoRepository extends JpaRepository<ResenaVoto, Long> {
     // Consulta para eliminar todos los votos de una reseña al borrarla.
     void deleteByResena_Id(Long idResena);
 
+    // Consulta para eliminar todos los votos de un usuario al borrar su cuenta.
+    void deleteByUsuario_Id(Long idUsuario);
+
 }

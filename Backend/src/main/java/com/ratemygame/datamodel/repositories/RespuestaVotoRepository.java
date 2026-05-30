@@ -10,4 +10,7 @@ public interface RespuestaVotoRepository extends JpaRepository<RespuestaVoto, Lo
     // Consulta para eliminar todos los votos de una respuesta al borrarla.
     void deleteByRespuesta_Id(Long idRespuesta);
 
+    // Consulta para eliminar todos los votos realizados por un usuario al borrar su cuenta.
+    void deleteByUsuario_Id(Long idUsuario);
+
 }
