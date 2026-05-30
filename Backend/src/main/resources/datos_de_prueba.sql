@@ -1264,6 +1264,10 @@ UPDATE resena SET REPORTES = 5 WHERE ID = 3;
 UPDATE resena SET REPORTES = 12 WHERE ID = 10;
 UPDATE resena SET REPORTES = 2 WHERE ID = 12;
 
+-- Corregir valores por defecto para evitar NULLs en nuevas columnas en registros sembrados
+UPDATE resena SET eliminada = 0 WHERE eliminada IS NULL;
+UPDATE usuario SET correo_real = 0 WHERE correo_real IS NULL;
+
 SET FOREIGN_KEY_CHECKS = 1;
 SET UNIQUE_CHECKS = 1;
 COMMIT;
