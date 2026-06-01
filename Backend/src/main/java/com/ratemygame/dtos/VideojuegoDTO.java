@@ -14,6 +14,7 @@ public class VideojuegoDTO {
     private Double rating;
     private Integer metacritic;
     private Integer added;
+    private Integer reviewsCount;
     
     private List<ItemDTO> genres;
     private List<ItemDTO> tags;

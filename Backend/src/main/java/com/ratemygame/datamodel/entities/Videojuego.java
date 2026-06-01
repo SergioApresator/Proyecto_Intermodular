@@ -31,7 +31,7 @@ public class Videojuego {
 
     private LocalDate released;
 
-    @Column(nullable = false)
+    @org.hibernate.annotations.Formula("(SELECT COALESCE(AVG(r.puntuacion), 0.0) FROM resena r WHERE r.id_videojuego = id AND r.eliminada = false)")
     private Double rating = 0.0;
 
     private Integer metacritic;

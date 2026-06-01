@@ -15,6 +15,7 @@ import com.ratemygame.dtos.VideojuegoDTO;
 public interface VideojuegoMapper {
 
     @Mapping(source = "backgroundImage", target = "background_image")
+    @Mapping(target = "reviewsCount", expression = "java(videojuego.getResenas() != null ? (int) videojuego.getResenas().stream().filter(r -> !Boolean.TRUE.equals(r.getEliminada())).count() : 0)")
     VideojuegoDTO toDTO(Videojuego videojuego);
 
     VideojuegoDTO.ItemDTO generoToItemDTO(Genero genero);

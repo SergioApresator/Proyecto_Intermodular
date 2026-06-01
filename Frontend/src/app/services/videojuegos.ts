@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable, of, tap, map } from 'rxjs';
 
 @Injectable({
@@ -221,5 +222,94 @@ export class Videojuegos {
     return this.http.get(`${this.url}/${id}/movies`).pipe(
       tap(res => this.cache.set(cacheKey, res))
     );
+  }
+
+  private buildExportParams(termino: string, filtros: any = {}): HttpParams {
+    let params = new HttpParams();
+
+    if (termino && termino.trim()) {
+        params = params.set('search', termino);
+    }
+
+    let genreSlugs: string[] = [];
+    let tagSlugs: string[] = [];
+
+    if (filtros.genero && Array.isArray(filtros.genero) && filtros.genero.length > 0) {
+        filtros.genero.forEach((g: string) => {
+            if (g === 'horror') {
+                tagSlugs.push('horror');
+            } else {
+                genreSlugs.push(g);
+            }
+        });
+    }
+
+    if (filtros.tags && Array.isArray(filtros.tags) && filtros.tags.length > 0) {
+        filtros.tags.forEach((t: string) => {
+            if (!tagSlugs.includes(t)) tagSlugs.push(t);
+        });
+    }
+
+    if (genreSlugs.length > 0) {
+        params = params.set('genres', genreSlugs.join(','));
+    }
+    if (tagSlugs.length > 0) {
+        params = params.set('tags', tagSlugs.join(','));
+    }
+
+    if (filtros.plataforma && (Array.isArray(filtros.plataforma) ? filtros.plataforma.length > 0 : filtros.plataforma)) {
+        params = params.set('platforms', Array.isArray(filtros.plataforma) ? filtros.plataforma.join(',') : filtros.plataforma);
+    }
+
+    if (filtros.metacritic && (Array.isArray(filtros.metacritic) ? filtros.metacritic.length > 0 : filtros.metacritic)) {
+        let minGlobal = 100;
+        let maxGlobal = 0;
+        let ranges = Array.isArray(filtros.metacritic) ? filtros.metacritic : [filtros.metacritic];
+        ranges.forEach((range: string) => {
+            const [min, max] = range.split(',').map(Number);
+            if (min < minGlobal) minGlobal = min;
+            if (max > maxGlobal) maxGlobal = max;
+        });
+        params = params.set('minMetacritic', minGlobal.toString());
+        params = params.set('maxMetacritic', maxGlobal.toString());
+    }
+
+    if (filtros.anio) {
+      let dates = filtros.anio.trim();
+      if (/^\d{4}$/.test(dates)) {
+        params = params.set('startDate', `${dates}-01-01`).set('endDate', `${dates}-12-31`);
+      } else if (/^\d{4}-\d{4}$/.test(dates)) {
+        const parts = dates.split('-');
+        params = params.set('startDate', `${parts[0]}-01-01`).set('endDate', `${parts[1]}-12-31`);
+      }
+    }
+
+    return params;
+  }
+
+  descargarJuegosPdf(termino: string, filtros: any): Observable<Blob> {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    const headers = new HttpHeaders({
+      'Authorization': token ? `Bearer ${token}` : ''
+    });
+    const params = this.buildExportParams(termino, filtros);
+    return this.http.get(`${this.url}/exportar/pdf`, {
+      headers: headers,
+      params: params,
+      responseType: 'blob'
+    });
+  }
+
+  descargarJuegosCsv(termino: string, filtros: any): Observable<Blob> {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    const headers = new HttpHeaders({
+      'Authorization': token ? `Bearer ${token}` : ''
+    });
+    const params = this.buildExportParams(termino, filtros);
+    return this.http.get(`${this.url}/exportar/csv`, {
+      headers: headers,
+      params: params,
+      responseType: 'blob'
+    });
   }
 }

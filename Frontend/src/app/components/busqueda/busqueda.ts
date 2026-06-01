@@ -32,6 +32,10 @@ export class Busqueda implements OnInit {
   intentosExtra: number = 0;
   totalPaginas: number = 1;
 
+  esAdmin: boolean = false;
+  exportandoPdf: boolean = false;
+  exportandoCsv: boolean = false;
+
   private searchSubscription?: Subscription;
   private searchSubject = new Subject<void>();
 
@@ -126,6 +130,8 @@ export class Busqueda implements OnInit {
 
   // Método para inicializar el componente, configurar el debounce y restaurar el estado previo si existe.
   ngOnInit() {
+    this.esAdmin = typeof window !== 'undefined' && localStorage.getItem('esAdmin') === 'true';
+    
     // Configurar debounce para la búsqueda
     this.searchSubject.pipe(
       debounceTime(400)
@@ -486,6 +492,51 @@ export class Busqueda implements OnInit {
     }
 
     return true;
+  }
+
+  private triggerDescargaFile(blob: Blob, defaultFilename: string) {
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = defaultFilename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  }
+
+  exportarJuegosPdf() {
+    this.exportandoPdf = true;
+    this.videojuegosServicio.descargarJuegosPdf(this.termino, this.filtros).subscribe({
+      next: (blob: Blob) => {
+        this.triggerDescargaFile(blob, 'reporte_videojuegos.pdf');
+        this.exportandoPdf = false;
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        console.error('Error al exportar PDF de videojuegos:', err);
+        alert('Hubo un error al intentar exportar los videojuegos a PDF.');
+        this.exportandoPdf = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  exportarJuegosCsv() {
+    this.exportandoCsv = true;
+    this.videojuegosServicio.descargarJuegosCsv(this.termino, this.filtros).subscribe({
+      next: (blob: Blob) => {
+        this.triggerDescargaFile(blob, 'reporte_videojuegos.csv');
+        this.exportandoCsv = false;
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        console.error('Error al exportar CSV de videojuegos:', err);
+        alert('Hubo un error al intentar exportar los videojuegos a CSV.');
+        this.exportandoCsv = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 }
 
