@@ -148,4 +148,40 @@ export class Usuarios {
   eliminarCuentaPropia(password: string): Observable<any> {
     return this.http.post(`${this.url}/eliminar-cuenta`, { password }, this.getHeaders());
   }
+
+  // Descarga el CSV de usuarios
+  descargarUsuariosCsv(query?: string): Observable<Blob> {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    const headers = new HttpHeaders({
+      'Authorization': token ? `Bearer ${token}` : ''
+    });
+    
+    let endpoint = `${this.url}/exportar/csv`;
+    if (query && query.trim() !== '') {
+      endpoint += `?query=${encodeURIComponent(query.trim())}`;
+    }
+    
+    return this.http.get(endpoint, {
+      headers: headers,
+      responseType: 'blob'
+    });
+  }
+
+  // Descarga el PDF de usuarios
+  descargarUsuariosPdf(query?: string): Observable<Blob> {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    const headers = new HttpHeaders({
+      'Authorization': token ? `Bearer ${token}` : ''
+    });
+    
+    let endpoint = `${this.url}/exportar/pdf`;
+    if (query && query.trim() !== '') {
+      endpoint += `?query=${encodeURIComponent(query.trim())}`;
+    }
+    
+    return this.http.get(endpoint, {
+      headers: headers,
+      responseType: 'blob'
+    });
+  }
 }

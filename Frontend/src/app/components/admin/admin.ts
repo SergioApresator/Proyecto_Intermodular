@@ -28,6 +28,10 @@ export class Admin implements OnInit {
   paginaActual: number = 1;
   elementosPorPagina: number = 5;
   miUsuarioId: number | null = null;
+  exportandoPdf: boolean = false;
+  exportandoCsv: boolean = false;
+  exportandoFiltroPdf: boolean = false;
+  exportandoFiltroCsv: boolean = false;
 
   
   // Modal de confirmación
@@ -362,5 +366,93 @@ export class Admin implements OnInit {
         });
       }
     );
+  }
+
+  // Descarga e inicia el guardado del archivo
+  private triggerDescargaFile(blob: Blob, defaultFilename: string) {
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = defaultFilename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  }
+
+  exportarTodosCsv() {
+    this.exportandoCsv = true;
+    this.usuariosServicio.descargarUsuariosCsv().subscribe({
+      next: (blob: Blob) => {
+        this.triggerDescargaFile(blob, 'todos_los_usuarios.csv');
+        this.exportandoCsv = false;
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        console.error('Error al exportar CSV de todos los usuarios:', err);
+        alert('Hubo un error al intentar exportar todos los usuarios a CSV.');
+        this.exportandoCsv = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  exportarTodosPdf() {
+    this.exportandoPdf = true;
+    this.usuariosServicio.descargarUsuariosPdf().subscribe({
+      next: (blob: Blob) => {
+        this.triggerDescargaFile(blob, 'todos_los_usuarios.pdf');
+        this.exportandoPdf = false;
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        console.error('Error al exportar PDF de todos los usuarios:', err);
+        alert('Hubo un error al intentar exportar todos los usuarios a PDF.');
+        this.exportandoPdf = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  exportarBusquedaCsv() {
+    if (!this.terminoBusqueda || this.terminoBusqueda.trim() === '') {
+      return;
+    }
+    this.exportandoFiltroCsv = true;
+    const term = this.terminoBusqueda.trim();
+    this.usuariosServicio.descargarUsuariosCsv(term).subscribe({
+      next: (blob: Blob) => {
+        this.triggerDescargaFile(blob, `usuarios_filtrados_${term.replace(/[^a-zA-Z0-9]/g, '_')}.csv`);
+        this.exportandoFiltroCsv = false;
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        console.error('Error al exportar CSV filtrado:', err);
+        alert('Hubo un error al intentar exportar la búsqueda a CSV.');
+        this.exportandoFiltroCsv = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  exportarBusquedaPdf() {
+    if (!this.terminoBusqueda || this.terminoBusqueda.trim() === '') {
+      return;
+    }
+    this.exportandoFiltroPdf = true;
+    const term = this.terminoBusqueda.trim();
+    this.usuariosServicio.descargarUsuariosPdf(term).subscribe({
+      next: (blob: Blob) => {
+        this.triggerDescargaFile(blob, `usuarios_filtrados_${term.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`);
+        this.exportandoFiltroPdf = false;
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        console.error('Error al exportar PDF filtrado:', err);
+        alert('Hubo un error al intentar exportar la búsqueda a PDF.');
+        this.exportandoFiltroPdf = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 }

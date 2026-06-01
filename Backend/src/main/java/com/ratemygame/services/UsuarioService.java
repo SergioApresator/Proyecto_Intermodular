@@ -16,6 +16,22 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.awt.Color;
+import com.lowagie.text.Document;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Font;
+import com.lowagie.text.FontFactory;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.Element;
 
 @Service
 public class UsuarioService {
@@ -221,5 +237,218 @@ public class UsuarioService {
         return usuarioRepository.buscarUsuariosGeneral(query).stream()
                 .map(usuarioMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    // Método para generar el listado de usuarios en formato PDF vertical premium
+    public byte[] exportarUsuariosAPdf(String query) {
+        List<UsuarioDTO> usuarios;
+        boolean esBusqueda = query != null && !query.trim().isEmpty();
+        if (esBusqueda) {
+            usuarios = buscarUsuariosGeneral(query);
+        } else {
+            usuarios = getAllUsuarios();
+        }
+
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            Document document = new Document(PageSize.A4, 36, 36, 45, 45);
+            PdfWriter.getInstance(document, out);
+            document.open();
+
+            // Definición de fuentes utilizando tipos estándar
+            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 22, new Color(30, 41, 59));
+            Font subtitleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, new Color(59, 130, 246));
+            Font metaFont = FontFactory.getFont(FontFactory.HELVETICA, 9, new Color(100, 116, 139));
+            Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 9, Color.WHITE);
+            Font dataFont = FontFactory.getFont(FontFactory.HELVETICA, 9, new Color(51, 65, 85));
+            Font dataFontBold = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 9, new Color(30, 41, 59));
+
+            // Cabecera del Documento
+            Paragraph brandPara = new Paragraph("RATE MY GAME", titleFont);
+            brandPara.setAlignment(Element.ALIGN_LEFT);
+            brandPara.setSpacingAfter(2);
+            document.add(brandPara);
+
+            String reportSubtitle = esBusqueda 
+                ? "REPORTE DE BÚSQUEDA DE USUARIOS (FILTRADO POR: '" + query.trim().toUpperCase() + "')"
+                : "REPORTE GLOBAL DE ADMINISTRACIÓN DE USUARIOS";
+            Paragraph subtitlePara = new Paragraph(reportSubtitle, subtitleFont);
+            subtitlePara.setAlignment(Element.ALIGN_LEFT);
+            subtitlePara.setSpacingAfter(10);
+            document.add(subtitlePara);
+
+            // Metadatos
+            String fechaGen = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+            Paragraph metaPara = new Paragraph(
+                "Fecha de generación: " + fechaGen + "   |   Total de registros: " + usuarios.size(), 
+                metaFont
+            );
+            metaPara.setAlignment(Element.ALIGN_LEFT);
+            metaPara.setSpacingAfter(15);
+            document.add(metaPara);
+
+            // Línea decorativa separatoria
+            PdfPTable lineTable = new PdfPTable(1);
+            lineTable.setWidthPercentage(100);
+            PdfPCell lineCell = new PdfPCell(new Phrase(""));
+            lineCell.setBorder(PdfPCell.BOTTOM);
+            lineCell.setBorderWidth(1.5f);
+            lineCell.setBorderColor(new Color(226, 232, 240)); // Slate 200
+            lineCell.setPadding(0);
+            lineTable.addCell(lineCell);
+            lineTable.setSpacingAfter(20);
+            document.add(lineTable);
+
+            // Tabla de Usuarios (5 columnas)
+            PdfPTable table = new PdfPTable(5);
+            table.setWidthPercentage(100);
+            // Anchos relativos: ID (1.0), Username (2.2), Nombre Completo (3.0), Email (3.5), Situación (2.3)
+            table.setWidths(new float[]{1.0f, 2.2f, 3.0f, 3.5f, 2.3f});
+            table.setSpacingBefore(10);
+
+            // Encabezados de la Tabla
+            String[] headers = {"ID", "USERNAME", "NOMBRE COMPLETO", "EMAIL", "SITUACIÓN"};
+            Color headerBg = new Color(30, 41, 59); // Slate 800
+            Color borderColor = new Color(226, 232, 240); // Slate 200
+
+            for (String header : headers) {
+                PdfPCell cell = new PdfPCell(new Phrase(header, headerFont));
+                cell.setBackgroundColor(headerBg);
+                cell.setBorderColor(borderColor);
+                cell.setBorderWidth(1);
+                cell.setPadding(8);
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                if ("ID".equals(header) || "SITUACIÓN".equals(header)) {
+                    cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                } else {
+                    cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                }
+                table.addCell(cell);
+            }
+
+            // Datos de la Tabla
+            boolean oddRow = false;
+            Color oddBg = new Color(248, 250, 252); // Slate 50
+            Color evenBg = Color.WHITE;
+
+            Color bannedColor = new Color(239, 68, 68); // Red 500
+            Color adminColor = new Color(59, 130, 246);  // Blue 500
+            Color activeColor = new Color(16, 185, 129); // Green 500
+
+            for (UsuarioDTO u : usuarios) {
+                Color rowBg = oddRow ? oddBg : evenBg;
+                oddRow = !oddRow;
+
+                // ID
+                PdfPCell cellId = new PdfPCell(new Phrase(String.valueOf(u.getId()), dataFontBold));
+                cellId.setBackgroundColor(rowBg);
+                cellId.setBorderColor(borderColor);
+                cellId.setPadding(7);
+                cellId.setHorizontalAlignment(Element.ALIGN_CENTER);
+                cellId.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                table.addCell(cellId);
+
+                // Username
+                PdfPCell cellUser = new PdfPCell(new Phrase(u.getUsername(), dataFontBold));
+                cellUser.setBackgroundColor(rowBg);
+                cellUser.setBorderColor(borderColor);
+                cellUser.setPadding(7);
+                cellUser.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cellUser.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                table.addCell(cellUser);
+
+                // Nombre Completo
+                String fullNm = (u.getNombre() != null ? u.getNombre() : "") + " " + (u.getApellidos() != null ? u.getApellidos() : "");
+                fullNm = fullNm.trim();
+                PdfPCell cellName = new PdfPCell(new Phrase(fullNm.isEmpty() ? "-" : fullNm, dataFont));
+                cellName.setBackgroundColor(rowBg);
+                cellName.setBorderColor(borderColor);
+                cellName.setPadding(7);
+                cellName.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cellName.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                table.addCell(cellName);
+
+                // Email
+                PdfPCell cellEmail = new PdfPCell(new Phrase(u.getEmail() != null ? u.getEmail() : "-", dataFont));
+                cellEmail.setBackgroundColor(rowBg);
+                cellEmail.setBorderColor(borderColor);
+                cellEmail.setPadding(7);
+                cellEmail.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cellEmail.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                table.addCell(cellEmail);
+
+                // Situación
+                String sitText = "Usuario Activo";
+                Font sitFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 8.5f, activeColor);
+
+                if (Boolean.TRUE.equals(u.getBaneado())) {
+                    sitText = "Baneado";
+                    sitFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 8.5f, bannedColor);
+                } else if (Boolean.TRUE.equals(u.getEsAdmin())) {
+                    sitText = "Administrador";
+                    sitFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 8.5f, adminColor);
+                }
+
+                PdfPCell cellSit = new PdfPCell(new Phrase(sitText, sitFont));
+                cellSit.setBackgroundColor(rowBg);
+                cellSit.setBorderColor(borderColor);
+                cellSit.setPadding(7);
+                cellSit.setHorizontalAlignment(Element.ALIGN_CENTER);
+                cellSit.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                table.addCell(cellSit);
+            }
+
+            document.add(table);
+            document.close();
+            return out.toByteArray();
+        } catch (IOException e) {
+            throw new RuntimeException("Error al generar el PDF de usuarios", e);
+        }
+    }
+
+    // Método para generar el listado de usuarios en formato CSV
+    public byte[] exportarUsuariosACsv(String query) {
+        List<UsuarioDTO> usuarios;
+        if (query != null && !query.trim().isEmpty()) {
+            usuarios = buscarUsuariosGeneral(query);
+        } else {
+            usuarios = getAllUsuarios();
+        }
+
+        StringBuilder csv = new StringBuilder();
+        // UTF-8 BOM para que Excel detecte tildes automáticamente al hacer doble clic
+        csv.append("\uFEFF");
+        // Cabeceras del CSV
+        csv.append("ID;Username;Nombre Completo;Email;Situación\n");
+
+        for (UsuarioDTO u : usuarios) {
+            String fullNm = (u.getNombre() != null ? u.getNombre() : "") + " " + (u.getApellidos() != null ? u.getApellidos() : "");
+            fullNm = fullNm.trim();
+
+            String sitText = "Usuario Activo";
+            if (Boolean.TRUE.equals(u.getBaneado())) {
+                sitText = "Baneado";
+            } else if (Boolean.TRUE.equals(u.getEsAdmin())) {
+                sitText = "Administrador";
+            }
+
+            csv.append(u.getId()).append(";")
+               .append(escapeCsvField(u.getUsername())).append(";")
+               .append(escapeCsvField(fullNm.isEmpty() ? "-" : fullNm)).append(";")
+               .append(escapeCsvField(u.getEmail() != null ? u.getEmail() : "-")).append(";")
+               .append(escapeCsvField(sitText)).append("\n");
+        }
+
+        return csv.toString().getBytes(StandardCharsets.UTF_8);
+    }
+
+    // Helper para escapar caracteres especiales de CSV (comillas y punto y coma)
+    private String escapeCsvField(String field) {
+        if (field == null) {
+            return "";
+        }
+        if (field.contains(";") || field.contains("\"") || field.contains("\n")) {
+            return "\"" + field.replace("\"", "\"\"") + "\"";
+        }
+        return field;
     }
 }

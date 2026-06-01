@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -309,5 +310,29 @@ public class UsuarioController {
                         .contentType(MediaType.parseMediaType(u.getBannerContentType() != null ? u.getBannerContentType() : "image/jpeg"))
                         .body(u.getBannerDatos()))
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    // Endpoint para exportar la lista de usuarios (todos o filtrados) a PDF
+    @GetMapping("/exportar/pdf")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<byte[]> exportarUsuariosAPdf(@RequestParam(required = false) String query) {
+        byte[] pdfBytes = usuarioService.exportarUsuariosAPdf(query);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "usuarios_export.pdf");
+        headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+        return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+    }
+
+    // Endpoint para exportar la lista de usuarios (todos o filtrados) a CSV
+    @GetMapping("/exportar/csv")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<byte[]> exportarUsuariosACsv(@RequestParam(required = false) String query) {
+        byte[] csvBytes = usuarioService.exportarUsuariosACsv(query);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("text/csv; charset=UTF-8"));
+        headers.setContentDispositionFormData("attachment", "usuarios_export.csv");
+        headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+        return new ResponseEntity<>(csvBytes, headers, HttpStatus.OK);
     }
 }
