@@ -28,6 +28,7 @@ export class Admin implements OnInit {
   paginaActual: number = 1;
   elementosPorPagina: number = 5;
   miUsuarioId: number | null = null;
+  ultimaBusquedaEjecutada: string = '';
   exportandoPdf: boolean = false;
   exportandoCsv: boolean = false;
   exportandoFiltroPdf: boolean = false;
@@ -212,6 +213,8 @@ export class Admin implements OnInit {
       next: (respuesta: any) => {
         this.resultadosUsuarios = respuesta;
         this.buscando = false;
+        // Solo actualizar el término ejecutado cuando la búsqueda se completa exitosamente
+        this.ultimaBusquedaEjecutada = term;
         this.cdr.detectChanges();
       },
       error: (err: any) => {

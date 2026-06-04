@@ -140,9 +140,9 @@
               </div>
             </div>
 
-            <!-- Botones de búsqueda activa (aparecen si término de búsqueda tiene valor y hay resultados) -->
-            <div class="export-group search-filter-group" *ngIf="terminoBusqueda && terminoBusqueda.trim() !== '' && resultadosUsuarios.length > 0">
-              <span class="export-label label-filter">EXPORTAR RESULTADO DE BÚSQUEDA ("{{ terminoBusqueda }}"):</span>
+            <!-- Botones de búsqueda activa (aparecen solo tras ejecutar la búsqueda con la lupa o Enter) -->
+            <div class="export-group search-filter-group" *ngIf="ultimaBusquedaEjecutada && ultimaBusquedaEjecutada.trim() !== '' && resultadosUsuarios.length > 0 && !buscando">
+              <span class="export-label label-filter">EXPORTAR RESULTADO DE BÚSQUEDA ("{{ ultimaBusquedaEjecutada }}"):</span>
               <div class="export-buttons">
                 <button class="btn-export btn-pdf-filter" (click)="exportarBusquedaPdf()" [disabled]="exportandoFiltroPdf">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
